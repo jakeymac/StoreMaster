@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register New User</title>
+    <!-- Add your CSS links or styles here -->
+</head>
+<body>
+    <h1>Register New User</h1>
+    <form action="{% url 'Accounts:register_user' %}" method="POST">
+        {% csrf_token %}
+
+        {{ form.first_name.label_tag }} {{ form.first_name }} <br>
+        {{ form.last_name.label_tag }} {{ form.last_name }} <br>
+        {{form.email_address.label_tag }} {{ form.email_address }} <br>
+        {{ form.address.label_tag }} {{ form.address }} <br>
+        {{ form.line_two.label_tag }} {{ form.line_two }} <br>
+        {{ form.city.label_tag }} {{ form.city }} <br>
+        {{ form.state.label_tag }} {{ form.state }} <br>
+        {{ form.zip.label_tag }} {{ form.zip }} <br>
+        {{ form.username.label_tag }} {{ form.username }} <br>
+        {{ form.password.label_tag}} {{ form.password }} <br>
+        {{ form.other_information.label_tag}} {{ form.other_information }} <br>
+        {{ form.birthday.label_tag }} {{ form.birthday }} <br>
+        {{ form.store_id.label_tag }} {{ form.store_id }} <br>
+        {{ form.user_type.label_tag }} {{ form.user_type }} <br>
+
+        <button type="submit">Register</button>
+    </form>
+    <p>{% if form_errors %}
+            
+        {% endif %}
+    </p>
+    <p>Already have an account? <a href="{% url 'Accounts:login' %}">Login</a></p>
+    <p>Want to register a new store? <a href="{% url 'Stores:register_store' %}">Register a new store</a></p>
+</body>
+</html>
