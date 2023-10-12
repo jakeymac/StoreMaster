@@ -69,7 +69,7 @@ def register_user(request):
                                                 last_name=last_name,
                                                 other_information=other_information,
                                                 birthday=birthday,
-                                                store=store)
+                                                store=store_object)
                     new_employee.save()
 
                 #TODO add verification to create a manager account
