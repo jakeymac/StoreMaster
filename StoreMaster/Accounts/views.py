@@ -41,8 +41,8 @@ def register_user(request):
             other_information = new_form.cleaned_data["other_information"]
             birthday = new_form.cleaned_data["birthday"]
 
-            store_id = new_form.cleaned_data["store_id"]
-            store_object = Store.objects.get(store_id=store_id)
+            store = new_form.cleaned_data["store"]
+            store_object = Store.objects.get(store_id=store)
             user_type = new_form.cleaned_data["user_type"]
 
 
