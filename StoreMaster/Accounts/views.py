@@ -42,7 +42,8 @@ def register_user(request):
             birthday = new_form.cleaned_data["birthday"]
 
             store = new_form.cleaned_data["store"]
-            store_object = Store.objects.get(store_id=store)
+            store_object = Store.objects.get(store_id=store.store_id)
+            
             user_type = new_form.cleaned_data["user_type"]
 
 
@@ -68,7 +69,7 @@ def register_user(request):
                                                 last_name=last_name,
                                                 other_information=other_information,
                                                 birthday=birthday,
-                                                store=store_object)
+                                                store=store)
                     new_employee.save()
 
                 #TODO add verification to create a manager account
