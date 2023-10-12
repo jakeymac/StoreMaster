@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import RegistrationForm
+from .forms import UserRegistrationForm
 
 from django.contrib.auth.models import User
 from django import forms
@@ -28,10 +28,8 @@ def login_user(request):
 
 
 def register_user(request):
-    stores = Store.objects.all()
-    context = {"stores":stores}
     if request.method == "POST":
-        new_form = RegistrationForm(request.POST)
+        new_form = UserRegistrationForm(request.POST)
         if new_form.is_valid():
             username = new_form.cleaned_data["username"]
             password = new_form.cleaned_data["password"]
@@ -111,7 +109,7 @@ def register_user(request):
     
         
     else:
-        clean_form = RegistrationForm()
+        clean_form = UserRegistrationForm()
     
         return render(request,"register_user.html",{'form':clean_form})
     

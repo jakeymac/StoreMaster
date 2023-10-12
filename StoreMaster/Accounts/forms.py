@@ -4,7 +4,7 @@ from Stores.models import Store
 
 
 #For validating and cleaning registration data
-class RegistrationForm(forms.Form):
+class UserRegistrationForm(forms.Form):
     first_name = forms.CharField(required=True,label="First Name",max_length=35)
     last_name = forms.CharField(required=True,label="Last Name",max_length=50)
     email_address = forms.EmailField(required=True,label="Email Address")
@@ -20,9 +20,7 @@ class RegistrationForm(forms.Form):
     birthday = forms.DateField(required=False,label="Birthday")
     birthday = forms.DateField(widget=DateInput(attrs={'type':'date'}))
     
-    choices = [(store.store_id, store.store_name) for store in Store.objects.all()]
-    choices.insert(0, ('', 'Select Store'))
-    store_id = forms.ChoiceField(required=False,label="Store Location", choices=choices)
+    store = forms.ModelChoiceField(queryset=Store.objects.all(), empty_label="Store Location", label="Select a Store Location")
 
     user_types = [("employee","Employee"), ("manager","Manager"),("admin","Admin")]
     user_type = forms.ChoiceField(required=True,label="Account Type", choices = user_types,)

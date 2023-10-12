@@ -86,13 +86,17 @@ class UserInfo(models.Model):
 
 
 class AdminInfo(UserInfo):
-    pass
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 class ManagerInfo(UserInfo):
-    pass
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 class EmployeeInfo(UserInfo):
-    pass   
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 class CustomerInfo(UserInfo):
-    pass
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
