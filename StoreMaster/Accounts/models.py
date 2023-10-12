@@ -15,7 +15,7 @@ class UserInfo(models.Model):
     city = models.CharField(max_length=50,null=True,blank=True)
     state = models.CharField(max_length=35,null=True,blank=True)
     zip = models.IntegerField(null=True,blank=True,validators=[MaxValueValidator(999999)])
-    store = models.OneToOneField(Store,null=True,blank=True,on_delete=models.CASCADE)
+    store = models.ForeignKey(Store,null=True,blank=True,on_delete=models.CASCADE)
     username = models.CharField(max_length=30,null=True,blank=True,unique=True)
     password = models.CharField(max_length=30,null=True,blank=True)
     other_information = models.CharField(max_length = 1000,null=True,blank=True)

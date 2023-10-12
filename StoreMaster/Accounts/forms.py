@@ -17,8 +17,7 @@ class UserRegistrationForm(forms.Form):
     password = forms.CharField(required=True, widget=forms.PasswordInput,label="Password",max_length=30)
     other_information = forms.CharField(required=False,label="Other Information",max_length = 1000)
 
-    birthday = forms.DateField(required=False,label="Birthday")
-    birthday = forms.DateField(widget=DateInput(attrs={'type':'date'}))
+    birthday = forms.DateField(widget=DateInput(attrs={'type':'date'}),label="Birthday")
     
     store = forms.ModelChoiceField(queryset=Store.objects.all(), empty_label="Store Location", label="Select a Store Location")
 
