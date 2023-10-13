@@ -13,29 +13,30 @@
         {% csrf_token %}
 
         {{ form.store_name.label_tag }} {{ form.store_name }} <br>
-        {{ form.address.label_tag }} {{ form.address }} <br>
-        {{ form.line_two.label_tag }} {{ form.line_two }} <br>
-        {{ form.city.label_tag }} {{ form.city }} <br>
-        {{ form.state.label_tag }} {{ form.state }} <br>
-        {{ form.zip.label_tag }} {{ form.zip }} <br>
+        {{ form.store_address.label_tag }} {{ form.store_address }} <br>
+        {{ form.store_line_two.label_tag }} {{ form.store_line_two }} <br>
+        {{ form.store_city.label_tag }} {{ form.store_city }} <br>
+        {{ form.store_state.label_tag }} {{ form.store_state }} <br>
+        {{ form.store_zip.label_tag }} {{ form.store_zip }} <br>
         
         <div id="select_existing_manager">
             {{ form.manager.label_tag }} {{ form.manager }}<br>
             <button id="add_new_manager_form_button" type="button">New Manager</button>
         </div>
-
+            
         <div id="register_new_manager" style="display: none;">
-            {{ form.first_name.label_tag }} {{ form.first_name }}<br>
-            {{ form.last_name.label_tag }} {{ form.last_name }}<br>
-            {{ form.address.label_tag }} {{ form.address }}<br>
-            {{ form.line_two.label_tag }} {{ form.line_two }}<br>
-            {{ form.city.label_tag }} {{ form.city }}<br>
-            {{ form.state.label_tag }} {{ form.state }}<br>
-            {{ form.zip.label_tag }} {{ form.zip }}<br>
-            {{ form.username.label_tag }} {{ form.username }}<br>
-            {{ form.password.label_tag }} {{ form.password }}<br>
-            {{ form.other_info.label_tag }} {{ form.other_info }}<br>
-            {{ form.birthday.label_tag }} {{ form.birthday }}<br>
+            {{ form.manager_first_name.label_tag }} {{ form.manager_first_name }}<br>
+            {{ form.manager_last_name.label_tag }} {{ form.manager_last_name }}<br>
+            {{ form.manager_address.label_tag }} {{ form.manager_address }}<br>
+            {{ form.manager_line_two.label_tag }} {{ form.manager_line_two }}<br>
+            {{ form.manager_city.label_tag }} {{ form.manager_city }}<br>
+            {{ form.manager_state.label_tag }} {{ form.manager_state }}<br>
+            {{ form.manager_zip.label_tag }} {{ form.manager_zip }}<br>
+            {{ form.manager_username.label_tag }} {{ form.manager_username }}<br>
+            {{ form.manager_password.label_tag }} {{ form.manager_password }}<br>
+            {{ form.manager_other_info.label_tag }} {{ form.manager_other_info }}<br>
+            {{ form.manager_birthday.label_tag }} {{ form.manager_birthday }}<br>
+
             <button id="return_button" type="button">Select Existing Manager</button>
         </div>
 

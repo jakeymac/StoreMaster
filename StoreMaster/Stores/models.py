@@ -25,8 +25,15 @@ class Store(models.Model):
     def get_store_name(self):
         return self.store_name
     
+    def get_location(self):
+        if self.line_two:
+            return f"{self.address} {self.line_two} {self.zip} {self.city}, {self.state}"
+        else:
+            return f"{self.address} {self.zip} {self.city}, {self.state}"
+    
     def get_address(self):
         return self.address
+    
     
     def set_address(self, address):
         self.address = address

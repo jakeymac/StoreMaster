@@ -46,7 +46,6 @@ def register_user(request):
             
             user_type = new_form.cleaned_data["user_type"]
 
-
             if User.objects.filter(username=username).exists():
                 raise forms.ValidationError("This username is already in use")
             elif  User.objects.filter(email=email_address).exists():
