@@ -1,7 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.widgets import DateInput
-from Accounts.models import ManagerInfo
+from django.contrib.auth.models import User
+from Accounts.models import UserInfo, ManagerInfo
 from .models import Store
 from Accounts.forms import UserRegistrationForm
 
@@ -37,10 +38,18 @@ class StoreRegistrationForm(forms.Form):
             locations = [store.get_location() for store in stores]
             if self.store_line_two:
                 if f"{self.store_address} {self.store_line_two} {self.store_zip} {self.store_city}, {self.store_state}" in locations:
-                    raise ValidationError("A store with name already exists at that address")
+                    raise forms.ValidationError("A store with name already exists at that address")
             else:
                 if f"{self.store_address} {self.store_zip} {self.store_city}, {self.store_state}" in locations:
-                    raise ValidationError("A store with name already exists at that address")
+                    raise forms.ValidationError("A store with name already exists at that address")
+                
+            if not self.manager:
+                if User.objects.filter(username=self.manager_username).exists():
+                    raise forms.ValidationError("This username is already in use")
+                if User.objects.filter(email=self.manager_email_address).exists():
+                    raise forms.ValidationError("This username is already in use")
+
+
             #raise ValidationError("A store with that name already exists")
 
         #validate manager information if it's been provided
@@ -60,9 +69,39 @@ class StoreRegistrationForm(forms.Form):
                                 "birthday":self.manager_birthday}
             
             new_user_form = UserRegistrationForm(initial=new_manager_info)
-            if not new_user_form.is_valid():
-                pass
 
+            if new_user_form.is_valid():
+                #Establish new store
+                newStore = error
+
+
+                user = User(username=self.manager_username,
+                            password=self.manager_password,
+                            emai=self.manager_email_address)
+                
+                newManager = ManagerInfo(user=user,
+                                         first_name=self.manager_first_name,
+                                         last_name=self.manager_last_name,
+                                         email_address=self.manager_last_name,
+                                         address=self.manager_address,
+                                         line_two=self.manager_line_two,
+                                         city=self.manager_city,
+                                         state=self.manager_state,
+                                         zip=self.manager_zip,
+                                         username=self.manager_username,
+                                         password=self.manager_password,
+                                         other_information=self.manager_other_information,
+                                         birthday=self.manager_birthday,
+                                         store=newStore)
+                
+                newManager.save()
+
+                newStore = Store(store_name=self.store_name,
+                                 address=self.store_address,
+                                 line_two=self.store_line_two,
+                                 city=self.store_city,
+                                 state=self.store_state,
+                                 zip=self.store_zip)
 
 
         return cleaned_data
