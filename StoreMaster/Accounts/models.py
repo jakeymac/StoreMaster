@@ -20,7 +20,13 @@ class UserInfo(models.Model):
     password = models.CharField(max_length=30,null=True,blank=True)
     other_information = models.CharField(max_length = 1000,null=True,blank=True)
     birthday = models.DateField(null=True,blank=True)
-
+    
+    account_types = (('customer','Customer'),
+                     ('employee','Employee'),
+                     ('manager', 'Manager'),
+                     ('admin','Admin'))
+    account_type = models.CharField(max_length=15,null=False,default="employee",choices=account_types)
+    
     def __str__(self):
         return self.username
     
@@ -86,17 +92,34 @@ class UserInfo(models.Model):
 
 
 class AdminInfo(UserInfo):
+    def __init__(self, *args, **kwargs):
+        super(AdminInfo, self).__init__(*args,**kwargs)
+        self.account_type = 'admin'
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+
 
 class ManagerInfo(UserInfo):
+    def __init__(self, *args, **kwargs):
+        super(ManagerInfo, self).__init__(*args,**kwargs)
+        self.account_type = 'manager'
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 class EmployeeInfo(UserInfo):
+    def __init__(self, *args, **kwargs):
+        super(EmployeeInfo, self).__init__(*args,**kwargs)
+        self.account_type = 'employee'
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 class CustomerInfo(UserInfo):
+    def __init__(self, *args, **kwargs):
+        super(CustomerInfo, self).__init__(*args,**kwargs)
+        self.account_type = 'customer'    
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

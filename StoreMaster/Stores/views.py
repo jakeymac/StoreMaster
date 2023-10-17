@@ -2,9 +2,31 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import *
 
+from Accounts.models import *
+
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 def index(request):
     return HttpResponse("Stores Home")
+
+@login_required(login_url='/accounts/login_user')
+def open_store(request):
+    userinfo = request.user.userinfo
+    if hasattr(userinfo, 'managerinfo'):
+        return HttpResponse("MANAGER INFO")
+    elif hasattr(userinfo,"employeeinfo"):
+        return HttpResponse("EMPLOYEE INFO ")
+    elif hasattr(userinfo,"admininfo"):
+        return HttpResponse("ADMIN INFO")
+    elif hasattr(userinfo,"customerinfo"):
+        return HttpResponse("CUSTOMER INFO ")
+        #SEND TO THE CUSTOMER VIEW
+    
+    else:
+        return HttpResponse("Something went wrong, couldn't grab user information")
+    
+    
 
 def register_store(request):
     print("HI THERE")
@@ -36,7 +58,8 @@ def register_store(request):
                                         "username":newRegistrationForm.cleaned_data["manager_username"],
                                         "password":newRegistrationForm.cleaned_data["manager_password"],
                                         "other_information":newRegistrationForm.cleaned_data["manager_other_information"],
-                                        "birthday":newRegistrationForm.cleaned_data["manager_birthday"]}
+                                        "birthday":newRegistrationForm.cleaned_data["manager_birthday"],
+                                        "account_type":"manager"}
                     
                     new_user_form = UserRegistrationForm(initial=new_manager_info)
 
@@ -70,10 +93,15 @@ def register_store(request):
                     newStore.save()
                     manager = newRegistrationForm.cleaned_data["manager"]
                     manager.store = newStore
-                    manager.save()            
+                    manager_object = ManagerInfo.objects.get(user_id=manager.user_id)
+                    if manager_object.store:
+                        return HttpResponse("ALREADY HAS A STORE")
+                    else:
+                        manager_object.store = newStore
+                        manager_object.save()            
 
 
-                    return HttpResponse("TESTINGGG")  
+                        return HttpResponse("TESTINGGG")  
             else:
                 return HttpResponse("ERROR:")
         

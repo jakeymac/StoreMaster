@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from .forms import UserRegistrationForm
 
@@ -47,13 +48,16 @@ def register_user(request):
             user_type = new_form.cleaned_data["user_type"]
 
             if User.objects.filter(username=username).exists():
-                raise forms.ValidationError("This username is already in use")
+                return render(request,"register_user.html",{"error_message":"Username already taken", "form":new_form})
+                #raise forms.ValidationError("This username is already in use")
+            
             elif  User.objects.filter(email=email_address).exists():
-                raise forms.ValidationError("This email is already in use")
+                return render(request,"register_user.html",{"error_message":"Email already in use","form":new_form})
+                #raise forms.ValidationError("This email is already in use")
             
             else:
                 user = User(username=username,
-                            password=password, 
+                            password=make_password(password), 
                             email=email_address)
                 user.save()
 
@@ -68,7 +72,8 @@ def register_user(request):
                                                 last_name=last_name,
                                                 other_information=other_information,
                                                 birthday=birthday,
-                                                store=store_object)
+                                                store=store_object,
+                                                account_type="employee")
                     new_employee.save()
 
                 #TODO add verification to create a manager account
@@ -82,12 +87,13 @@ def register_user(request):
                                                 last_name=last_name,
                                                 other_information=other_information,
                                                 birthday=birthday,
-                                                store=store_object)
+                                                store=store_object,
+                                                account_type="manager")
                     new_manager.save()
                     
                 #TODO add verification to create an admin account
                 elif user_type == "admin":
-                    new_admin = EmployeeInfo(user=user,
+                    new_admin = AdminInfo(user=user,
                                                 username=username,
                                                 password=password,
                                                 email_address=email_address,
@@ -96,7 +102,8 @@ def register_user(request):
                                                 last_name=last_name,
                                                 other_information=other_information,
                                                 birthday=birthday,
-                                                store=store_object)
+                                                store=store_object,
+                                                account_type="admin")
                     new_admin.save()
                 #customer
                 else:
