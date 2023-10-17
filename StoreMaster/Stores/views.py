@@ -10,22 +10,28 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     return HttpResponse("Stores Home")
 
-@login_required(login_url='/accounts/login_user')
+@login_required(login_url='/login')
 def open_store(request):
+    
     userinfo = request.user.userinfo
-    if hasattr(userinfo, 'managerinfo'):
-        return HttpResponse("MANAGER INFO")
-    elif hasattr(userinfo,"employeeinfo"):
-        return HttpResponse("EMPLOYEE INFO ")
-    elif hasattr(userinfo,"admininfo"):
-        return HttpResponse("ADMIN INFO")
-    elif hasattr(userinfo,"customerinfo"):
-        return HttpResponse("CUSTOMER INFO ")
+    #Check if logged in user is a customer, not a staff member or admin
+    if hasattr(userinfo,"customerinfo"):
         #SEND TO THE CUSTOMER VIEW
-    
-    else:
-        return HttpResponse("Something went wrong, couldn't grab user information")
-    
+        return HttpResponse("CUSTOMER INFO ")
+
+
+    elif hasattr(userinfo, 'managerinfo'):
+        user_type = "manager"
+
+    elif hasattr(userinfo,"employeeinfo"):
+        user_type="employee"
+
+    elif hasattr(userinfo,"admininfo"):
+        user_type = "admin"
+
+    return render(request,"store_home.html",context={"user_type":user_type})
+       
+
     
 
 def register_store(request):
