@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{% static 'js/store_registration_dynamic_form.js' %}"></script>
+
+    </head>
+    <body>
+        <div id="register_existing_manager_div">
+            <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
+                {% csrf_token %}
+                <select name="manager_selector">
+                    <option value="">Select a manager</option>
+                    {% for manager_option in manager_options %}
+                        <option value="{{ manager_option.0 }}">{{ manager_option.1 }}</option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" name="form_type" value="register_existing">
+                <button type="submit">Next</button>
+            </form>
+            <button id="add_new_manager_form_button" type="button">Register a New Manager</button>
+        </div>
+        
+        <div id="register_new_manager_div"> 
+            <form id="register_store_new_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
+                {% csrf_token %}    
+                
+                {{ form.first_name.label_tag }} {{ form.first_name }}<br>
+                {{ form.last_name.label_tag }} {{ form.last_name }}<br>
+                {{ form.address.label_tag }} {{ form.address }}<br>
+                {{ form.line_two.label_tag }} {{ form.line_two }}<br>
+                {{ form.city.label_tag }} {{ form.city }}<br>
+                {{ form.state.label_tag }} {{ form.state }}<br>
+                {{ form.zip.label_tag }} {{ form.zip }}<br>
+                {{ form.username.label_tag }} {{ form.username }}<br>
+                {{ form.password.label_tag }} {{ form.password }}<br>
+                {{ form.email_address.label_tag }} {{ form.email_address }}<br>
+                {{ form.other_info.label_tag }} {{ form.other_info }}<br>
+                {{ form.birthday.label_tag }} {{ form.birthday }}<br>
+
+                <input type="hidden" name="form_type" value="register_new">
+                <button type="submit">Next</button>
+            </form>
+            <button id="return_button" type="button">Select Existing Manager</button>
+        </div>
+    </body>
+</html>

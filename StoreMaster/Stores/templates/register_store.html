@@ -34,12 +34,16 @@
             {{ form.manager_zip.label_tag }} {{ form.manager_zip }}<br>
             {{ form.manager_username.label_tag }} {{ form.manager_username }}<br>
             {{ form.manager_password.label_tag }} {{ form.manager_password }}<br>
+            {{ form.manager_email_address.label_tag }} {{ form.manager_email_address }}<br>
             {{ form.manager_other_info.label_tag }} {{ form.manager_other_info }}<br>
             {{ form.manager_birthday.label_tag }} {{ form.manager_birthday }}<br>
+            
 
             <button id="return_button" type="button">Select Existing Manager</button>
         </div>
 
+    
+        <input type="hidden" name="manager_type_choice" value="pre-existing">
         
         <button type="submit">Register</button>
     </form>

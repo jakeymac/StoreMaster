@@ -11,66 +11,63 @@ $(document).ready(function () {
     var currentPassword  = "";
     var currentOtherInfo = "";
     var currentBirthday = "";
+
+    // var new_manager_form_open = false;
+
+    const managerSelector = $("[name='manager_selector']");
+    const firstName = $("[name='first_name']");
+    const lastName = $("[name='last_name']");
+    const address = $("[name='address']");
+    const lineTwo = $("[name='line_two']");
+    const city = $("[name='city']");
+    const state = $("[name='state']");
+    const zip = $("[name='zip']");
+    const username = $("[name='username']");
+    const password = $("[name='password']");
+    const otherInfo = $("[name='other_info']");
+    const birthday = $("[name='birthday']");
+
+    const existingManagerDiv = $('#register_existing_manager_div');
+    const newManagerDiv = $('#register_new_manager_div');
+
+    newManagerDiv.hide();
     
     $('#add_new_manager_form_button').click(function() {
-        $('#select_existing_manager').hide();
-        $('#register_new_manager').show();
         
-        currentManagerChoice = $("[name='manager']").val();
-        $("[name='first_name']").val(currentFirstName);
-        $("[name='last_name']").val(currentLastName);
-        $("[name='address']").val(currentAddress);
-        $("[name='line_two']").val(currentLineTwo);
-        $("[name='city']").val(currentCity);
-        $("[name='state']").val(currentState);
-        $("[name='zip']").val(currentZip);
-        $("[name='username']").val(currentUsername);
-        $("[name='password']").val(currentPassword);
-        $("[name='other_info']").val(currentOtherInfo);
-        $("[name='birthday']").val(currentBirthday);
+        currentManagerChoice = managerSelector.val();
+        existingManagerDiv.hide();
+        newManagerDiv.show();
+        
+        firstName.val(currentFirstName);
+        lastName.val(currentLastName);
+        address.val(currentAddress);
+        lineTwo.val(currentLineTwo);
+        city.val(currentCity);
+        state.val(currentState);
+        zip.val(currentZip);
+        username.val(currentUsername);
+        password.val(currentPassword);
+        otherInfo.val(currentOtherInfo);
+        birthday.val(currentBirthday);
 
-        toggleRequiredFields();
     });
 
     $('#return_button').click(function() {
-        $('#register_new_manager').hide();
-        $('#select_existing_manager').show();
-
-        $("[name='manager']").val(currentManagerChoice);
-        currentFirstName = $("[name='first_name']").val();
-        currentLastName = $("[name='last_name']").val();
-        currentAddress = $("[name='address']").val();
-        currentLineTwo = $("[name='line_two']").val();
-        currentCity = $("[name='city']").val();
-        currentState = $("[name='state']").val();
-        currentZip = $("[name='zip']").val();
-        currentUsername = $("[name='username']").val();
-        currentPassword = $("[name='password']").val();
-        currentOtherInfo = $("[name='other_info']").val();
-        currentBirthday = $("[name='birthday']").val();
-
-        toggleRequiredFields();
+        currentFirstName = firstName.val();
+        currentLastName = lastName.val();
+        currentAddress = address.val();
+        currentLineTwo = lineTwo.val();
+        currentCity = city.val();
+        currentState = state.val();
+        currentZip = zip.val();
+        currentUsername = username.val();
+        currentPassword = password.val();
+        currentOtherInfo = otherInfo.val();
+        currentBirthday = birthday.val();
+        
+        existingManagerDiv.show();
+        newManagerDiv.hide();
+        managerSelector.val(currentManagerChoice);
     });
 
-    function toggleRequiredFields() {
-        $("[name='manager']").prop("required", function(i, required) {
-            return !required;
-        });
-        
-        $("[name='first_name']").prop("required", function(i, required) {
-            return !required;
-        });
-        
-        $("[name='last_name']").prop("required", function(i, required) {
-            return !required;
-        });
-        
-        $("[name='username']").prop("required", function(i, required) {
-            return !required;
-        });
-        
-        $("[name='password']").prop("required", function(i, required) {
-            return !required;
-        });        
-    }
 });

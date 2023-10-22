@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <title>Select a Store</title>
+    <form action = "open_type="POST"
+    <label for="store-selector">Select a store to access</label>
+    <select name="store-selector" id="store-selector">
+        {% for store in stores %}
+            <option value="{{ store }}">{{store}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="submit">
+    </div>
+</body>
+</html>
