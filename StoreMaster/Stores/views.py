@@ -7,8 +7,12 @@ from django.forms.models import model_to_dict
 
 from django.contrib.auth.decorators import login_required
 
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
-import datetime
+
+
+from datetime import datetime
 # Create your views here.
 def index(request):
     return HttpResponse("Stores Home")
@@ -188,7 +192,8 @@ def register_store_page_2(request):
                 manager_options = get_all_managers()
                 return render(request,"register_store_page_2.html",{'manager_options':manager_options,'error':f'{manager.first_name} {manager.last_name} is already assigned to a store'})
             else:
-                request.session["manager dict"] = model_to_dict(manager) #Passing along manager ID to pull the manager later
+                manager_id = manager.user_id
+                request.session["manager_id"] = manager_id #Passing along manager ID to pull the manager later
             context["manager"] = manager #Passing the manager object itself to the template
             return render(request,"register_store_page_3.html",context=context)
         
@@ -197,9 +202,8 @@ def register_store_page_2(request):
             filled_out_manager_form = UserRegistrationForm(request.POST)
             if filled_out_manager_form.is_valid():
                 manager_data = filled_out_manager_form.cleaned_data
-                manager_data['birthday'] = manager_data["birthday".strftime('%Y-%m-%d')] #Converting to string for data transfer to request session
-                
-                request.session["manager"] = manager_data
+                manager_data['birthday'] = manager_data["birthday"].strftime('%Y-%m-%d') #Converting to string for data transfer to request session
+                request.session["manager_dict"] = manager_data
                 context["manager"] = filled_out_manager_form.cleaned_data
 
                 return render(request,"register_store_page_3.html",context=context)
@@ -207,7 +211,6 @@ def register_store_page_2(request):
             #Error in manager registration form
             else:
                 pass
-
 
     else:
         manager_options = get_all_managers()
@@ -241,12 +244,29 @@ def confirm_store_registration(request):
 
     new_store = Store(**converted_store_info)
     new_store.save()
+    try:
+        manager_id = request.session["manager_id"]
+        new_manager = ManagerInfo.objects.get(user_id=manager_id)
 
-    manager_data = request.session["manager"]
-    manager_data["birthday"] = datetime.strptime(manager_data["birthday"])
-    new_manager = ManagerInfo(**manager_data)
+    except KeyError:
+        manager_data = request.session["manager dict"]
+        birthday_string = manager_data["birthday"]
+        birthday_date = datetime.strptime(birthday_string, "%Y-%m-%d")
+        manager_data["birthday"] = birthday_date
 
-    new_manager["store"] = new_store
+        new_user = User(username=manager_data["username"],
+                        password=make_password(manager_data["password"]),
+                        email=manager_data["email"])
+        
+        new_user.save()
+
+
+       
+    
+        new_manager = ManagerInfo(**manager_data)
+        new_manager.user = new_user
+
+    new_manager.store = new_store
 
     new_manager.save()
     return HttpResponse("HI")
