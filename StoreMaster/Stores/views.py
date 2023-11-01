@@ -3,9 +3,12 @@ from django.http import HttpResponse
 from .forms import *
 
 from Accounts.models import *
+from django.forms.models import model_to_dict
 
 from django.contrib.auth.decorators import login_required
 
+
+import datetime
 # Create your views here.
 def index(request):
     return HttpResponse("Stores Home")
@@ -150,6 +153,14 @@ def manage_store(request,store_name):
 
 from django.shortcuts import render
 
+def get_all_managers():
+    #Get all existing managers to use in manager selector
+    managers= []
+    for manager in ManagerInfo.objects.all():
+        managers.append((manager.user_id,str(manager)))
+
+    return managers
+
 def register_store_page_1(request):
     if request.method == "POST":
         filled_out_registration_form = StoreRegistrationForm(request.POST)
@@ -171,7 +182,14 @@ def register_store_page_2(request):
         context = {"store":request.session["store_info"]}
         #If the user is using a pre existing manager
         if request.POST.get('form_type') == "register_existing":
+            
             manager = ManagerInfo.objects.get(user_id = request.POST.get("manager_selector"))
+            if manager.store:
+                manager_options = get_all_managers()
+                return render(request,"register_store_page_2.html",{'manager_options':manager_options,'error':f'{manager.first_name} {manager.last_name} is already assigned to a store'})
+            else:
+                request.session["manager dict"] = model_to_dict(manager) #Passing along manager ID to pull the manager later
+            context["manager"] = manager #Passing the manager object itself to the template
             return render(request,"register_store_page_3.html",context=context)
         
         #If the user is registering a new manager to ues for this store
@@ -191,14 +209,8 @@ def register_store_page_2(request):
                 pass
 
 
-            return HttpResponse("NEW MANAGER TIMEEEE")
-
-
     else:
-        #Get all exissting managers to use in manager selector
-        manager_options = []
-        for manager in ManagerInfo.objects.all():
-            manager_options.append((manager.user_id,str(manager)))
+        manager_options = get_all_managers()
             
         #Create user registration form for a new manager to be registered
         clean_user_form = UserRegistrationForm()
@@ -207,9 +219,37 @@ def register_store_page_2(request):
 
         return render(request,"register_store_page_2.html",context=context)
     
+
+def edit_current_registration(request):
+    pass
+    
 #Final Confirmation
 def confirm_store_registration(request):
-    return HttpResponse("hi")
+    store_info = request.session["store_info"]
+
+    #convert key names to remove "store_"
+    converted_store_info = {}
+    for key, value in store_info.items():
+        if key == "store_name":
+            converted_store_info[key] = value
+
+        elif key == "store_state":
+            converted_store_info["state"] = value
+
+        else:
+            converted_store_info[key.lstrip("store_")] = value
+
+    new_store = Store(**converted_store_info)
+    new_store.save()
+
+    manager_data = request.session["manager"]
+    manager_data["birthday"] = datetime.strptime(manager_data["birthday"])
+    new_manager = ManagerInfo(**manager_data)
+
+    new_manager["store"] = new_store
+
+    new_manager.save()
+    return HttpResponse("HI")
 
 def register_store(request):
     if request.method == "POST":

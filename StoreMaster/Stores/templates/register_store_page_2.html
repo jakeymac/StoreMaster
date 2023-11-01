@@ -8,6 +8,9 @@
     </head>
     <body>
         <div id="register_existing_manager_div">
+            {% if error%} 
+                <h4>{{error}}</h4>
+            {% endif %}
             <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
                 {% csrf_token %}
                 <select name="manager_selector">

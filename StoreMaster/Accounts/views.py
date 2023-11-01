@@ -43,8 +43,11 @@ def register_user(request):
             birthday = new_form.cleaned_data["birthday"]
 
             store = new_form.cleaned_data["store"]
-            store_object = Store.objects.get(store_id=store.store_id)
-            
+            if store:
+                store_object = Store.objects.get(store_id=store.store_id)
+            else:
+                store_object = None
+                
             user_type = new_form.cleaned_data["user_type"]
 
             if User.objects.filter(username=username).exists():
