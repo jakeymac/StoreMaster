@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from Stores.models import Store
 
-
 # Create your models here.
 class UserInfo(models.Model):
     user = models.OneToOneField(User,primary_key=True,on_delete=models.CASCADE)

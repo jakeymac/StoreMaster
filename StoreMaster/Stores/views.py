@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
+from Accounts.forms import UserRegistrationForm
 
 
 from datetime import datetime
@@ -46,116 +47,7 @@ def manage_store(request,store_name):
 
 
     return render(request,"manage_store.html",context=context)
-    
 
-# def register_store(request):
-#     if request.method == "POST":
-#         #Check if the user has opted to use a pre-existing manager or register a new one
-#         newRegistrationForm = StoreRegistrationForm(request.POST)
-#         #print(request.POST.get("manager_choice"))
-#         errors = ""
-#         try:
-#             if newRegistrationForm.is_valid():
-#                 manager_type_choice = request.POST.get("manager_type_choice")
-                
-#                 #print("Step 1")
-                
-#                 #print(existing_manager)
-
-#                 new_store = Store(store_name=newRegistrationForm.cleaned_data["store_name"],
-#                                         address=newRegistrationForm.cleaned_data["store_address"],
-#                                         line_two=newRegistrationForm.cleaned_data["store_line_two"],
-#                                         city=newRegistrationForm.cleaned_data["store_city"],
-#                                         state=newRegistrationForm.cleaned_data["store_state"],
-#                                         zip=newRegistrationForm.cleaned_data["store_zip"])
-                
-#                 #If a pre-existing manager was not chosen
-#                 if manager_type_choice == "new":
-#                     print("Starting new manager creation")
-#                     new_manager_info = {"first_name":newRegistrationForm.cleaned_data["manager_first_name"],
-#                                         "last_name":newRegistrationForm.cleaned_data["manager_last_name"],
-#                                         "email_address":newRegistrationForm.cleaned_data["manager_email_address"],
-#                                         "address":newRegistrationForm.cleaned_data["manager_address"],
-#                                         "line_two":newRegistrationForm.cleaned_data["manager_line_two"],
-#                                         "city":newRegistrationForm.cleaned_data["manager_city"],
-#                                         "state":newRegistrationForm.cleaned_data["manager_state"],
-#                                         "zip":newRegistrationForm.cleaned_data["manager_zip"],
-#                                         "username":newRegistrationForm.cleaned_data["manager_username"],
-#                                         "password":newRegistrationForm.cleaned_data["manager_password"],
-#                                         "other_information":newRegistrationForm.cleaned_data["manager_other_information"],
-#                                         "birthday":newRegistrationForm.cleaned_data["manager_birthday"],
-#                                         "account_type":"manager"}
-                    
-#                     new_user_form = UserRegistrationForm(initial=new_manager_info)
-
-#                     if new_user_form.is_valid():
-#                         print("Passed new manager validation")
-#                         new_store.save()
-                        
-#                         user = User(username=newRegistrationForm.cleaned_data["manager_username"],
-#                                     password=newRegistrationForm.cleaned_data["manager_password"],
-#                                     emai=newRegistrationForm.cleaned_data["manager_email_address"])
-                        
-#                         user.save()
-                        
-#                         new_manager = ManagerInfo(user=user,
-#                                                 first_name=newRegistrationForm.cleaned_data["manager_first_name"],
-#                                                 last_name=newRegistrationForm.cleaned_data["manager_last_name"],
-#                                                 email_address=newRegistrationForm.cleaned_data["manager_last_name"],
-#                                                 address=newRegistrationForm.cleaned_data["manager_address"],
-#                                                 line_two=newRegistrationForm.cleaned_data["manager_line_two"],
-#                                                 city=newRegistrationForm.cleaned_data["manager_city"],
-#                                                 state=newRegistrationForm.cleaned_data["manager_state"],
-#                                                 zip=newRegistrationForm.cleaned_data["manager_zip"],
-#                                                 username=newRegistrationForm.cleaned_data["manager_username"],
-#                                                 password=newRegistrationForm.cleaned_data["manager_password"],
-#                                                 other_information=newRegistrationForm.cleaned_data["manager_other_information"],
-#                                                 birthday=newRegistrationForm.cleaned_data["manager_birthday"],
-#                                                 store=new_store,
-#                                                 user_type = "manager")
-        
-#                         new_manager.save()
-#                         return HttpResponse("Valid FORM Time, created new objects")
-                    
-#                     else:
-#                         print("ERRORRRRRR")
-#                         return render(request,"DELETE_ME_ERROR_VIEW.html",context={"errors":new_user_form.errors})
-#                         return HttpResponse(new_user_form.errors)
-                
-#                 else:
-#                     print("Pre-existing manager first step")
-                    
-#                     existing_manager = newRegistrationForm.cleaned_data["manager"]
-                    
-#                     manager_object = ManagerInfo.objects.get(user_id=existing_manager.user_id)
-#                     if manager_object.store:
-#                         #print("Step 5")
-#                         return HttpResponse("ALREADY HAS A STORE")
-#                     else:
-#                         #print("Step 6")
-#                         manager_object.store = new_store
-#                         manager_object.save()            
-#                         new_store.save()
-
-#                         return HttpResponse("TESTINGGG")  
-#             else:
-#                 #print("Step 7")
-#                 return HttpResponse("ERROR:")
-        
-        
-#         except ValidationError as e:
-#             errors += f"{str(e)}\n"
-        
-#         return HttpResponse(errors)
-                
-        
-#     else:
-#         clean_form = StoreRegistrationForm()
-#         return render(request, "register_store.html",{'form':clean_form})
-    
-
-
-from django.shortcuts import render
 
 def get_all_managers():
     #Get all existing managers to use in manager selector
@@ -166,22 +58,29 @@ def get_all_managers():
     return managers
 
 def register_store_page_1(request):
+    empty_form = StoreRegistrationForm()
     if request.method == "POST":
+        print("step 1")
         filled_out_registration_form = StoreRegistrationForm(request.POST)
+        print("Before step 2\n\n\n hi there \n\n\n")
         if filled_out_registration_form.is_valid():
+            print("step 2")
             request.session["store_info"] = filled_out_registration_form.cleaned_data
+            print("step 3")
             return redirect("Stores:register_store_page_2")
             #return render(request,"register_store_page_2.html",context={"store_info":request.POST})
         else:
             #Add any error messages up top
-            return render(request,"register_store_page_1.html")
+            print("step 4")
+            return render(request,"register_store_page_1.html",{'form':empty_form,'error':'A store with that name exists at that location already'})
         
-
     else:
-        empty_form = StoreRegistrationForm()
         return render(request, "register_store_page_1.html", {'form': empty_form})
 
-def register_store_page_2(request):
+def register_store_page_2(request,error = None):
+    #Create user registration form for a new manager to be registered
+    clean_user_form = UserRegistrationForm()
+
     if request.method == "POST":
         context = {"store":request.session["store_info"]}
         #If the user is using a pre existing manager
@@ -190,7 +89,7 @@ def register_store_page_2(request):
             manager = ManagerInfo.objects.get(user_id = request.POST.get("manager_selector"))
             if manager.store:
                 manager_options = get_all_managers()
-                return render(request,"register_store_page_2.html",{'manager_options':manager_options,'error':f'{manager.first_name} {manager.last_name} is already assigned to a store'})
+                return render(request,"register_store_page_2.html",{'form':clean_user_form, 'manager_options':manager_options,'error':f'{manager.first_name} {manager.last_name} is already assigned to a store'})
             else:
                 manager_id = manager.user_id
                 request.session["manager_id"] = manager_id #Passing along manager ID to pull the manager later
@@ -202,6 +101,7 @@ def register_store_page_2(request):
             filled_out_manager_form = UserRegistrationForm(request.POST)
             if filled_out_manager_form.is_valid():
                 manager_data = filled_out_manager_form.cleaned_data
+                del manager_data["user_type"]
                 manager_data['birthday'] = manager_data["birthday"].strftime('%Y-%m-%d') #Converting to string for data transfer to request session
                 request.session["manager_dict"] = manager_data
                 context["manager"] = filled_out_manager_form.cleaned_data
@@ -214,12 +114,9 @@ def register_store_page_2(request):
 
     else:
         manager_options = get_all_managers()
-            
-        #Create user registration form for a new manager to be registered
-        clean_user_form = UserRegistrationForm()
-
         context = {"manager_options":manager_options, "form":clean_user_form}
-
+        if error:
+            context["error":error]
         return render(request,"register_store_page_2.html",context=context)
     
 
@@ -228,6 +125,7 @@ def edit_current_registration(request):
     
 #Final Confirmation
 def confirm_store_registration(request):
+    
     store_info = request.session["store_info"]
 
     #convert key names to remove "store_"
@@ -244,25 +142,30 @@ def confirm_store_registration(request):
 
     new_store = Store(**converted_store_info)
     new_store.save()
+    print("Adding store to database")
+    
     try:
         manager_id = request.session["manager_id"]
         new_manager = ManagerInfo.objects.get(user_id=manager_id)
 
     except KeyError:
-        manager_data = request.session["manager dict"]
+        manager_data = request.session["manager_dict"]
         birthday_string = manager_data["birthday"]
         birthday_date = datetime.strptime(birthday_string, "%Y-%m-%d")
         manager_data["birthday"] = birthday_date
 
+        
+        
         new_user = User(username=manager_data["username"],
                         password=make_password(manager_data["password"]),
-                        email=manager_data["email"])
+                        email=manager_data["email_address"])
         
         new_user.save()
 
 
        
-    
+        #import pdb; pdb.set_trace()
+        print(manager_data)
         new_manager = ManagerInfo(**manager_data)
         new_manager.user = new_user
 

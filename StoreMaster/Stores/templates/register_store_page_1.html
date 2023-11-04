@@ -5,6 +5,9 @@
     </head>
     <body>
         <h1>Register New Store</h1>
+        {% if error%}
+            <h3>{{error}}</h3>
+        {% endif %}
         <form id="store_registration_form" action="{% url 'Stores:register_store_page_1' %}" method="POST">
         {% csrf_token %}
 
