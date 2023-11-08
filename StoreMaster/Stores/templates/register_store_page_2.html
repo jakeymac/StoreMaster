@@ -2,16 +2,28 @@
 <!DOCTYPE html>
 <html>
     <head>
+
+        <script type="text/javascript">
+            var loadNewManagerFirst = {{ load_new_manager_first|yesno:"true,false" }};
+        </script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="{% static 'js/store_registration_dynamic_form.js' %}"></script>
-
+        
+        <script type="text/javascript">
+            
+        </script>
     </head>
     <body>
         <div id="register_existing_manager_div">
+            <h1>Select a manager</h1>
+            
+            {% if error %}
+                <h5>{{error}}</h5>
+            {% endif %}
             
             <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
                 {% csrf_token %}
-                <select name="manager_selector">
+                <select name="manager_selector" required>
                     <option value="">Select a manager</option>
                     {% for manager_option in manager_options %}
                         <option value="{{ manager_option.0 }}">{{ manager_option.1 }}</option>
@@ -24,6 +36,12 @@
         </div>
         
         <div id="register_new_manager_div"> 
+            <h1>Register a manager</h1>
+            
+            {% if error %}
+                <h5>{{ error|striptags }}</h5>
+            {% endif %}
+        
             <form id="register_store_new_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
                 {% csrf_token %}    
                 

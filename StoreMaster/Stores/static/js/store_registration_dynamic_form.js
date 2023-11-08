@@ -30,8 +30,12 @@ $(document).ready(function () {
     const existingManagerDiv = $('#register_existing_manager_div');
     const newManagerDiv = $('#register_new_manager_div');
 
-    newManagerDiv.hide();
-    
+    if(loadNewManagerFirst) {
+        existingManagerDiv.hide();
+    }
+    else {
+        newManagerDiv.hide();
+    }
     $('#add_new_manager_form_button').click(function() {
         
         currentManagerChoice = managerSelector.val();
