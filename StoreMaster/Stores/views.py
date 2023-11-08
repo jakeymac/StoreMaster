@@ -1,22 +1,59 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import *
 
+from .forms import *
+from Accounts.forms import UserRegistrationForm
+
+from .models import *
 from Accounts.models import *
+from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 
 from django.contrib.auth.decorators import login_required
-
-from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
-from Accounts.forms import UserRegistrationForm
-
-
 from datetime import datetime
+
 # Create your views here.
 def index(request):
     return HttpResponse("Stores Home")
+
+
+def manage_store_redirect_from_home(request):
+    if request.method == 'POST':
+        store_name = request.POST.get("store_name")
+        store_id = request.POST.get("store_id")
+
+        most_definite = Store.objects.filter(store_name=store_name,store_id=store_id)
+
+        possible_by_name = Store.objects.filter(store_name=store_name)
+        possible_by_id = Store.objects.filter(store_id=store_id)
+
+
+
+        if most_definite:
+            #Found an exact match for name and ID
+        else:
+            #Go through and show results of stores with same name, and 
+            #the store that matches the id provided (if it exists)
+        
+
+        for item in possible_by_name:
+            print(item,item.store_id)
+        
+        for item in possible_by_id:
+            print(item,item.store_name)
+
+        print(most_definite)
+        #print(possible_by_name)
+        #print(possible_by_id)
+        return render(request)
+        return HttpResponse("Results printed")
+
+    else:
+        return render(request,"manage_store_home.html",{"load":True})
+    return HttpResponse("testing MANAGE STORE REDIRECT")
+
 
 @login_required(login_url='/login')
 def manage_store(request,store_name):
@@ -25,7 +62,7 @@ def manage_store(request,store_name):
     #Check if logged in user is a customer, not a staff member or admin
     if hasattr(userinfo,"customerinfo"):
         #SEND TO THE CUSTOMER VIEW
-        return HttpResponse("CUSTOMER INFO ")
+        return HttpResponse("CUSTOMER INFO")
 
     elif hasattr(userinfo,"admininfo"):
         context["user_type"] = "admin"
@@ -42,10 +79,11 @@ def manage_store(request,store_name):
 
         context["user_type"]="employee"
 
-
-
     return render(request,"manage_store.html",context=context)
 
+def view_store(request,store_name):
+    #Check if a user is logged in, if they are and they're a manager, they should be forwarded to the manage_store version.
+    pass
 
 def get_all_managers():
     #Get all existing managers to use in manager selector
@@ -126,11 +164,7 @@ def register_store_page_2(request,error = None):
         if error:
             context["error"] = error
         return render(request,"register_store_page_2.html",context=context)
-    
-
-def edit_current_registration(request):
-    pass
-    
+       
 #Final Confirmation
 def confirm_store_registration(request):
     
