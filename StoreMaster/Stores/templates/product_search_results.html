@@ -1,0 +1,6 @@
+<h1>Search Results</h1>
+<h3>{{ search }}</h3>
+{% for product in results %}
+    <p>Product: {{ product.product_name }}</p>
+    <a href="product_view/"><button>View Product</button></a>
+{% endfor %}

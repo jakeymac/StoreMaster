@@ -40,7 +40,7 @@ class Store(models.Model):
 
 class StoreHasStock(models.Model):
     product = models.OneToOneField(Product,on_delete=models.CASCADE)
-    store = models.OneToOneField(Store,on_delete=models.CASCADE)
+    store = models.ForeignKey(Store,on_delete=models.CASCADE)
     stock = models.IntegerField()
 
     def __str__(self):

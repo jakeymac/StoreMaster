@@ -7,6 +7,7 @@ from Accounts.forms import UserRegistrationForm
 from .models import *
 from Accounts.models import *
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.forms.models import model_to_dict
 
 from django.contrib.auth.decorators import login_required
@@ -28,15 +29,17 @@ def manage_store_redirect_from_home(request):
 
         possible_by_name = Store.objects.filter(store_name=store_name)
         possible_by_id = Store.objects.filter(store_id=store_id)
-
-
-
+        
         if most_definite:
             #Found an exact match for name and ID
+            print(most_definite)
+            print(most_definite[0].store_id)
+            return manage_store(request,most_definite[0].store_id)
+
         else:
             #Go through and show results of stores with same name, and 
             #the store that matches the id provided (if it exists)
-        
+            pass
 
         for item in possible_by_name:
             print(item,item.store_id)
@@ -47,7 +50,7 @@ def manage_store_redirect_from_home(request):
         print(most_definite)
         #print(possible_by_name)
         #print(possible_by_id)
-        return render(request)
+        #return render(request)
         return HttpResponse("Results printed")
 
     else:
@@ -56,34 +59,34 @@ def manage_store_redirect_from_home(request):
 
 
 @login_required(login_url='/login')
-def manage_store(request,store_name):
+def manage_store(request,store_id):
     context = {}
     userinfo = request.user.userinfo
-    #Check if logged in user is a customer, not a staff member or admin
-    if hasattr(userinfo,"customerinfo"):
-        #SEND TO THE CUSTOMER VIEW
-        return HttpResponse("CUSTOMER INFO")
+    request.session["store_id"] = store_id
+    context["user_type"] = userinfo.account_type
+    context["Store name"] = Store.objects.get(store_id=store_id).store_name
 
-    elif hasattr(userinfo,"admininfo"):
-        context["user_type"] = "admin"
-
-    elif hasattr(userinfo, 'managerinfo'):
-        if userinfo.managerinfo.store.store_name != store_name:
-            context["correct_store_name":userinfo.managerinfo.store.store_name]
-
-        context["user_type"] = "manager"
-
-    elif hasattr(userinfo,"employeeinfo"):
-        if userinfo.employeeinfo.store.store_name != store_name:
-            context["correct_store_name":userinfo.employeeinfo.store.store_name]
-
-        context["user_type"]="employee"
-
-    return render(request,"manage_store.html",context=context)
+    return render(request,"manage_store.html",context)
 
 def view_store(request,store_name):
     #Check if a user is logged in, if they are and they're a manager, they should be forwarded to the manage_store version.
     pass
+
+def product_search(request):
+    search = request.GET["product_search"]
+    if search:
+        store = Store.objects.get(store_id=request.session["store_id"])
+        results = StoreHasStock.objects.filter(
+            Q(product__product_name__icontains=search) | Q(product__product_description__icontains=search), 
+            Q(store=store)
+        )
+        results = [result.product for result in results]
+    else:
+        results = []
+    
+    context = {"results":results,"search":search}
+    return render(request, "product_search_results.html",context=context)
+
 
 def get_all_managers():
     #Get all existing managers to use in manager selector
