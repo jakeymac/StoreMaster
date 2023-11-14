@@ -2,5 +2,5 @@
 <h3>{{ search }}</h3>
 {% for product in results %}
     <p>Product: {{ product.product_name }}</p>
-    <a href="product_view/"><button>View Product</button></a>
-{% endfor %}
+    <a href="{% url 'Products:product_view' store_id=request.session.store_id product_id=product.product_id %}"><button>View Product</button></a>
+    {% endfor %}

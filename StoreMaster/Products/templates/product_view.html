@@ -1,0 +1,21 @@
+<h1>{{ product.product_name }}</h1>
+<p>Price: ${{ product.product_price }}</p>
+<p>{{ product.product_description }}</p>
+<p>In stock: {{ product.stock }}</p>
+<p>Location: {{ product.product_location }}</p>
+{% if product.product_image %} 
+    <img src="{{ product.product_image.url }}" alt="Product Image">
+
+{% else %} 
+    <p>No image available</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    {% if user.userinfo.account_type == "manager" or user.userinfo.account_type == "admin" %}
+        <br><a href="{% url 'Products:product_edit_view' store_id=request.session.store_id product_id=product.product_id %}"><button>Edit</button></a>
+    {% endif %}
+{% endif %}
+
+
+
+

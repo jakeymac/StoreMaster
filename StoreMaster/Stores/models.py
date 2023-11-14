@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
-from Products.models import *
 
 # Create your models here.
 
@@ -38,10 +37,14 @@ class Store(models.Model):
     def set_address(self, address):
         self.address = address
 
-class StoreHasStock(models.Model):
-    product = models.OneToOneField(Product,on_delete=models.CASCADE)
-    store = models.ForeignKey(Store,on_delete=models.CASCADE)
-    stock = models.IntegerField()
+def product_image_path(instance, filename):
+    return f'stores/{instance.store.store_id}/products/{instance.product.product_id}/{filename}'
 
-    def __str__(self):
-        return f"{self.product} at {self.store}"
+# class StoreHasStock(models.Model):
+#     product = models.OneToOneField(Product,on_delete=models.CASCADE)
+#     store = models.ForeignKey(Store,on_delete=models.CASCADE)
+#     stock = models.IntegerField()
+#     product_image = models.ImageField(blank=True,null=True,upload_to=product_image_path)
+
+#     def __str__(self):
+#         return f"{self.product} at {self.store}"

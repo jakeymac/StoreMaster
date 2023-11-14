@@ -6,6 +6,7 @@ from Accounts.forms import UserRegistrationForm
 
 from .models import *
 from Accounts.models import *
+from Products.models import *
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms.models import model_to_dict
@@ -68,6 +69,9 @@ def manage_store(request,store_id):
 
     return render(request,"manage_store.html",context)
 
+def product_view(request):
+    pass
+
 def view_store(request,store_name):
     #Check if a user is logged in, if they are and they're a manager, they should be forwarded to the manage_store version.
     pass
@@ -76,7 +80,7 @@ def product_search(request):
     search = request.GET["product_search"]
     if search:
         store = Store.objects.get(store_id=request.session["store_id"])
-        results = StoreHasStock.objects.filter(
+        results = Product.objects.filter(
             Q(product__product_name__icontains=search) | Q(product__product_description__icontains=search), 
             Q(store=store)
         )

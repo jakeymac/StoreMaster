@@ -1,14 +1,18 @@
 from django.db import models
+from Stores.models import Store
 
-# Create your models here.
-from django.db import models
+def product_image_path(instance, filename):
+    return f'stores/{instance.store.store_id}/products/{instance.product_id}/{filename}'
+
 
 # Create your models here.
 class Product(models.Model):
     product_id = models.AutoField(primary_key=True)
+    store = models.ForeignKey(Store,on_delete=models.CASCADE)
+    product_stock = models.IntegerField()
+    product_image = models.ImageField(null=True,blank=True,upload_to=product_image_path)
     product_name = models.CharField(max_length=150)
     product_description = models.CharField(max_length=1000)
-    product_image = models.ImageField(null=True, blank=True,upload_to="images/")
     product_price = models.FloatField()
     product_location = models.CharField(max_length=10)
 
