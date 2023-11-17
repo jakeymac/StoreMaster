@@ -81,10 +81,10 @@ def product_search(request):
     if search:
         store = Store.objects.get(store_id=request.session["store_id"])
         results = Product.objects.filter(
-            Q(product__product_name__icontains=search) | Q(product__product_description__icontains=search), 
-            Q(store=store)
+            Q(product_name__icontains=search) | Q(product_description__icontains=search), 
+            store=store
         )
-        results = [result.product for result in results]
+        results = [result for result in results]
     else:
         results = []
     

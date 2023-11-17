@@ -11,6 +11,8 @@
             <input type="text" name="product_search" placeholder="Product Search">
             <button type="submit">Search</button>
         </form>
+
+        <a href="{% url 'Products:add_product' store_id=request.session.store_id %}"><button>Add Product</button></a>
         
         
         <a href="url EMPLOYEE PRODUCT SEARCH VIEW"></a>

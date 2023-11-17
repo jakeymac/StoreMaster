@@ -12,4 +12,5 @@ urlpatterns = [
     path('confirm_store_registration',views.confirm_store_registration,name="confirm_store_registration"),
     path('manage_store_redirect_from_home', views.manage_store_redirect_from_home,name='manage_store_home_page_redirect'),
     path('product_search',views.product_search, name='product_search'),
+    
 ]
