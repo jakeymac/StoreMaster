@@ -10,9 +10,15 @@ def index(request):
     return HttpResponse("Products Home")
 
 def add_product_view(request,store_id):
+    # import pdb
+    # pdb.set_trace()
+    store = Store.objects.get(store_id=store_id)
+    print(type(store))
     if request.method == "POST":
-        form = NewProductForm(request.POST)
+        form = NewProductForm(request.POST, request.FILES, store=store)
+        
         if form.is_valid():
+            print(form.cleaned_data)
             new_product = form.save()
             product_id = new_product.product_id
 
@@ -22,7 +28,7 @@ def add_product_view(request,store_id):
             return HttpResponse("ERROR: THIS NEEDS A NEW PAGE MADE")
     else:
         store = Store.objects.get(store_id=store_id)
-        cleanForm = NewProductForm()
+        cleanForm = NewProductForm(store=store)
         context = {"form":cleanForm}
         return render(request,"new_product.html",context)
 

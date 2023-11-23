@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
         ('Stores', '0001_initial'),
         ('Products', '0001_initial'),
     ]
-
+    
     operations = [
         migrations.AddField(
             model_name='product',
