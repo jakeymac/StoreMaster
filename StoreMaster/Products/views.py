@@ -10,32 +10,26 @@ def index(request):
     return HttpResponse("Products Home")
 
 def add_product_view(request,store_id):
-    # import pdb
-    # pdb.set_trace()
     store = Store.objects.get(store_id=store_id)
-    print(type(store))
     if request.method == "POST":
-        form = NewProductForm(request.POST, request.FILES, store=store)
-        
+        form = NewProductForm(request.POST, request.FILES,initial={'store':store})
         if form.is_valid():
-            print(form.cleaned_data)
             new_product = form.save()
+            #new_product.save()
             product_id = new_product.product_id
-
             return product_view(request,store_id,product_id)
         
         else:
             return HttpResponse("ERROR: THIS NEEDS A NEW PAGE MADE")
     else:
-        store = Store.objects.get(store_id=store_id)
-        cleanForm = NewProductForm(store=store)
+        
+        cleanForm = NewProductForm(initial={'store':store_id})
         context = {"form":cleanForm}
         return render(request,"new_product.html",context)
 
 def product_view(request, store_id, product_id):
     store = Store.objects.get(store_id=store_id)
     product = Product.objects.get(product_id=product_id,store=store)
-
     context = {"product":product}
                 
     return render(request,"product_view.html",context)
@@ -43,28 +37,22 @@ def product_view(request, store_id, product_id):
 def product_edit_view(request,store_id,product_id):
     store = Store.objects.get(store_id=store_id)
     product = Product.objects.get(product_id=product_id,store=store)
-
-    if request.method == 'POST':
-        form = EditProductForm(request.POST, instance=product)
-        if form.is_valid():
-            form.save()
-
-        return product_view(request,store_id,product_id)
-
-    else:
-        product_form = EditProductForm(instance=product)
-        return render(request, "edit_product.html",{'form':product_form})
-
-
-def product_registration_view(request):
-    if request.method == 'POST':
-        form = NewProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-
-        return HttpResponse("Done!")
-
-    else:
-        clean_form = NewProductForm()
-
+    print("Step 1")
     
+    if request.method == 'POST':
+        print("Step 2")
+        form = EditProductForm(request.POST,request.FILES,instance = product)
+        if form.is_valid():
+            print("Step 3")
+            form.save()
+        else:
+            form_errors = form.errors
+            print("Step 4")
+            print(form_errors)
+            print("\n")
+            
+        return redirect('Products:product_view',store_id=store_id,product_id=product_id)
+    else:
+        print("Not POST step 2")
+        product_form = EditProductForm(instance=product)
+        return render(request, "edit_product.html",{'form':product_form,'product_id':product_id,'store_id':store_id})

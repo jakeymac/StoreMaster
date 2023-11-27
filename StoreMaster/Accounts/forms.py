@@ -2,8 +2,47 @@ from django import forms
 from django.forms.widgets import DateInput
 from Stores.models import Store
 from django.contrib.auth.models import User
+from .models import ManagerInfo, AdminInfo, EmployeeInfo, CustomerInfo
 
 
+class UserSelectorForm(forms.Form):
+    account = forms.ModelChoiceField(queryset=User.objects.all(),empty_label="Select an account")
+
+class EditManagerForm(forms.ModelForm):
+    class Meta:
+        model = ManagerInfo
+        fields = "__all__"
+        widgets={
+            "user":forms.HiddenInput(),
+            "birthday":forms.SelectDateWidget(years=range(1900, 2030))
+        }
+
+class EditAdminForm(forms.ModelForm):
+    class Meta:
+        model = AdminInfo
+        fields = "__all__"
+        widgets={
+            "user":forms.HiddenInput(),
+            "birthday":forms.SelectDateWidget(years=range(1900, 2030))
+        }
+
+class EditEmployeeForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeInfo
+        fields = "__all__"
+        widgets={
+            "user":forms.HiddenInput(),
+            "birthday":forms.SelectDateWidget(years=range(1900, 2030))
+        }
+class EditCustomerForm(forms.ModelForm):
+    class Meta:
+        model = CustomerInfo
+        fields = "__all__"
+        widgets={
+            "user":forms.HiddenInput(),
+            "birthday":forms.SelectDateWidget(years=range(1900, 2030))
+        }
+        
 #For validating and cleaning registration data
 class UserRegistrationForm(forms.Form):
     first_name = forms.CharField(required=True,label="First Name",max_length=35)

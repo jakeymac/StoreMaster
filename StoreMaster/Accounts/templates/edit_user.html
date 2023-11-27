@@ -1,0 +1,8 @@
+{{user.username}}
+{{user.userinfo.account_type}}
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    {{form.user}}
+    <button type="submit">Save</button>
+</form>

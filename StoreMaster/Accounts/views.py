@@ -3,14 +3,123 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .forms import UserRegistrationForm
+
+from .forms import UserRegistrationForm,UserSelectorForm,EditManagerForm,EditAdminForm, EditCustomerForm, EditEmployeeForm
 
 from django.contrib.auth.models import User
 from django import forms
 from .models import *
 
+
+def view_user(request, user_id):
+    return HttpResponse(user_id)
+
+def edit_user_view(request,user_id):
+    #NEED TO CHECK FOR IF THE USER HAS CHANGED THE SELECTED ACCOUNT'S ACCOUNT TYPE. 
+    user = User.objects.get(id=user_id)
+    original_type = user.userinfo.account_type
+    if original_type == "manager":
+        manager_info = ManagerInfo.objects.get(user=user)
+        form = EditManagerForm(instance=manager_info)
+
+    elif original_type == "admin":
+        admin_info = AdminInfo.objects.get(user=user)
+        form = EditAdminForm(instance=admin_info)
+
+    elif original_type == "employee":
+        employee_info = EmployeeInfo.objects.get(user=user)
+        form = EditEmployeeForm(instance=employee_info)
+        
+    elif original_type == "customer":
+        customer_info = CustomerInfo.objects.get(user=user)
+        form = EditCustomerForm(instance=customer_info) 
+
+
+    if request.method == "POST": 
+        #If the user hasn't changed the account type
+        if request.POST["account_type"] == original_type:
+            if original_type == "manager":
+                form = EditManagerForm(request.POST,instance=manager_info)
+                
+            elif original_type == "admin":
+                form = EditAdminForm(request.POST,instance=admin_info)
+            
+            elif original_type == "employee":
+                form = EditEmployeeForm(request.POST,instance=employee_info)
+            
+            elif original_type == "customer":
+                form = EditCustomerForm(request.POST, instance=customer_info)
+            
+            if form.is_valid():
+                form.save()
+                return HttpResponse("Success")
+                #return redirect("Accounts:view_,)
+            else:
+                return HttpResponse("ERROR HERE")
+            
+        else:
+            if request.POST["account_type"] == "manager":
+                form = EditManagerForm(request.POST)
+
+            
+    
+
+
+    
+    if request.method == "POST":
+        if request.POST["account_type"] == "manager":
+            manager_instance = ManagerInfo.objects.get()
+            #form = EditManagerForm(request.POST,instance=)
+
+        elif request.POST["account_type"] == "admin":
+            form = EditAdminForm(request.POST)
+
+        elif request.POST["account_type"] == "employee":
+            form = EditEmployeeForm(request.POST)
+
+        elif request.POST["account_type"] == "customer":
+            form = EditCustomerForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            
+        else:
+            print(form.errors)
+            return HttpResponse("ERROR EDITING USER")
+
+        return redirect("view_user",user_id)
+    
+    else:
+        user = User.objects.get(id=user_id)
+        if user.userinfo.account_type == "manager":
+            manager_info = ManagerInfo.objects.get(user=user)
+            form = EditManagerForm(instance=manager_info)
+
+        elif user.userinfo.account_type == "admin":
+            admin_info = AdminInfo.objects.get(user=user)
+            form = EditAdminForm(instance=admin_info)
+
+        elif user.userinfo.account_type == "employee":
+            employee_info = EmployeeInfo.objects.get(user=user)
+            form = EditEmployeeForm(instance=employee_info)
+            
+        elif user.userinfo.account_type == "customer":
+            customer_info = CustomerInfo.objects.get(user=user)
+            form = EditCustomerForm(instance=customer_info)
+
+        return render(request,"edit_user.html",context={"user":user,"form":form})
+
+def select_user_view(request):
+    if request.method=="POST":
+        return redirect("Accounts:edit_user", user_id=request.POST["account"])
+    else:
+        form = UserSelectorForm()
+        return render(request,"user_selector_for_edit.html",context={"form":form})
+    
+
 # Create your views here.
 def index(request):
+
     return render(request, "login_registration_home.html", {})
 
 def login_user(request):

@@ -1,6 +1,31 @@
 <h1>Add New Product</h1>
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save">
+    <label for="{{ form.product_stock.id_for_label }}">Product Stock:</label>
+    {{ form.product_stock }}
+    <br>
+
+    <label for="{{ form.product_image.id_for_label }}">Product Image:</label>
+    {{ form.product_image }}
+    <br>
+
+    <label for="{{ form.product_name.id_for_label }}">Product Name:</label>
+    {{ form.product_name }}
+    <br>
+
+    <label for="{{ form.product_description.id_for_label }}">Product Description:</label>
+    {{ form.product_description }}
+    <br>
+
+    <label for="{{ form.product_price.id_for_label }}">Product Price:</label>
+    {{ form.product_price }}
+    <br>
+
+    <label for="{{ form.product_location.id_for_label }}">Product Location:</label>
+    {{ form.product_location }}
+    <br>
+
+    {{ form.store }}
+
+    <button type="submit">Save</button>
 </form>

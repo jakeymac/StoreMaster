@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<form method="POST" action="Accounts:">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{form.user}}
+    <button type="submit">Select</button>
+    
+</form>

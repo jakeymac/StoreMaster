@@ -143,7 +143,7 @@ def register_store_page_2(request,error = None):
                 manager_data['birthday'] = manager_data["birthday"].strftime('%Y-%m-%d') #Converting to string for data transfer to request session
                 request.session["manager_dict"] = manager_data
                 context["manager"] = filled_out_manager_form.cleaned_data
-
+            
                 return render(request,"register_store_page_3.html",context=context)
             
             #Error in manager registration form
