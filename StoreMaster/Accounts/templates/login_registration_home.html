@@ -1,5 +1,10 @@
-<a href="{% url 'Accounts:login' %}"><button>Login User</button></a>
-<a href="{% url 'Accounts:register_user' %}"><button>Register User</button></a>
+<a href="{% url 'Accounts:login_customer' %}"><button>Login Customer</button></a>
+<a href="{% url 'Accounts:login_employee' %}"><button>Login Employee</button></a>
+
+<a href="{% url 'Accounts:register_employee' %}"><button>Register Employee</button></a>
+<a href="{% url 'Accounts:register_customer' %}"><button>Register Customer</button></a>
+
+
 <a href="{% url 'Stores:register_store_page_1' %}"><button>Register Store</button></a>
 <a href="{% url 'Stores:manage_store_home_page_redirect' %}"><button>Manage a store</button></a>
 <a href="{% url 'Accounts:select_user' %}"><button>Select a user to Edit</button></a>

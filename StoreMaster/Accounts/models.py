@@ -5,7 +5,9 @@ from Stores.models import Store
 
 # Create your models here.
 class UserInfo(models.Model):
-    user = models.OneToOneField(User,primary_key=True,on_delete=models.CASCADE)
+    
+    user = models.OneToOneField(User,primary_key=True, on_delete=models.CASCADE)
+
     first_name = models.CharField(max_length=35)
     last_name = models.CharField(max_length = 50)
     email_address = models.CharField(max_length = 75, null=True, blank=True,unique=True)
@@ -25,6 +27,38 @@ class UserInfo(models.Model):
                      ('manager', 'Manager'),
                      ('admin','Admin'))
     account_type = models.CharField(max_length=15,null=False,default="employee",choices=account_types)
+
+
+    def switchModelType(self,new_account_type):
+        model_dict = {"manager":ManagerInfo,
+                      "admin":AdminInfo,
+                      "employee":EmployeeInfo,
+                      "customer":CustomerInfo}
+        
+        self.save()
+        
+        new_instance = model_dict.get(new_account_type)()
+        new_instance.user = self.user
+        new_instance.first_name = self.first_name
+        new_instance.last_name = self.last_name
+        new_instance.email_address = self.email_address
+        new_instance.address = self.address
+        new_instance.line_two = self.line_two
+        new_instance.city = self.city
+        new_instance.state = self.state
+        new_instance.zip = self.zip
+        new_instance.store = self.store
+        new_instance.username = self.username
+        new_instance.password = self.password
+        new_instance.other_information = self.other_information
+        new_instance.birthday = self.birthday
+        new_instance.account_type = new_account_type
+
+        new_instance.account_type = new_account_type
+        return new_instance
+    
+
+
     
     def __str__(self):
         return self.username

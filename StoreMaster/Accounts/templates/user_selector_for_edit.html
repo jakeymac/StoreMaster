@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<form method="POST" action="Accounts:">
+<form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     {{form.user}}

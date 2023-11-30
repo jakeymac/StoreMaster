@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register New Employee/Admin</title>
+    <!-- Add your CSS links or styles here -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        #registration-container {
+            width: 600px;
+            margin: 100px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            grid-column: span 2; /* span both columns */
+        }
+
+        .column {
+            grid-column: span 1; /* span one column */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input,select {
+            width: 100%;
+            padding: 2px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            grid-column: span 2;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        p {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Register New User</h1>
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+    <form action="{% url 'Accounts:register_employee' %}" method="POST">
+        {% csrf_token %}
+    <div id="registration-container">
+        <div class="column">
+                {{ form.username.label_tag }} {{ form.username }}
+                {{ form.password.label_tag }} {{ form.password }}
+                {{ form.email_address.label_tag }} {{ form.email_address }}
+                {{ form.first_name.label_tag }} {{ form.first_name }}
+                {{ form.last_name.label_tag }} {{ form.last_name }}
+                {{ form.birthday.label_tag }} {{ form.birthday}}
+                {{ form.other_information.label_tag }} {{ form.other_information }}
+
+                
+        </div>
+
+        <div class="column">
+                {{ form.address.label_tag }} {{ form.address }}
+                {{ form.line_two.label_tag }} {{ form.line_two }}
+                {{ form.city.label_tag }} {{ form.city }}
+                {{ form.state.label_tag }} {{ form.state }}
+                {{ form.zip.label_tag }} {{ form.zip }}
+                {{ form.store.label_tag }} {{ form.store }}
+                {{ form.account_type.label_tag }} {{ form.account_type}}
+            
+        </div>
+        <button type="submit">Submit</button>
+        </form>
+        {% if form_errors %}
+            <p>
+                <!-- Display form errors here -->
+            </p>
+        {% endif %}
+    </div>
+
+    <p>Already have an account? <a href="{% url 'Accounts:login_employee' %}">Login</a></p>
+    <p>Want to register a new store? <a href="{% url 'Stores:register_store_page_1' %}">Register a new store</a></p>
+</body>
+</html>

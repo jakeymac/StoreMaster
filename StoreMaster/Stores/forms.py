@@ -4,7 +4,6 @@ from django.forms.widgets import DateInput
 from django.contrib.auth.models import User
 from Accounts.models import UserInfo, ManagerInfo
 from .models import Store
-from Accounts.forms import UserRegistrationForm
 
 
 

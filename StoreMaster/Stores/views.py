@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from .forms import *
-from Accounts.forms import UserRegistrationForm
+from Accounts.forms import EmployeeRegistrationForm
 
 from .models import *
 from Accounts.models import *
@@ -20,6 +20,21 @@ from datetime import datetime
 def index(request):
     return HttpResponse("Stores Home")
 
+def store_home(request, store_id):
+    request.session["store_id"] = store_id
+    if request.user.is_authenticated:
+        if request.user.userinfo.account_type == "customer":
+            user = request.user
+            #NEEDS TO LOAD PRODUCTS AND SUCH
+        else:
+            if request.user.userinfo.store:
+                return redirect(request,"manage_store",store_id=user.userinfo.store)
+            else:
+                #return HttpResponse("Error: No store associated with this user")
+                pass
+            
+    store = Store.objects.get(store_id=store_id)
+    return render(request,"store_front.html",context={"store":store})
 
 def manage_store_redirect_from_home(request):
     if request.method == 'POST':
@@ -135,7 +150,7 @@ def register_store_page_2(request,error = None):
         
         #If the user is registering a new manager to ues for this store
         if request.POST.get('form_type') == "register_new":
-            filled_out_manager_form = UserRegistrationForm(request.POST)
+            filled_out_manager_form = EmployeeRegistrationForm(request.POST)
             
             if filled_out_manager_form.is_valid():
                 manager_data = filled_out_manager_form.cleaned_data
@@ -160,7 +175,7 @@ def register_store_page_2(request,error = None):
                     if "email address" in error:
                         manager_data["email_address"] = ""
 
-                context["form"] = UserRegistrationForm(manager_data)
+                context["form"] = EmployeeRegistrationForm(manager_data)
                 context["load_new_manager_first"] = True
                 
                 return render(request,"register_store_page_2.html",context=context)
