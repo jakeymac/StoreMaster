@@ -14,7 +14,6 @@ class Purchase(models.Model):
     customer_id = models.OneToOneField(CustomerInfo,on_delete=models.CASCADE, related_name="customer")
     purchase_date = models.DateTimeField()
     purchase_total = models.FloatField() #could update this model for tax registration
-    items = models.CharField(max_length=800)
 
     def get_purchase_id(self):
         return self.purchase_id
@@ -54,3 +53,4 @@ class Purchase(models.Model):
     
     def set_items(self, items):
         self.items = items
+

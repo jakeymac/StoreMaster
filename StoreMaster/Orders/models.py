@@ -12,7 +12,6 @@ class Order(models.Model):
     order_date = models.DateTimeField()
     destination = models.CharField(max_length = 100, null = True, blank = True)
     order_total = models.FloatField()
-    items = models.CharField(max_length = 800)
 
     shipping_address = models.CharField(max_length=200,null=True,blank=True)
     shipping_line_two = models.CharField(max_length=35,null=True,blank=True)

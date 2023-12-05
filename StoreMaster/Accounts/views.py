@@ -22,13 +22,23 @@ model_dict = {"manager":ManagerInfo,
               "employee":EmployeeInfo,
               "customer":CustomerInfo}
 
+
+
+def StoreMasterHome(request):
+    if request.method == 'POST':
+        pass
+    else:
+        return render(request,"home.html",{})
+
 def view_user(request, user_id):
     user = User.objects.get(id=user_id)
     account_type = user.userinfo.account_type
-    
     instance = model_dict.get(account_type).objects.get(user=user)
     context = {"user":instance}
-    return render(request,"view_user.html",context=context)
+    if account_type == "customer":
+        return render(request,"view_customer.html",context=context)
+    else:
+        return render(request,"view_employee.html",context=context)
 
 
 def edit_user_view(request,user_id):
@@ -93,14 +103,27 @@ def index(request):
 
     return render(request, "login_registration_home.html", {})
 
-def logout_manual(request):
-    logout(request)
-    return redirect("Stores:store_home",request.session["store_id"])
+def logout_customer(request):
+    if "store_id" in request.session:
+        store = request.session["store_id"]
+    elif request.user.userinfo.store:
+        store = request.user.userinfo.store.store_id
 
+    if request.user.is_authenticated:
+        logout(request)
+
+    return redirect("Stores:store_home",store_id=store)
+
+def logout_employee(request):
+    if request.user.is_authenticated:
+        logout(request)
+
+    return redirect("Accounts:login_employee")
+    
 
 #MAY RENAME LOGIN_CUSTOMER AND HAVE A SEPERATE LOGIN_EMPLOYEE, NOT SURE YET
 def login_customer(request):
-
+    error = None
     if request.user.is_authenticated:
         if request.user.userinfo.account_type == "customer":
             if request.user.userinfo.store:
@@ -116,7 +139,7 @@ def login_customer(request):
         
         else:
             if request.user.userinfo.store:
-                return redirect("Stores:manage_store",store_id=request.session["store_id"])
+                return redirect("Stores:manage_store",store_id=request.user.userinfo.store.store_id)
 
             else:
                 #Return to manage store search
@@ -133,18 +156,18 @@ def login_customer(request):
                     login(request,user)
 
                     if user.userinfo.store:
-                        store = user.userinfo.store
+                        store = user.userinfo.store.store_id
                     elif "store_id" in request.session:
                         store = request.session["store_id"]
                     else:
-                        return logout_manual(request)
+                        return logout_customer(request)
                         return HttpResponse("No store found for that account")
                         
 
                     if user.userinfo.account_type == "customer":
-                        return redirect(request, "Stores:store_home",store_id=store)
+                        return redirect("Stores:store_home",store_id=store)
                     else:
-                        return logout_manual(request)
+                        return redirect("logout_employee")
                         return HttpResponse("No store found for that account")
                         #add option to log out here
 
@@ -155,23 +178,27 @@ def login_customer(request):
 
         else:
             error = None
-            
+
         form = AuthenticationForm(request)
         return render(request,"login_customer.html",{"form":form,"error":error})
     
 def login_employee(request):
+    error = None
     if request.user.is_authenticated:
+        if request.user.userinfo.account_type == "admin":
+            return redirect("Stores:admin_manage_stores")
+        
         if request.user.userinfo.account_type == "customer":
             if request.user.userinfo.store:
                 store = request.user.userinfo.store
                 
             elif "store_id" in request.session:
                 store = request.session["store_id"]
-            
+                
             else:
                 return HttpResponse("Error: No store found for the current account, try going to the store you're looking to access and logging in from there.")
 
-            return redirect("Stores:store_home",store_id=store)
+            return redirect("Stores:store_home",store_id=store.store_id)
         
         else:
             print(request.user.userinfo.store)
@@ -196,18 +223,37 @@ def login_employee(request):
                         store = user.userinfo.store
                     elif "store_id" in request.session:
                         store = request.session["store_id"]
-                    else:
-                        return logout_manual(request)
-                        return HttpResponse("No store found for that account")
+                        # account_type = user.userinfo.account_type 
+                        # print(account_type)
+                        # if account_type == "admin":
+                        #     store = request.session["store_id"]
+                        # elif model_dict.get(account_type).objects.get(user=user).store.store_id == request.session["store_id"]:
+                        #     store = request.session["store_id"]
+                        # else:
+                        #     return HttpResponse("No store found for that account")
                         
-
-                    if user.userinfo.account_type == "customer":
-                        return redirect(request, "Stores:store_home",store_id=store)
+                        # return redirect("Stores:manage_store",store_id=store)
+                
+                        
                     else:
-                        return logout_manual(request)
+    
+                        #No store ID found.
+                        pass
+                        #return logout_manual(request)
+                        
+                        
+                    account_type = user.userinfo.account_type
+                    if account_type == "customer":
+                        return redirect("Stores:store_home",store_id=store.store_id)
+                    else:
+                        if account_type == "admin":
+                            return redirect("Stores:admin_manage_stores")
+                        elif model_dict.get(account_type).objects.get(user=user).store.store_id == store:
+                            return redirect("Stores:manager_store",store_id=store.store_id)
+
+                        #return logout_manual(request)
                         return HttpResponse("No store found for that account")
                         #add option to log out here
-
 
                 else:
                     error = "Incorrect username or password"
@@ -218,6 +264,7 @@ def login_employee(request):
             
         form = AuthenticationForm(request)
         return render(request,"login_employee.html",{"form":form,"error":error})
+        
 
 
 

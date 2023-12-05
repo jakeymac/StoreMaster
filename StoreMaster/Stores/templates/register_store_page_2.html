@@ -12,56 +12,131 @@
         <script type="text/javascript">
             
         </script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f9f9f9;
+            }
+    
+            .registration-container {
+                width: 600px;
+                margin: 100px auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                display: grid;
+                gap: 10px;
+            }
+    
+            h1 {
+                text-align: center;
+                color: #333; /* span both columns */
+            }
+    
+            .column {
+                grid-column: span 1; /* span one column */
+            }
+    
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #333;
+            }
+    
+            input,select {
+                width: 75%;
+                padding: 2px;
+                margin-bottom: 20px;
+                box-sizing: border-box;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                cursor: pointer;
+                color: #fff;
+            }
+            
+            .form-switch-button {
+                background-color:rgb(5, 161, 68)
+            }
+            .form-switch-button:hover{
+                background-color:#136d37
+            }
+            .next-button{
+
+                background-color: #3498db;
+            }
+            
+            .next-button:hover {
+                background-color: #2980b9;
+            }
+    
+            p {
+                margin-top: 20px;
+                text-align: center;
+            }
+        </style>
     </head>
     <body>
-        <div id="register_existing_manager_div">
-            <h1>Select a manager</h1>
-            
-            {% if error %}
-                <h5>{{error}}</h5>
-            {% endif %}
-            
-            <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
-                {% csrf_token %}
-                <select name="manager_selector" required>
-                    <option value="">Select a manager</option>
-                    {% for manager_option in manager_options %}
-                        <option value="{{ manager_option.0 }}">{{ manager_option.1 }}</option>
-                    {% endfor %}
-                </select>
-                <input type="hidden" name="form_type" value="register_existing">
-                <button type="submit">Next</button>
-            </form>
-            <button id="add_new_manager_form_button" type="button">Register a New Manager</button>
-        </div>
-        
-        <div id="register_new_manager_div"> 
-            <h1>Register a manager</h1>
-            
-            {% if error %}
-                <h5>{{ error|striptags }}</h5>
-            {% endif %}
-        
-            <form id="register_store_new_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
-                {% csrf_token %}    
+        {% if not load_new_manager_first %}
+            <div class='registration-container' id="register_existing_manager_div">
+                <h1>Select a manager</h1>
+                <button id="add_new_manager_form_button" class="form-switch-button" type="button">Register a New Manager</button>
+                {% if error %}
+                    <h5>{{error}}</h5>
+                {% endif %}
                 
-                {{ form.first_name.label_tag }} {{ form.first_name }}<br>
-                {{ form.last_name.label_tag }} {{ form.last_name }}<br>
-                {{ form.address.label_tag }} {{ form.address }}<br>
-                {{ form.line_two.label_tag }} {{ form.line_two }}<br>
-                {{ form.city.label_tag }} {{ form.city }}<br>
-                {{ form.state.label_tag }} {{ form.state }}<br>
-                {{ form.zip.label_tag }} {{ form.zip }}<br>
-                {{ form.username.label_tag }} {{ form.username }}<br>
-                {{ form.password.label_tag }} {{ form.password }}<br>
-                {{ form.email_address.label_tag }} {{ form.email_address }}<br>
-                {{ form.other_info.label_tag }} {{ form.other_info }}<br>
-                {{ form.birthday.label_tag }} {{ form.birthday }}<br>
+                <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
+                    {% csrf_token %}
+                    <select name="manager_selector" required>
+                        <option value="">Select a manager</option>
+                        {% for manager_option in manager_options %}
+                            <option value="{{ manager_option.0 }}">{{ manager_option.1 }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="form_type" value="register_existing">
+                    <button class="next-button" type="submit">Next</button>
+                </form>
+                
+            </div>
+        {% else %}
+            <div class='registration-container' id="register_new_manager_div"> 
+                <h1>Register a manager</h1>
+                <button id="return_button" class="form-switch-button" type="button">Select Existing Manager</button>
+                <!--TODO make this error message dissapear-->
+                {% if error %}
+                    <h5>{{ error|striptags }}</h5>
+                {% endif %}
+            
+                <form id="register_store_new_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
+                    {% csrf_token %}    
+                    
+                    {{ form.first_name.label_tag }} {{ form.first_name }}<br>
+                    {{ form.last_name.label_tag }} {{ form.last_name }}<br>
+                    {{ form.address.label_tag }} {{ form.address }}<br>
+                    {{ form.line_two.label_tag }} {{ form.line_two }}<br>
+                    {{ form.city.label_tag }} {{ form.city }}<br>
+                    {{ form.state.label_tag }} {{ form.state }}<br>
+                    {{ form.zip.label_tag }} {{ form.zip }}<br>
+                    {{ form.username.label_tag }} {{ form.username }}<br>
+                    {{ form.password.label_tag }} {{ form.password }}<br>
+                    {{ form.email_address.label_tag }} {{ form.email_address }}<br>
+                    {{ form.other_info.label_tag }} {{ form.other_info }}<br>
+                    {{ form.birthday.label_tag }} {{ form.birthday }}<br>
 
-                <input type="hidden" name="form_type" value="register_new">
-                <button type="submit">Next</button>
-            </form>
-            <button id="return_button" type="button">Select Existing Manager</button>
-        </div>
+                    <input type="hidden" name="form_type" value="register_new">
+                    <button class="next-button" type="submit">Next</button>
+                    
+                </form>
+                
+            </div>
+        {% endif %}
+        <a href="{% url 'Stores:register_store_page_1'%}"><button>Back</button></a>
+        <!--TODO Change the look of this back button-->
     </body>
 </html>

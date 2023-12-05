@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from .forms import *
-from Accounts.forms import EmployeeRegistrationForm
+from Accounts.forms import EmployeeRegistrationForm, StoreRegistrationManagerForm
 
 from .models import *
 from Accounts.models import *
@@ -20,21 +20,56 @@ from datetime import datetime
 def index(request):
     return HttpResponse("Stores Home")
 
+
 def store_home(request, store_id):
+    
     request.session["store_id"] = store_id
     if request.user.is_authenticated:
         if request.user.userinfo.account_type == "customer":
             user = request.user
+
             #NEEDS TO LOAD PRODUCTS AND SUCH
         else:
             if request.user.userinfo.store:
-                return redirect(request,"manage_store",store_id=user.userinfo.store)
+                return redirect("Stores:manage_store",store_id=request.user.userinfo.store.store_id)
             else:
                 #return HttpResponse("Error: No store associated with this user")
                 pass
             
     store = Store.objects.get(store_id=store_id)
     return render(request,"store_front.html",context={"store":store})
+
+def view_customer_cart(request,user_id):
+    context = {}
+    if "cart_errors" in request.session:
+        context["errors"] = request.session["cart_errors"]
+        del request.session["cart_errors"]
+
+    products_in_cart = ProductInCart.objects.filter(customer_id=user_id)
+    context["products_in_cart"] = products_in_cart
+    context["user_id"] = user_id
+    return render(request,"view_customer_cart.html",context=context)
+    return HttpResponse("CART TIMEEE")
+
+def edit_customer_cart(request,user_id):
+    # import pdb
+    # pdb.set_trace()
+    products_in_cart = ProductInCart.objects.filter(customer_id=user_id)
+    print(products_in_cart)
+    print(request.POST)
+    errors = []
+    for product in products_in_cart:
+        new_quantity = int(request.POST.get(f'quantity_{product.product.product_id}'))
+        if new_quantity == 0:
+            product.delete()
+        elif new_quantity <= product.product.product_stock:
+            product.quantity = new_quantity
+            product.save()
+        else:
+            errors.append(f"{product.product.product_name} does not have enough stock for that.")
+
+    request.session["cart_errors"] = errors
+    return redirect("Stores:view_customer_cart",user_id)
 
 def manage_store_redirect_from_home(request):
     if request.method == 'POST':
@@ -74,15 +109,62 @@ def manage_store_redirect_from_home(request):
     return HttpResponse("testing MANAGE STORE REDIRECT")
 
 
-@login_required(login_url='/login')
+@login_required(login_url='/login_employee')
 def manage_store(request,store_id):
     context = {}
     userinfo = request.user.userinfo
-    request.session["store_id"] = store_id
-    context["user_type"] = userinfo.account_type
-    context["Store name"] = Store.objects.get(store_id=store_id).store_name
+    if Store.objects.filter(store_id = store_id).exists():
+
+        request.session["store_id"] = store_id
+        context["account_type"] = userinfo.account_type
+        context["Store name"] = Store.objects.get(store_id=store_id).store_name
+        context["user"] = request.user
+        
+    else:
+        return HttpResponse("Sorry, no stores found with that ID.")
+        #Could put a seperate search page for finding a store.
+
+
 
     return render(request,"manage_store.html",context)
+
+def admin_manage_stores(request):
+    if request.method == 'POST':
+        print(dict(request.POST))
+        if 'store_selector' in request.POST:
+            return redirect("Stores:manage_store",store_id=request.POST.get('store_selector'))
+        elif 'employee_selector' in request.POST:
+            return redirect('Accounts:view_user',user_id=request.POST.get('employee_selector'))
+        elif 'customer_selector' in request.POST:
+            return redirect('Accounts:view_user',user_id=request.POST.get('customer_selector'))
+    
+    else:
+        stores = []
+        for store in Store.objects.all():
+            stores.append((store.store_id,str(store)))
+
+        employees = []
+        for manager in ManagerInfo.objects.all():
+            print(manager)
+            employees.append((manager.user_id,str(manager)))
+        for employee in EmployeeInfo.objects.all():
+            print(employee)
+            employees.append((employee.user_id,str(employee)))
+        for admin in AdminInfo.objects.all():
+            print(admin)
+            employees.append((admin.user_id,str(admin)))
+        
+        customers = []
+        for customer in CustomerInfo.objects.all():
+            customers.append((customer.user_id,str(customer)))
+
+        context = {"stores":stores,
+                "employees":employees,
+                "customers":customers}
+        
+                                                                                        
+        return render(request, "admin_manage_stores.html",context)
+        return HttpResponse("admin timeeee")
 
 def product_view(request):
     pass
@@ -107,6 +189,33 @@ def product_search(request):
     return render(request, "product_search_results.html",context=context)
 
 
+def search_for_store(request):
+    if request.method == 'POST':
+        context = {}
+        search_contents = request.POST.get('store_search_bar')
+        #TODO could add address searching
+        if search_contents.isdigit():
+            if Store.objects.filter(store_id=int(search_contents)).exists():
+                context["results"] = Store.objects.filter(store_id=int(search_contents))
+
+            else:
+                context["no_results"] = "Sorry, no stores were found with that ID"
+        else:
+            search_words = search_contents.split()
+            result = Q()
+            for word in search_words:
+                result |= Q(store_name__icontains=word)
+            
+            search_results = Store.objects.filter(result)
+            if search_results:
+                
+                context["results"] = search_results
+            else:
+                context["no_results"] = "Sorry, no stores found"
+
+        return render(request,"home.html",context)
+
+
 def get_all_managers():
     #Get all existing managers to use in manager selector
     managers= []
@@ -116,53 +225,108 @@ def get_all_managers():
     return managers
 
 def register_store_page_1(request):
-    empty_form = StoreRegistrationForm()
+    if "store_info" in request.session:
+        form = StoreRegistrationForm(request.session["store_info"])
+        store_info = request.session["store_info"]
+        del request.session["store_info"]
+    else:
+        form = StoreRegistrationForm()
+
+    manager_info = None
+    manager_id = None
+    if "manager_info" in request.session:
+        manager_info = request.session["manager_info"]
+        del request.session["manager_info"]
+
+    elif "manager_id" in request.session:
+        manager_id = request.session["manager_id"]
+        del request.session["manager_id"]
+
     if request.method == "POST":
         filled_out_registration_form = StoreRegistrationForm(request.POST)
         if filled_out_registration_form.is_valid():
             request.session["store_info"] = filled_out_registration_form.cleaned_data
+
+            
+
             return redirect("Stores:register_store_page_2")
             #return render(request,"register_store_page_2.html",context={"store_info":request.POST})
         else:
             #Add any error messages up top
-            return render(request,"register_store_page_1.html",{'form':empty_form,'error':'A store with that name exists at that location already'})
+            return render(request,"register_store_page_1.html",{'form':form,'error':'A store with that name exists at that location already'})
         
     else:
-        return render(request, "register_store_page_1.html", {'form': empty_form})
+        if manager_info is not None:
+            request.session["manager_info"] = manager_info
+        elif manager_id is not None:
+            request.session["manager_id"] = manager_id
+        
+        return render(request, "register_store_page_1.html", {'form': form})
 
 def register_store_page_2(request,error = None):
+    #Grab store info 
+    print(dict(request.session))
+
+    manager_info = None
+    manager_id = None
+
+    store_info = request.session["store_info"]
+    del request.session["store_info"]
+
+    form = None
+    
     #Create user registration form for a new manager to be registered
-    clean_user_form = UserRegistrationForm()
+    if "manager_info" in request.session:
+        manager_info = request.session["manager_info"]
+        form = StoreRegistrationManagerForm(manager_info)
+        del request.session["manager_info"]
+
+        
+    elif "manager_id" in request.session:
+        manager_id = request.session["manager_id"]
+        del request.session["manager_id"]
+
+    if form is None:
+        form = StoreRegistrationManagerForm()
+    
 
     if request.method == "POST":
-        context = {"store":request.session["store_info"]}
+        context = {}
+        request.session["store_info"] = store_info
+        # context = {"store":store_info}
         #If the user is using a pre existing manager
         if request.POST.get('form_type') == "register_existing":
             manager = ManagerInfo.objects.get(user_id = request.POST.get("manager_selector"))
-            if manager.store:  #If the 
+            request.session["manager_id"] = manager.user_id
+            if manager.store:  #If the manager is alread assigned to a store
                 manager_options = get_all_managers()
-                return render(request,"register_store_page_2.html",{'form':clean_user_form, 'manager_options':manager_options,'error':f'{manager.first_name} {manager.last_name} is already assigned to a store'})
+                return render(request,"register_store_page_2.html",{'form':form, 'manager_options':manager_options,'error':f'{manager.first_name} {manager.last_name} is already assigned to a store'})
             else:
-                manager_id = manager.user_id
-                request.session["manager_id"] = manager_id #Passing along manager ID to pull the manager later
+                manager_id = manager.user_id 
+            
+
+            context["load_new_manager_first"] = False
             context["manager"] = manager #Passing the manager object itself to the template
             return render(request,"register_store_page_3.html",context=context)
         
         #If the user is registering a new manager to ues for this store
-        if request.POST.get('form_type') == "register_new":
-            filled_out_manager_form = EmployeeRegistrationForm(request.POST)
-            
+        if request.POST.get('form_type') == "register_new":            
+            filled_out_manager_form = StoreRegistrationManagerForm(request.POST)
+            print(request.POST)
             if filled_out_manager_form.is_valid():
                 manager_data = filled_out_manager_form.cleaned_data
-                del manager_data["user_type"]
+                # del manager_data["user_type"]
                 manager_data['birthday'] = manager_data["birthday"].strftime('%Y-%m-%d') #Converting to string for data transfer to request session
-                request.session["manager_dict"] = manager_data
+                request.session["manager_info"] = manager_data
                 context["manager"] = filled_out_manager_form.cleaned_data
-            
+
+                
+                context["load_new_manager_first"] = True
                 return render(request,"register_store_page_3.html",context=context)
             
             #Error in manager registration form
             else:
+                print(filled_out_manager_form.errors)
                 manager_data = filled_out_manager_form.cleaned_data
                 form_errors = filled_out_manager_form.errors
                 if "__all__" in form_errors:
@@ -182,14 +346,30 @@ def register_store_page_2(request,error = None):
 
     else:
         manager_options = get_all_managers()
-        context = {"manager_options":manager_options, "form":clean_user_form}
+        context = {"manager_options":manager_options, "form":form}
+
+        if manager_info is not None:
+            request.session["manager_info"] = manager_info
+            context["load_new_manager_first"] = True
+
+        elif manager_id is not None:
+            request.session["manager_id"] = manager_id
+
+            context["selected_manager_name"] = str(ManagerInfo.objects.get(user_id=manager_id))
+            context["selected_manager_id"] = manager_id 
+
+            context["load_new_manager_first"] = False
+        
+        request.session["store_info"] = store_info
+        
+
         if error:
             context["error"] = error
+
         return render(request,"register_store_page_2.html",context=context)
        
 #Final Confirmation
 def confirm_store_registration(request):
-    
     store_info = request.session["store_info"]
 
     #convert key names to remove "store_"
@@ -207,12 +387,14 @@ def confirm_store_registration(request):
     new_store = Store(**converted_store_info)
     new_store.save()
     
+    #Preexisting manager
     try:
         manager_id = request.session["manager_id"]
         new_manager = ManagerInfo.objects.get(user_id=manager_id)
 
+    #New manager
     except KeyError:
-        manager_data = request.session["manager_dict"]
+        manager_data = request.session["manager_info"]
         birthday_string = manager_data["birthday"]
         birthday_date = datetime.strptime(birthday_string, "%Y-%m-%d")
         manager_data["birthday"] = birthday_date
@@ -226,11 +408,19 @@ def confirm_store_registration(request):
         new_user.save()
         new_manager = ManagerInfo(**manager_data)
         new_manager.user = new_user
-
+    
     new_manager.store = new_store
 
     new_manager.save()
+
+    del request.session["store_info"]
+    if "manager_id" in request.session:
+        del request.session["manager_id"]
+    elif "manager_info" in request.session:
+        del request.session["manager_info"]
+
     return HttpResponse("HI")
+
 
 
 #TODO delete this function, not being used: 
@@ -272,7 +462,7 @@ def confirm_store_registration(request):
 #                 else:
 #                     print("it didn't vlaidate")
 #                     return render(request,"DELETE_ME_ERROR_VIEW.html",context={"form":filled_out_registration_form})
-#                     return HttpResponse("OK I DON'T KNOW WHAT'S GOING ON")
+#                     return HttpResponse("OK I DON'T KNOW WHAT'S GOING ON")fds 
 #                 # except ValidationError:
 #                 #     return HttpResponse("nope, error in the user form")
 

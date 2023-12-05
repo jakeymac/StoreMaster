@@ -59,5 +59,3 @@ class StoreRegistrationForm(forms.Form):
         #validate manager information if it's been provided"""
         return cleaned_data
 
-
-

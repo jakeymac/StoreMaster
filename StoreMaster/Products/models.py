@@ -1,5 +1,9 @@
 from django.db import models
 from Stores.models import Store
+from Accounts.models import CustomerInfo
+from Orders.models import Order
+from Purchases.models import Purchase
+
 
 def product_image_path(instance, filename):
     return f'stores/{instance.store.store_id}/products/{instance.product_id}/{filename}'
@@ -65,7 +69,22 @@ class Product(models.Model):
     #TODO add verification for increase - make sure it doesn't go past a limit(could add a field for maximum stock?)
     def add_product_stock(self, increase):
         self.product_stock += increase
-
+        
     #TODO add verification for remove - can't go past 0 
     def remove_product_stock(self, decrease):
         self.product_stock -= decrease
+
+class ProductInCart(models.Model):
+    customer_id = models.ForeignKey(CustomerInfo,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+class ProductInOrder(models.Model):
+    order_info_object = models.ForeignKey(Order,on_delete=models.CASCADE)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity=models.IntegerField()
+
+class ProductInPurchase(models.Model):
+    purchase_info_object = models.ForeignKey(Purchase,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.IntegerField()

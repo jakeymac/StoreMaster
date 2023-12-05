@@ -1,0 +1,89 @@
+<!-- view_cart.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load custom_filters %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        select {
+            padding: 8px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>View Cart</h1>
+    {% if errors %} 
+        {% for error in error %}
+            <p>{{error}}</p>
+        {% endfor %}
+    {% endif %}
+    <form action="{% url 'Stores:edit_customer_cart' user_id %}" method="POST">
+        {% csrf_token %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price per Item</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product_in_cart in products_in_cart %}
+                    <tr>
+                        <td>{{ product_in_cart.product.product_name }}</td>
+                        <td>{{ product_in_cart.product.product_price }}</td>
+                        <td>
+                            <!--TODO need to fix this, django isn't finding the product_id-->
+                            <select name="quantity_{{ product_in_cart.product.product_id }}">
+                                {% for quantity in product_in_cart.product.product_stock|times %}
+                                    <option value="{{ quantity }}" {% if quantity == product_in_cart.quantity %}selected{% endif %}>
+                                        {{ quantity }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">Update Cart</button>
+    </form>
+</body>
+</html>

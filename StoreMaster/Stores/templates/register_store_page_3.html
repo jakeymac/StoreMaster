@@ -2,9 +2,10 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Store Confirmation Page</title>
     </head>
     <body>
-        <title>Store Confirmation Page</title>
+        <h1>Confirm details</h1>
         {{manager.first_name}} {{manager.last_name}}
 
         {{store.store_name}}
@@ -13,6 +14,8 @@
         {{store.store_city}}
         {{store.store_state}}
         {{store.store_zip}}
-
+        <!--Make this page look nice-->
         <a href="{% url 'Stores:confirm_store_registration' %}"><button>Confirm</button></a>
+        <a href="{% url 'Stores:register_store_page_2' %}"><button>Back</button></a>
+        <!--TODO change the look of this back button-->
 </html>

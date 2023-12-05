@@ -6,11 +6,15 @@ app_name = "Stores"
 
 urlpatterns = [
     path('stores', views.index,name='index'),
+    path('search_for_store', views.search_for_store, name='search_for_store'),
     path('register_store',views.register_store_page_1,name='register_store_page_1'),
     path('register_store_manager',views.register_store_page_2,name='register_store_page_2'),
     path('manage_store/<int:store_id>',views.manage_store,name='manage_store'),
+    path("admin_manage_stores",views.admin_manage_stores,name='admin_manage_stores'),
     path('confirm_store_registration',views.confirm_store_registration,name="confirm_store_registration"),
     path('manage_store_redirect_from_home', views.manage_store_redirect_from_home,name='manage_store_home_page_redirect'),
     path('product_search',views.product_search, name='product_search'),
-    path('home/<int:store_id>',views.store_home,name="home")
+    path('store_home/<int:store_id>',views.store_home,name="store_home"),
+    path('view_customer_cart/<int:user_id>',views.view_customer_cart,name="view_customer_cart"),
+    path('edit_customer_cart/<int:user_id>',views.edit_customer_cart,name="edit_customer_cart"),
 ]
