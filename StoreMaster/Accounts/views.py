@@ -23,12 +23,12 @@ model_dict = {"manager":ManagerInfo,
               "customer":CustomerInfo}
 
 
-
 def StoreMasterHome(request):
     if request.method == 'POST':
         pass
     else:
         return render(request,"home.html",{})
+    
 
 def view_user(request, user_id):
     user = User.objects.get(id=user_id)
@@ -40,6 +40,44 @@ def view_user(request, user_id):
     else:
         return render(request,"view_employee.html",context=context)
 
+
+def view_customer(request,user_id):
+    customer = CustomerInfo.objects.get(user=User.objects.get(id=user_id))
+    context = {"customer":customer}
+    return render(request,"view_customer.html",context)
+
+def view_employee(request,user_id):
+    pass
+
+
+def edit_customer(request,user_id):
+    customer = CustomerInfo.objects.get(user=User.objects.get(id=user_id))
+
+    if request.method == "POST":
+        edited_form = EditCustomerForm(request.POST,instance=customer)
+        if edited_form.is_valid():
+            if edited_form.cleaned_data["username"] != customer.username:
+                if edited_form.cleaned_data["username"] in User.objects.values_list('username', flat=True):
+                    #TODO Error for repeated username, edit User object
+                    pass
+
+            if edited_form.cleaned_data["password"] != customer.password:
+                #TODO Edit user object
+                pass
+
+            if edited_form.cleaned_data["email_address"] != customer.email_address:
+                if edited_form.cleaned_data["email_address"] in User.objects.values_list('email_address', flat=True):
+                    #TODO Error for repeated email, edit User object
+                    pass 
+
+            edited_form.save()
+            return redirect("Accounts:view_customer",user_id)
+    else:
+        new_form = EditCustomerForm(instance=customer)
+        context={"form":new_form}
+
+    
+        return render(request,"edit_customer.html",context=context)
 
 def edit_user_view(request,user_id):
     #Update info on same object as long as the object is the same account_type. Also needs to check if username or password was updated
@@ -60,14 +98,12 @@ def edit_user_view(request,user_id):
                 print(new_object)
                 original_object.delete()
                 new_object.save()
-
+            #TODO finalize error handling here and
             if request.POST["username"] != user.username:
-                print("HI THERE")
                 if not User.objects.filter(username=request.POST["username"]).exists():
                     user.username = request.POST["username"]
                     #model_dict.get(request.POST.get("account_type")).objects.get(user=user).username = request.POST["username"]
                     
-            
             if request.POST["password"] != user.password:
             ############### MAY NEED THE MAKE PASSWORD FUNCTION #############
                 user.password = request.POST["password"] 

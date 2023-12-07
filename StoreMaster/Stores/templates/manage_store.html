@@ -1,14 +1,161 @@
 <!DOCTYPE html>
-
 <html>
-    <head>
-        
-    </head>
 
-    <body>
-        <h1>Store Name</h1>
-        <h2>Welcome, {{ request.user }}</h2>
-         <!--TODO-Employees at the store,
+<head>
+    <style>
+        .search-section {
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: inline-block;
+            height: 500px;
+            width: 300px;
+            max-height: 500px;
+            margin-left: 20px; /* Adjusted margin-left */
+        }
+
+        .search-results-section {
+            justify-content: center;
+            margin-top: 20px;
+            overflow-y: auto;
+            max-height: 380px;
+        }
+
+        .product,
+        .order,
+        .purchase {
+            margin-bottom: 15px;
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        #no-image {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+            border: 1px solid #2980b9;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .results-label {
+            color: #e74c3c;
+        }
+
+        body {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Store Name</h1>
+    <h2>Welcome, {{ request.user }}</h2>
+
+    <div class="search-section">
+        <h3>Product Search</h3>
+        <form id="product-search-form" method="POST">
+            {% csrf_token %}
+            <input type="text" name="product_search" placeholder="Product Search">
+            <button type="submit">Search</button>
+        </form>
+        {% if products %}
+        <div class="search-results-section" id="product-results-div">
+            {% for product in products %}
+            <div class="product">
+                {% if product.product_image %}
+                <img src="{{product.product_image.url}}" alt="{{product.product_name}}">
+                {% endif %}
+                <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
+                <p>{{product.product_price}}</p>
+                <p>{{product.product_location}}</p>
+                <p>{{product.product_stock}}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h3 class="results-label">Sorry, no products found</h3>
+        {% endif %}
+    </div>
+
+    <div class="search-section">
+        <h3>Order Search</h3>
+        <form id="order-search-form" method="POST">
+            {% csrf_token %}
+            <input type="text" name="order_search" placeholder="Order Search">
+            <button type="submit">Search</button>
+        </form>
+        {% if orders %}
+        <div class="search-results-section" id="order-results-div">
+            {% for order in orders %}
+            <div class="order">
+                <a href="#"><h2>{{order.order_id}}</h2></a>
+                <p>{{order.customer_id.first_name}} {{order.customer_id.last_name}}</p>
+                <p>{{order.order_date}}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h3 class="results-label">Sorry, no orders found</h3>
+        {% endif %}
+    </div>
+
+    <div class="search-section">
+        <h3>Purchase Search</h3>
+        <form id="purchase-search-form" method="POST">
+            {% csrf_token %}
+            <input type="text" name="purchase_search" placeholder="Purchase Search">
+            <button type="submit">Search</button>
+        </form>
+        {% if purchases %}
+        <div class="search-results-section" id="purchase-results-div">
+            {% for purchase in purchases %}
+            <div class="purchase">
+                <a href="#"><h2>{{purchase.purchase_id}}</h2></a>
+                <p>{{purchase.customer_id.first_name}} {{purchase.customer_id.last_name}}</p>
+                <p>{{purchase.purchase_date}}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h3 class="results-label">Sorry, no purchases found</h3>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'Stores:new_purchase' request.session.store_id %}"><button>New Purchase</button></a>
+
+    <!--Admin and manager only stuff-->
+    <h3>Customer Search</h3>
+
+    <h3>Employee Search</h3>
+
+    <a href="{% url 'Products:add_product' store_id=request.session.store_id %}"><button>Add Product</button></a>
+
+    <h3>New Employee or Manager </h3>
+
+    {% if request.user.userinfo.account_type == "admin" %}
+    <a href="{% url 'Stores:admin_manage_stores' %}"><button>Back to Admin Portal</button></a>
+    {% endif %}
+
+    <h3>Low Stock Items</h3>
+
+    <!--TODO-Employees at the store,
              product search,
             make purchase,
             make order
@@ -17,25 +164,9 @@
             look up purchases/orders
             stock
             log out button-->
-        <h3>Product Search</h3>
-        <form id="search-form" action="{% url 'Stores:product_search' %}" method="GET">
-            <input type="text" name="product_search" placeholder="Product Search">
-            <button type="submit">Search</button>
-        </form>
 
-        <a href="{% url 'Products:add_product' store_id=request.session.store_id %}"><button>Add Product</button></a>
-        
-        
-        <a href="url EMPLOYEE PRODUCT SEARCH VIEW"></a>
-        <a href="url MAKE A PURCHASE"></a>
-        <a href="CHECK ORDER OR ACCOUNT INFO SCREEN"></a>
-        <!--OR  Icould just have fields for looking up an account or order-->
-        
+    <a href="{% url 'Accounts:logout_employee' %}"><button>Log Out</button></a>
 
-        <a href="{% url 'Accounts:logout_employee' %}"><button>Log Out</button></a>
-        {% if request.user.userinfo.account_type == "admin" %}                                                                                                                                                
-            <a href="{% url 'Stores:admin_manage_stores' %}"><button>Back to Admin Portal</button></a>
-        {% endif %}
-            
-    </body>
+</body>
+
 </html>

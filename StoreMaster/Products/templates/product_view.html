@@ -1,21 +1,111 @@
-<h1>{{ product.product_name }}</h1>
-<p>Price: ${{ product.product_price }}</p>
-<p>{{ product.product_description }}</p>
-<p>In stock: {{ product.stock }}</p>
-<p>Location: {{ product.product_location }}</p>
-{% if product.product_image %} 
-    <img src="{{ product.product_image.url }}" alt="Product Image">
+{% extends 'base.html'%}
+{% block content %}
+    <style>
+        .product-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 60%;
+            margin: auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
 
-{% else %} 
-    <p>No image available</p>
-{% endif %}
+        .product-details {
+            width: 45%;
+        }
 
-{% if user.is_authenticated %}
-    {% if user.userinfo.account_type == "manager" or user.userinfo.account_type == "admin" %}
-        <br><a href="{% url 'Products:product_edit_view' store_id=request.session.store_id product_id=product.product_id %}"><button>Edit</button></a>
-    {% endif %}
-{% endif %}
+        .product-image {
+            width: 45%;
+            text-align: center;
+        }
 
+        img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+        }
 
+        #no-image {
+            width: 100px;
+            height: 100px;
+            margin-bottom:10px;
+            border: 1px solid #2980b9
+        }
 
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
 
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top:30px;
+        }
+
+        #add-to-cart-div {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        #add-to-cart-form {
+            display: flex;
+            align-items: center;
+        }
+
+        #quantity-selector {
+            margin-right: 10px;
+        }
+
+        
+    </style>
+
+    <div class="product-container">
+        <div class="product-details">
+            <h1>{{ product.product_name }}</h1>
+            <label>Price:</label> ${{ product.product_price }}<br>
+            <label>Description:</label> {{ product.product_description }}<br>
+            <label>In stock:</label> {{ product.product_stock }}<br>
+            <label>Location:</label> {{ product.product_location }}<br>
+
+            {% if user.is_authenticated %}
+                {% if user.userinfo.account_type == "manager" or user.userinfo.account_type == "admin" %}
+                    <a href="{% url 'Products:product_edit_view' store_id=request.session.store_id product_id=product.product_id %}">
+                        <button>Edit</button>
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="product-image">
+            {% if product.product_image %} 
+                <img src="{{ product.product_image.url }}" alt="Product Image">
+            {% else %} 
+                <div id="no-image"><p>No image available</p></div>
+                
+            {% endif %}
+        </div>
+        <div id="add-to-cart-div">
+            <form id="add-to-cart-form" method="POST">
+                {% csrf_token %}
+                <select name="quantity" id="quantity-selector">
+                    {% for num in quantities %}
+                        <option value="{{ num }}">{{ num }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Add to cart</button>
+            </form>
+        </div>
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,669 @@
+/*Home */ 
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+h1 {
+    margin-top:100px;
+    text-align: center;
+    color: #333;
+    margin-bottom:30px;
+}
+
+#search-form {
+    display: flex;
+    margin-bottom: 20px;
+    
+}
+
+#search-div {
+    margin-top:35px;
+}
+
+#search-bar {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    width: 250px;
+}
+
+#submit-button,
+#manage-store-button,
+#register-store-button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#submit-button {
+    background-color: #3498db;
+    color: #fff;
+}
+
+#submit-button:hover {
+    background-color: #2980b9;
+}
+
+#manage-store-button {
+    background-color: #2ecc71;
+    color: #fff;
+    margin-right: 10px;
+}
+
+#manage-store-button:hover {
+    background-color: #27ae60;
+}
+
+#register-store-button {
+    background-color: #e67e22;
+    color: #fff;
+}
+
+#register-store-button:hover {
+    background-color: #d35400;
+}
+
+#main-container {
+    text-align: center;
+}
+
+#search-results-div {
+    border: 1px solid blue;
+    width:500px;
+    text-align:center;
+    margin: 0 auto;
+    margin-top:50px;
+    border-radius:4px;
+}
+
+.store-entry {
+    display: flex;
+    justify-content: space-between;
+}
+
+.store-info {
+    text-align: left;
+    flex: 1;
+}
+.store-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.store-address {
+    margin-bottom: 10px;
+}
+.open-store-button {
+    margin-bottom:10px;
+}
+
+/* Login-Customer*/
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#login-container {
+    width: 300px;
+    margin: 35px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Login-Employee */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#login-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Register-customer */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#registration-container {
+    width: 600px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    grid-column: span 2; /* span both columns */
+}
+
+.column {
+    grid-column: span 1; /* span one column */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input,select {
+    width: 100%;
+    padding: 2px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    grid-column: span 2;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Register Employee */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#registration-container {
+    width: 600px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    grid-column: span 2; /* span both columns */
+}
+
+.column {
+    grid-column: span 1; /* span one column */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input,select {
+    width: 100%;
+    padding: 2px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    grid-column: span 2;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Admin manage stores*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#main-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top:25px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/*Register store page 1*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#registration-container {
+    width: 600px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    gap: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    grid-column: span 2; /* span both columns */
+}
+
+.column {
+    grid-column: span 1; /* span one column */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input,select {
+    width: 100%;
+    padding: 2px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    grid-column: span 2;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/*Register Store page 2*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.registration-container {
+    width: 600px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    gap: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #333; /* span both columns */
+}
+
+.column {
+    grid-column: span 1; /* span one column */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input,select {
+    width: 75%;
+    padding: 2px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+}
+
+.form-switch-button {
+    background-color:rgb(5, 161, 68)
+}
+.form-switch-button:hover{
+    background-color:#136d37
+}
+.next-button{
+
+    background-color: #3498db;
+}
+
+.next-button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/*Store front*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#banner {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+#options {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #fff;
+}
+
+#content {
+    padding: 20px;
+}
+
+.product {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 30%;
+    float: left;
+    box-sizing: border-box;
+}
+
+#search {
+    width: 70%;
+    padding: 10px;
+    margin: 20px 0;
+    box-sizing: border-box;
+}
+
+/*View customer cart*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+select {
+    padding: 8px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/*View customer order*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* View customer orders*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+}

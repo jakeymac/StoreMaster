@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,12 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{store.store_name}}</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
         #banner {
             background-color: #3498db;
             color: #fff;
@@ -18,78 +15,72 @@
             text-align: center;
         }
 
-        #options {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #fff;
-        }
-
         #content {
             padding: 20px;
+        }
+
+        #results-div {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            overflow-y: auto;
+            max-height: 500px;
         }
 
         .product {
             border: 1px solid #ddd;
             padding: 10px;
-            margin-bottom: 10px;
-            width: 30%;
-            float: left;
+            margin: 10px;
+            width: 200px; /* Adjusted width */
             box-sizing: border-box;
+            text-align: center;
         }
 
-        #search {
-            width: 70%;
+        img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        button {
             padding: 10px;
-            margin: 20px 0;
-            box-sizing: border-box;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
         }
     </style>
 </head>
+
 <body>
-
-    <div id="banner">
-        <h1>My Online Store</h1>
-    </div>
-
-    <div id="options">
-        {% url 'Accounts:login_customer' as login_url%}
-        {% url 'Accounts:register_customer' as register_url %}
-
-        {% if user.is_authenticated %}
-            {% if user.userinfo.account_type == "customer" %}
-                <a href="{% url 'Orders:view_customer_orders' user.userinfo.user_id %}">My Orders</a> | <a href="{% url 'Stores:view_customer_cart' user.userinfo.user_id%}">My Cart</a> | <a href="#">My Account</a> | <a href="{% url 'Accounts:logout_customer' %}">Logout</a> | 
-            {% endif %}
-            
-        {% else %}
-            <a href="{{ login_url }}">Login </a> | <a href="{{ register_url }}">Register</a>
-        {% endif %}
-
-    </div>
-        
-
-    <input type="text" id="search" placeholder="Search for products...">
+    <form id="product_search_bar" method="POST">
+        {% csrf_token %}
+        <input type="text" id="search" name="search-bar" placeholder="Search for products...">
+        <button type="submit">Search</button>
+    </form>
 
     <div id="content">
-        <div class="product">
-            <h2>Product 1</h2>
-            <p>Description of Product 1.</p>
-        </div>
-
-        <div class="product">
-            <h2>Product 2</h2>
-            <p>Description of Product 2.</p>
-        </div>
-
-        <div class="product">
-            <h2>Product 3</h2>
-            <p>Description of Product 3.</p>
-        </div>
-
-        <!-- Add more product divs as needed -->
-
-        <div style="clear: both;"></div>
+        {% if products %}
+            <div id="results-div">
+                {% for product in products %}
+                    <div class="product">
+                        {% if product.product_image %}
+                            <img src="{{product.product_image.url}}" alt="{{product.product_name}}">
+                        {% endif %}
+                        <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
+                        <p>{{product.product_price}}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h3 class="results-label">Sorry, no products found</h3>
+        {% endif %}
     </div>
-
 </body>
+{% endblock %}
 </html>

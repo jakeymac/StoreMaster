@@ -58,7 +58,8 @@ class UserInfo(models.Model):
         return new_instance
     
 
-
+    def get_full_address(self):
+        return f"{self.address} {self.line_two} {self.city}, {self.state} {self.zip}"
     
     def __str__(self):
         return self.username
