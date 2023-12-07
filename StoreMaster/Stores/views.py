@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from .forms import *
-from Accounts.forms import EmployeeRegistrationForm, StoreRegistrationManagerForm
+from Accounts.forms import CustomerRegistrationForm,EmployeeRegistrationForm, StoreRegistrationManagerForm
 
 from .models import *
 from Accounts.models import *
 from Products.models import *
+from Shipments.models import *
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms.models import model_to_dict
@@ -20,9 +21,146 @@ from datetime import datetime
 def index(request):
     return HttpResponse("Stores Home")
 
+def add_product_to_purchase(request,store_id,product_id,quantity):
+    product = Product.objects.get(product_id=product_id)
+    if "products_in_purchase" in request.session:
+        print(type(product_id))
+        products_in_purchase = request.session["products_in_purchase"]
+        key = str(product_id)
+        
+        if str(product_id) in request.session.get("products_in_purchase"):
+            
+            current_quantity = request.session.get("products_in_purchase").get(str(product_id))[1]
+            new_quantity = current_quantity + quantity
+            request.session["products_in_purchase"][str(product_id)][1] = new_quantity
+
+        else:
+            request.session["products_in_purchase"][product_id] = [product.product_name,quantity]
+
+    else:
+        request.session["products_in_purchase"] = {product_id:(product.product_name,quantity)}
+
+    
+    request.session.save()
+
+    return redirect("Stores:new_purchase",store_id)
+
+def remove_product_from_purchase(request,store_id,product_id):
+    del request.session[product_id]
+    return redirect("Stores:new_purchase",store_id)
+
+def employee_view_purchase(request,purchase_id):
+    purchase_object = Purchase.objects.get(purchase_id=purchase_id)
+    products_in_purchase = [obj for obj in ProductInPurchase.objects.filter(purchase_info_object=purchase_object)]
+
+    if purchase_object.customer_id:
+        name = purchase_object.customer_id.first_name + " " + purchase_object.customer_id.last_name
+    else:
+        name = purchase_object.first_name + " " + purchase_object.last_name
+
+    context = {"purchase_object":purchase_object, "products_in_purchase":products_in_purchase,"name":name}
+
+    return render(request,"employee_view_purchase.html",context=context)
+
+
+def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_name=None):
+
+    account_type = request.user.userinfo.account_type
+    user_id = request.user.userinfo.user_id
+    employee_id = None
+    manager_id=None
+    admin_id=None
+    if customer_id is not None:
+        customer = CustomerInfo.objects.get(user_id=customer_id)
+
+    store = Store.objects.get(store_id=store_id)
+    if account_type == "employee":
+        employee_id = EmployeeInfo.objects.get(user_id=user_id)
+
+    elif account_type == "manager":
+        manager_id = ManagerInfo.objects.get(user_id=user_id)
+        
+    elif account_type == "admin":
+        admin_id = AdminInfo.objects.get(user_id=user_id)
+
+    total = 0
+    for product in request.session.get("products_in_purchase"):
+        product_object = Product.objects.get(product_id=product)
+        total += (product_object.product_price * request.session.get("products_in_purchase").get(product)[1])
+        
+    new_purchase = Purchase(store=store,employee_id=employee_id,manager_id=manager_id,admin_id=admin_id,
+                            customer_id=customer,first_name=first_name,last_name=last_name,
+                            purchase_date = datetime.now().date(),purchase_total=total)
+    new_purchase.save()
+
+    #TODO make sure stock gets updated, also verify that stock can handle the purchase(AKA error handling)
+
+    #loop through items and create items in purchase
+    for product in request.session.get("products_in_purchase"):
+        product_object = Product.objects.get(product_id=product)
+        quantity = request.session.get("products_in_purchase").get(product)[1]
+        new_product_in_purchase = ProductInPurchase(purchase_info_object=new_purchase,product=product_object,quantity=quantity)
+        new_product_in_purchase.save()
+
+    del request.session["products_in_purchase"]
+
+    return redirect("Stores:employee_view_purchase",new_purchase.purchase_id)
+
+def new_purchase(request,store_id):
+    
+    if "products_in_purchase" in request.session:
+        print("TESTING")
+        print(request.session["products_in_purchase"])
+    context = {"store_id":store_id}
+    store = Store.objects.get(store_id=store_id)
+    if request.method == 'POST':
+        if 'product_search' in request.POST:
+            search_text = request.POST.get('product_search')
+            search_terms = search_text.split()
+            query = Q(store_id=store_id)
+            for term in search_terms:
+                if term.isdigit():
+                    query &= Q(product_id=term, store=store)
+                else:
+                    query &= (Q(product_name__icontains=term) | Q(product_description__icontains=term))
+            
+            products = Product.objects.filter(query)
+        elif "customer_selector" in request.POST:
+            customer_id = request.POST.get("customer_selector")
+            print(customer_id)
+            
+
+            return finalize_purchase(request,store_id,customer_id)
+
+            
+            
+        elif "new_customer_form" in request.POST:
+            new_customer_form = CustomerRegistrationForm(request.POST)
+            if new_customer_form.is_valid():
+                new_customer_form.save()
+                
+                #may need new user as well
+                return finalize_purchase(request,store_id,customer_id)
+
+            else:
+                #TODO error in registering a new customer to the store
+                pass
+        
+    
+    else:
+        products = Product.objects.filter(store=Store.objects.get(store_id=store_id))
+        context["customer_options"] = get_all_customers(store_id)
+        context["new_customer_form"] = CustomerRegistrationForm()
+
+    # if "products_in_purchase" in request.session:
+    #     context["products_in_purchase"] = []
+    #     for item,value in request.session["products_in_purchase"]:
+    #         context["products_in_purchase"].append(value)
+    context["products"] = products
+    context["store_id"] = store_id
+    return render(request,"new_purchase.html",context=context)
 
 def store_home(request, store_id):
-    
     request.session["store_id"] = store_id
     if request.user.is_authenticated:
         if request.user.userinfo.account_type == "customer":
@@ -33,11 +171,30 @@ def store_home(request, store_id):
             if request.user.userinfo.store:
                 return redirect("Stores:manage_store",store_id=request.user.userinfo.store.store_id)
             else:
-                #return HttpResponse("Error: No store associated with this user")
+                #TODO return HttpResponse("Error: No store associated with this user")
                 pass
             
     store = Store.objects.get(store_id=store_id)
-    return render(request,"store_front.html",context={"store":store})
+    if request.method == 'POST':
+        #Get search results
+        print(request.POST)
+        search_text = request.POST.get('search-bar')
+        if search_text:
+            query = Q()
+            search_terms = search_text.split()
+            for term in search_terms:
+                query |= Q(product_name__icontains=term) | Q(product_description__icontains=term)
+
+            products = Product.objects.filter(query,store_id=store_id)
+            
+        else:
+            return redirect("Stores:store_home",store_id)
+        
+    else:
+        #Get all products
+        products = Product.objects.filter(store = store)
+    return render(request,"store_front.html",context={"store":store,"products":products})
+
 
 def view_customer_cart(request,user_id):
     context = {}
@@ -52,8 +209,6 @@ def view_customer_cart(request,user_id):
     return HttpResponse("CART TIMEEE")
 
 def edit_customer_cart(request,user_id):
-    # import pdb
-    # pdb.set_trace()
     products_in_cart = ProductInCart.objects.filter(customer_id=user_id)
     print(products_in_cart)
     print(request.POST)
@@ -111,21 +266,77 @@ def manage_store_redirect_from_home(request):
 
 @login_required(login_url='/login_employee')
 def manage_store(request,store_id):
-    context = {}
-    userinfo = request.user.userinfo
-    if Store.objects.filter(store_id = store_id).exists():
+    store = Store.objects.get(store_id=store_id)
+    products = Product.objects.filter(store=store)
+    orders = Order.objects.filter(store=store)
+    purchases = Purchase.objects.filter(store=store)
+    customers = CustomerInfo.objects.filter(store=store)
+    employees = EmployeeInfo.objects.filter(store=store)
+    managers = ManagerInfo.objects.filter(store=store)
+    
+    employees = list(employees) + list(managers)
 
-        request.session["store_id"] = store_id
-        context["account_type"] = userinfo.account_type
-        context["Store name"] = Store.objects.get(store_id=store_id).store_name
-        context["user"] = request.user
+    if request.method == 'POST':
+        if 'product_search' in request.POST:
+            search_text = request.POST.get('product_search')
+            search_terms = search_text.split()
+            query = Q(store_id=store_id)
+            for term in search_terms:
+                query &= (Q(product_name__icontains=term) | Q(product_description__icontains=term))
+
+            products = Product.objects.filter(query)
+
+        elif 'order_search' in request.POST:
+            #TODO could add searhcing for user as well.
+            search_text = request.POST.get("order_search")
+            search_terms = search_text.split()
+            query = Q(store=store)
+            for term in search_terms:
+                if term.isdigit():
+                    query &= (Q(order_id__icontains=int(term)))
+            
+            orders = Order.objects.filter(query)
+
+        elif 'purchase-search-form' in request.POST:
+            #TODO could add searhcing for user as well.
+            search_text = request.POST.get("purchase_search")
+            search_terms = search_text.split()
+            query = Q(store=store)
+            for term in search_terms:
+                if term.isdigit():
+                    query &= (Q(purchase_id__icontains=int(term)))
+            
+            purchases = Purchase.objects.filter(query)
+        elif 'customer-search-form' in request.POST:
+            pass
+        elif 'employee-search-form' in request.POST:
+            pass
         
     else:
-        return HttpResponse("Sorry, no stores found with that ID.")
-        #Could put a seperate search page for finding a store.
+
+        context = {}
+        userinfo = request.user.userinfo
+        if Store.objects.filter(store_id = store_id).exists():
+
+            request.session["store_id"] = store_id
+            context["account_type"] = userinfo.account_type
+            context["Store name"] = Store.objects.get(store_id=store_id).store_name
+            context["user"] = request.user
+            
+        else:
+            return HttpResponse("Sorry, no stores found with that ID.")
+            #Could put a seperate search page for finding a store.
 
 
+    shipments = Shipment.objects.filter(destination_store=store_id)
 
+    context = { "products":products,
+                "orders":orders,
+                "purchases":purchases,
+                "customers":customers,
+                "employees":employees,
+                "shipments":shipments }
+    
     return render(request,"manage_store.html",context)
 
 def admin_manage_stores(request):
@@ -215,6 +426,12 @@ def search_for_store(request):
 
         return render(request,"home.html",context)
 
+def get_all_customers(store_id):
+    customers = []
+    for customer in CustomerInfo.objects.filter(store=Store.objects.get(store_id=store_id)):
+        customers.append((customer.user_id,str(customer)))
+
+    return customers
 
 def get_all_managers():
     #Get all existing managers to use in manager selector
@@ -361,7 +578,6 @@ def register_store_page_2(request,error = None):
             context["load_new_manager_first"] = False
         
         request.session["store_info"] = store_info
-        
 
         if error:
             context["error"] = error
@@ -420,6 +636,12 @@ def confirm_store_registration(request):
         del request.session["manager_info"]
 
     return HttpResponse("HI")
+
+def view_shipment(request,shipment_id):
+    print(shipment_id)
+    pass
+def view_all_shipments(request,store_id):
+    pass
 
 
 

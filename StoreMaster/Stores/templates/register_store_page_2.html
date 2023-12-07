@@ -91,16 +91,15 @@
                     <h5>{{error}}</h5>
                 {% endif %}
                 
-                <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
+                <form id="existing-customer-form" method="POST">
                     {% csrf_token %}
-                    <select name="manager_selector" required>
-                        <option value="">Select a manager</option>
-                        {% for manager_option in manager_options %}
-                            <option value="{{ manager_option.0 }}">{{ manager_option.1 }}</option>
+                    <select name="customer_selector">
+                        <option value="">Select a customer</option>
+                        {% for customer_option in customer_options %}
+                            <option value="{{ customer_option.0 }}">{{ customer_option.1 }}</option>
                         {% endfor %}
                     </select>
-                    <input type="hidden" name="form_type" value="register_existing">
-                    <button class="next-button" type="submit">Next</button>
+                    <button type="submit">Finalize</button>
                 </form>
                 
             </div>

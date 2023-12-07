@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $("#new-customer-div").hide();
+                // Event listener for radio buttons
+                $("#existing-customer-radio").change(function () {
+                        // Show existing customer div, hide new customer div
+                        $("#existing-customer-div").show();
+                        $("#new-customer-div").hide();
+    
+                        // Deselect new customer radio button
+                        $("#new-customer-radio").prop("checked", false);
+                    
+                });
+    
+                $("#new-customer-radio").change(function () {
+            
+                        // Show new customer div, hide existing customer div
+                        $("#existing-customer-div").hide();
+                        $("#new-customer-div").show();
+                        
+                        // Deselect existing customer radio button
+                        $("#existing-customer-radio").prop("checked", false);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="search-section">
+            <h3>Product Search</h3>
+            <form id="product-search-form" method="POST">
+                {% csrf_token %}
+                <input type="text" name="product_search" placeholder="Product Search">
+                <button type="submit">Search</button>
+            </form>
+
+            \
+            {% if products %}
+                <div class="search-results-section" id="product-results-div">
+                    {% for product in products %}
+                        <div class="product">
+                            <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
+                            <p>{{product.product_price}}</p>
+                            <p>{{product.product_location}}</p>
+                            <p>{{product.product_stock}}</p>
+                            <a href="{% url 'Stores:add_product_to_purchase' store_id=store_id product_id=product.product_id quantity=1 %}"><button>Add to purchase</button></a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <h3 class="results-label">Sorry, no products found</h3>
+            {% endif %}
+        </div>
+        <div id="selected-products-div">
+            {% if request.session.products_in_purchase %}
+            {% for product, details in request.session.products_in_purchase.items %}
+                {% with details=details %}
+                    <p>Details: {{ details.0 }}</p>3
+                {% endwith %}
+                    
+                {% endfor %}
+            {% else %}
+                <p>No products added yet</p>
+            {% endif %}
+        </div>
+
+        <label for="customer_selection_existing">Existing Customer</label>
+        <input type="radio" name="customer_selection_existing" id="existing-customer-radio" checked/>
+        <label for="customer_selection_new">New Customer</label>
+        <input type="radio" name="customer_selection_new" id="new-customer-radio"/>
+        
+        <div id="new-customer-div">
+            <h3>New Customer</h3>
+            <form id="new-customer-finalize-purchase-form" method="POST">
+                {% csrf_token %} 
+                {{new_customer_form.as_p}}
+                <button type="submit">Finalize</button>
+            </form>
+        </div>
+    
+        <div id="existing-customer-div">
+            <h3>Existing Customer</h3>
+            <form id="existing-customer-finalize-purchase-form" method="POST">
+                {% csrf_token %} 
+                <select name="customer_selector">
+                    <option value="">Select a customer</option>
+                    {% for customer_option in customer_options %}
+                        <option value="{{ customer_option.0 }}">{{ customer_option.1 }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Finalize</button>
+            </form>
+        </div>
+    </body>
+</html>

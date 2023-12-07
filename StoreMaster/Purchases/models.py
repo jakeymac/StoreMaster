@@ -3,15 +3,18 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from Stores.models import Store
-from Accounts.models import EmployeeInfo, ManagerInfo, CustomerInfo
+from Accounts.models import EmployeeInfo, ManagerInfo, AdminInfo, CustomerInfo
 
 # Create your models here.
 class Purchase(models.Model):
     purchase_id = models.AutoField(primary_key = True)
-    store = models.OneToOneField(Store, on_delete=models.CASCADE)
-    employee_id = models.OneToOneField(EmployeeInfo, on_delete=models.CASCADE, related_name="employee",null=True)
-    manager_id = models.OneToOneField(ManagerInfo,on_delete=models.CASCADE,related_name="manager",null=True)
-    customer_id = models.OneToOneField(CustomerInfo,on_delete=models.CASCADE, related_name="customer")
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(EmployeeInfo, on_delete=models.CASCADE, related_name="employee",null=True)
+    manager_id = models.ForeignKey(ManagerInfo,on_delete=models.CASCADE,related_name="manager",null=True)
+    admin_id = models.ForeignKey(AdminInfo,on_delete=models.CASCADE, related_name="admin",null=True)
+    customer_id = models.ForeignKey(CustomerInfo,on_delete=models.CASCADE, related_name="customer",null=True)
+    first_name = models.CharField(max_length=25,null=True)
+    last_name = models.CharField(max_length=30,null=True)
     purchase_date = models.DateTimeField()
     purchase_total = models.FloatField() #could update this model for tax registration
 

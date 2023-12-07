@@ -5,7 +5,7 @@ from Stores.models import Store
 class Shipment(models.Model):
     shipment_id = models.AutoField(primary_key = True)
     shipment_origin = models.CharField(max_length = 70)
-    destination_store = models.OneToOneField(Store,on_delete=models.CASCADE)
+    destination_store = models.ForeignKey(Store,on_delete=models.CASCADE)
     expected_date = models.DateField()
     shipment_status = models.CharField(max_length=150)
     shipment_tracking_history = models.CharField(max_length=1000)

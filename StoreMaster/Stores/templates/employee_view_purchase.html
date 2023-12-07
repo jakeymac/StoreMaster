@@ -1,0 +1,22 @@
+Customer name: {{name}}
+Purchase ID: {{purchase_object.purchase_id}}
+purchase_data: {{purchase_object.purchase_date}}
+<table>
+    <tr>
+        <th>Product ID</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+
+    </tr>
+    {% for product_in_purchase in products_in_purchase %}
+        <tr>
+            <th>{{product_in_purchase.product.product_id}}</th>
+            <th>{{product_in_purchase.product.product_name}}</th>
+            <th>{{product_in_purchase.product.product_price}}</th>
+            <th>{{product_in_purchase.quantity}}</th>
+        </tr>
+    {% endfor %}
+</table>
+
+<p>Total: ${{purchase_object.purchase_total}}</p>
