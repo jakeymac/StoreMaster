@@ -21,7 +21,6 @@ from datetime import datetime
 def index(request):
     return HttpResponse("Stores Home")
 
-<<<<<<< HEAD
 def add_product_to_purchase(request,store_id,product_id,quantity):
     product = Product.objects.get(product_id=product_id)
         
@@ -166,8 +165,6 @@ def new_purchase(request,store_id):
     context["store_id"] = store_id
     return render(request,"new_purchase.html",context=context)
 
-=======
->>>>>>> 804bb3482eeade48020eaaa103127e05e10bf719
 def store_home(request, store_id):
     request.session["store_id"] = store_id
     if request.user.is_authenticated:
