@@ -127,7 +127,7 @@
         <div class="search-results-section" id="purchase-results-div">
             {% for purchase in purchases %}
             <div class="purchase">
-                <a href="#"><h2>{{purchase.purchase_id}}</h2></a>
+                <a href="{% url 'Stores:employee_view_purchase' purchase.purchase_id %}"><h2>{{purchase.purchase_id}}</h2></a>
                 <p>{{purchase.customer_id.first_name}} {{purchase.customer_id.last_name}}</p>
                 <p>{{purchase.purchase_date}}</p>
             </div>
