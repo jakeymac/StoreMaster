@@ -57,8 +57,8 @@ def product_view(request, product_id):
     return render(request,"product_view.html",context)
 
 def product_edit_view(request,product_id):
-    product = Product.objects.get(product_id=product_id,store=store)
-    store = Store.objects.get(store_id=product.store_id)
+    product = Product.objects.get(product_id=product_id)
+    #store = Store.objects.get(store_id=product.store_id)
     print("Step 1")
     
     if request.method == 'POST':
@@ -77,4 +77,10 @@ def product_edit_view(request,product_id):
     else:
         print("Not POST step 2")
         product_form = EditProductForm(instance=product)
-        return render(request, "edit_product.html",{'form':product_form,'product_id':product_id,'store_id':store_id})
+        return render(request, "edit_product.html",{'form':product_form,'product_id':product_id})
+    
+def employee_view_product(request,product_id):
+    product = Product.objects.get(product_id=product_id)
+    context={"product":product}
+
+    return render(request,"employee_view_product.html",context=context)

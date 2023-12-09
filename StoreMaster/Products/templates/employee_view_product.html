@@ -1,6 +1,4 @@
-{% extends 'base.html'%}
 
-{% block content %}
     <style>
         .product-container {
             display: flex;
@@ -97,17 +95,6 @@
                 
             {% endif %}
         </div>
-        <div id="add-to-cart-div">
-            <form id="add-to-cart-form" method="POST">
-                {% csrf_token %}
-                <select name="quantity" id="quantity-selector">
-                    {% for num in quantities %}
-                        <option value="{{ num }}">{{ num }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Add to cart</button>
-            </form>
-        </div>
     </div>
     
-{% endblock %}
+

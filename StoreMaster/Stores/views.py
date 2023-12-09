@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms.models import model_to_dict
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 
@@ -267,9 +268,21 @@ def manage_store_redirect_from_home(request):
         return render(request,"manage_store_home.html",{"load":True})
     return HttpResponse("testing MANAGE STORE REDIRECT")
 
+def view_shipment(request,shipment_id):
+    shipment = Shipment.objects.get(shipment_id=shipment_id)
+    context = {"shipment":shipment}
+    return render(request,"view_shipment.html",context=context)
+
+def view_all_shipments(request,store_id):
+    store = Store.objects.get(store_id=store_id)
+    shipments = Shipment.objects.filter(destination_store=store)
+
+    context={"shipments":shipments}
+    return render(request,"view_all_shipments.html",context=context)
 
 @login_required(login_url='/login_employee')
 def manage_store(request,store_id):
+    messages.error(request,"HELLO WORLD")
     store = Store.objects.get(store_id=store_id)
     products = Product.objects.filter(store=store)
     orders = Order.objects.filter(store=store)
@@ -279,6 +292,13 @@ def manage_store(request,store_id):
     managers = ManagerInfo.objects.filter(store=store)
     
     employees = list(employees) + list(managers)
+
+    products_in_low_stock = []
+    for product in products:
+        if product.product_stock <= product.low_stock_quantity:
+            products_in_low_stock.append(product)
+
+    
 
     if request.method == 'POST':
         if 'product_search' in request.POST:
@@ -331,12 +351,12 @@ def manage_store(request,store_id):
             return HttpResponse("Sorry, no stores found with that ID.")
             #Could put a seperate search page for finding a store.
 
+
+        #TODO maybe delete this, not sure what it's doing here.
         context = {}
         userinfo = request.user.userinfo
         if Store.objects.filter(store_id = store_id).exists():
             pass
-
-
 
     shipments = Shipment.objects.filter(destination_store=store_id)
 
@@ -345,7 +365,8 @@ def manage_store(request,store_id):
                 "purchases":purchases,
                 "customers":customers,
                 "employees":employees,
-                "shipments":shipments }
+                "shipments":shipments,
+                "low_stock_products":products_in_low_stock }
     
     return render(request,"manage_store.html",context)
 
@@ -625,8 +646,6 @@ def confirm_store_registration(request):
         birthday_date = datetime.strptime(birthday_string, "%Y-%m-%d")
         manager_data["birthday"] = birthday_date
 
-        
-        
         new_user = User(username=manager_data["username"],
                         password=make_password(manager_data["password"]),
                         email=manager_data["email_address"])
@@ -646,12 +665,6 @@ def confirm_store_registration(request):
         del request.session["manager_info"]
 
     return HttpResponse("HI")
-
-def view_shipment(request,shipment_id):
-    print(shipment_id)
-    pass
-def view_all_shipments(request,store_id):
-    pass
 
 
 

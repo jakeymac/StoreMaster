@@ -1,6 +1,5 @@
 <!--TODO flesh out this page -->
 customer view
-
 {% extends 'base.html' %}
 {% block content %}
     <div id="main-info-container">
@@ -22,6 +21,6 @@ customer view
         {% else %} 
             <p>No other information found</p>
         {% endif %}
-        <a href="{% url 'Accounts:edit_customer' customer.user.id %}"><button>Edit Information</button></a>
+        <a href="{% url 'Accounts:edit_customer' customer.user.userinfo.user_id %}"><button>Edit Information</button></a>
     </div>
 {% endblock %}

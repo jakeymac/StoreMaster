@@ -25,6 +25,9 @@
     {{ form.product_location }}
     <br>
 
+    <label for="{{ form.low_stock_quantity.id_for_label }}">Low Stock Quantity:</label>
+    {{ form.low_stock_quantity }}
+    
     {{ form.store }}
 
     <button type="submit">Save</button>

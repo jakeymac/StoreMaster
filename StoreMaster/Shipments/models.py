@@ -7,9 +7,13 @@ class Shipment(models.Model):
     shipment_origin = models.CharField(max_length = 70)
     destination_store = models.ForeignKey(Store,on_delete=models.CASCADE)
     expected_date = models.DateField()
-    shipment_status = models.CharField(max_length=150)
-    shipment_tracking_history = models.CharField(max_length=1000)
+    shipment_status = models.CharField(max_length=150,null=True)
+    shipment_tracking_history = models.CharField(max_length=1000,null=True)
     shipment_tracking_link = models.CharField(max_length=100,null=True,blank=True)
+    shipment_tracking_num = models.IntegerField(null=False,blank=False)
+    shipment_freight_company = models.CharField(max_length=70,null=False,blank=False)
+
+
 
     def __str__(self):
         return f"Shipment ID - {self.shipment_id}"

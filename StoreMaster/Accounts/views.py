@@ -23,6 +23,7 @@ model_dict = {"manager":ManagerInfo,
               "customer":CustomerInfo}
 
 
+
 def StoreMasterHome(request):
     if request.method == 'POST':
         pass
@@ -30,15 +31,43 @@ def StoreMasterHome(request):
         return render(request,"home.html",{})
     
 
+def employee_view_customer(request,customer_id):
+    customer = CustomerInfo.objects.get(user_id=customer_id)
+
+    context={"customer":customer}
+    return render(request,"employee_view_customer.html",context=context)
+
+def employee_view_employee(request,employee_id):
+    user_info = UserInfo.objects.get(user_id=employee_id)
+    user = User.objects.get(userinfo=user_info)
+    account_type = user.userinfo.account_type
+    account = model_dict.get(account_type).objects.get(user=user)
+    context = {account_type:account, "account_type":account_type} 
+
+    return render(request,"employee_view_employee.html",context=context)
+    
+
 def view_user(request, user_id):
+    if request.user.is_authenticated:
+        if request.user.userinfo.account_type == "customer":
+            template_start = ""
+        else:
+            template_start = "employee_"
+    else:
+        #TODO add security here to not allow just anyoen without an account to access. Update below to m
+        pass
     user = User.objects.get(id=user_id)
     account_type = user.userinfo.account_type
     instance = model_dict.get(account_type).objects.get(user=user)
-    context = {"user":instance}
+    context = {account_type:instance}
     if account_type == "customer":
-        return render(request,"view_customer.html",context=context)
+        return render(request,template_start+"view_customer.html",context=context)
     else:
-        return render(request,"view_employee.html",context=context)
+        if request.user.userinfo.account_type != "customer":
+            return render(request,template_start+"view_employee.html",context=context)
+        else:
+            #TODO dont' allow custoemrs to access the employees' information.
+            pass
 
 
 def view_customer(request,user_id):

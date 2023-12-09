@@ -17,5 +17,6 @@ urlpatterns = [
     path('edit_customer/<int:user_id>',views.edit_customer,name='edit_customer'),
     path('logout_employee',views.logout_employee,name='logout_employee'),
     path('logout_customer',views.logout_customer,name='logout_customer'),
+    path('view_user/<int:user_id>',views.view_user,name='view_user')
     
 ]

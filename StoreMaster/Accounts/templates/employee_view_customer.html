@@ -1,0 +1,22 @@
+<div id="main-info-container">
+    <h1>{{customer.first_name }} {{customer.last_name}}</h1>
+    {% if customer.address %}
+        <p>Address: {{customer.get_full_address}}</p>
+    {% else %}
+        <p> No address found</p>
+    {% endif %}
+    <p>Username: {{customer.username}}</p>
+    {% if customer.birthday %}
+        <p>Birthday: {{customer.birthday}}</p>
+    {% else %}
+        <p>No birthday found</p>
+    {% endif %}
+    
+    {% if customer.other_information %} 
+        <p>Other information: {{customer.other_information}}</p>
+    {% else %} 
+        <p>No other information found</p>
+    {% endif %}
+    <a href="{% url 'Accounts:edit_customer' customer.user.id %}"><button>Edit Information</button></a>
+    <a href="{% url 'Stores:manage_store' request.session.store_id %}"><button>Back to store management portal</button></a>
+</div>
