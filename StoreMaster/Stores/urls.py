@@ -22,4 +22,11 @@ urlpatterns = [
     path('employee_view_purchase/<int:purchase_id>',views.employee_view_purchase,name="employee_view_purchase"),
     path('view_shipment/<int:shipment_id>',views.view_shipment,name='view_shipment'),\
     path('view_all_shipments/<int:store_id>',views.view_all_shipments,name='view_all_shipments'),
+<<<<<<< HEAD
+=======
+    path('employee_view_customer/<int:customer_id>',views.employee_view_customer,name='employee_view_customer'),
+    path('employee_view_employee/<int:employee_id>',views.employee_view_employee,name='employee_view_employee'),
+    path('employee_view_product/<int:product_id>',views.employee_view_product,name='employee_view_product'),
+
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
 ]   

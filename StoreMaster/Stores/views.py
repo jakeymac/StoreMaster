@@ -268,6 +268,30 @@ def manage_store_redirect_from_home(request):
         return render(request,"manage_store_home.html",{"load":True})
     return HttpResponse("testing MANAGE STORE REDIRECT")
 
+<<<<<<< HEAD
+=======
+def employee_view_customer(request,customer_id):
+    customer = CustomerInfo.objects.get(user_id=customer_id)
+
+    context={"customer":customer}
+    return render(request,"employee_view_customer.html",context=context)
+
+def employee_view_employee(request,employee_id):
+    user_info = UserInfo.objects.get(user_id=employee_id)
+    user = User.objects.get(userinfo=user_info)
+    employee = EmployeeInfo.objects.get(user=user)
+
+    context={"employee":employee}
+    return render(request,"employee_view_employee.html",context=context)
+
+
+def employee_view_product(request,product_id):
+    product = Product.objects.get(product_id=product_id)
+    context={"product":product}
+
+    return render(request,"employee_view_product.html",context=context)
+
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
 def view_shipment(request,shipment_id):
     shipment = Shipment.objects.get(shipment_id=shipment_id)
     context = {"shipment":shipment}

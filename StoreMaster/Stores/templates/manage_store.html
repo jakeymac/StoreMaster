@@ -102,7 +102,18 @@ button:hover {
     color: #e74c3c;
 }
 
+<<<<<<< HEAD
 
+=======
+/* Additional styles for shipments and low stock items */
+.shipments-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.shipment,
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
 .low-stock {
     margin: 10px;
     padding: 10px;
@@ -111,6 +122,10 @@ button:hover {
     box-sizing: border-box;
 }
 
+<<<<<<< HEAD
+=======
+/* Additional styles for buttons on the same line */
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
 .extra-buttons {
     display: flex;
     justify-content: space-around;
@@ -140,7 +155,11 @@ button:hover {
                     {% if product.product_image %}
                     <img src="{{product.product_image.url}}" alt="{{product.product_name}}">
                     {% endif %}
+<<<<<<< HEAD
                     <a href="{% url 'Products:employee_view_product' product.product_id %}"><h2>{{product.product_name}}</h2></a>
+=======
+                    <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
                     <p>{{product.product_price}}</p>
                     <p>{{product.product_location}}</p>
                     <p>{{product.product_stock}}</p>
@@ -198,6 +217,7 @@ button:hover {
             {% endif %}
         </div>
     </div>
+<<<<<<< HEAD
 
     <!-- Admin and Manager Sections -->
     {% if request.user.userinfo.account_type == "admin" or request.user.userinfo.account_type == "manager" %}
@@ -274,18 +294,103 @@ button:hover {
     </div>
         
     {% endif %}
+=======
+
+    <!-- Admin and Manager Sections -->
+    {% if request.user.userinfo.account_type == "admin" or request.user.userinfo.account_type == "manager" %}
+
+        <div class="search-container">
+            <!-- Customer Search Section -->
+            <div class="search-section">
+                <h3>Customer Search</h3>
+                <form id="customer-search-form" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="customer_search" placeholder="Customer Search">
+                    <button type="submit">Search</button>
+                </form>
+                {% if customers %}
+                <div class="search-results-section" id="customer-results-div">
+                    {% for customer in customers %}
+                    <div class="result-item customer">
+                        <a href="{% url 'Stores:employee_view_customer' customer.user_id %}"><h2>{{customer.user_id}}</h2></a>
+                        <p>{{customer.first_name}} {{customer.last_name}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h3 class="results-label">Sorry, no customers found</h3>
+                {% endif %}
+            </div>
+
+            <!-- Employee Search Section -->
+            <div class="search-section">
+                <h3>Employee Search</h3>
+                <form id="employee-search-form" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="employee_search" placeholder="Employee Search">
+                    <button type="submit">Search</button>
+                </form>
+                {% if employees %}
+                <div class="search-results-section" id="employee-results-div">
+                    {% for employee in employees %}
+                    <div class="result-item employee">
+                        <a href="{% url 'Stores:employee_view_employee' employee.user_id %}"><h2>{{employee.user_id}}</h2></a>
+                        <p>{{employee.first_name}} {{employee.last_name}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h3 class="results-label">Sorry, no employees found</h3>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Shipments Section -->
+        <div>
+            <h3>Shipments</h3>
+            <div>
+                {% for shipment in shipments %}
+                    <div class="result-item shipment">
+                        {{shipment.shipment_id}}
+                        {{shipment.shipment_origin}}
+                        {{shipment.expected_date}}
+                        {{shipment_status}}
+                        <a href="{% url 'Stores:view_shipment' shipment.shipment_id %}"><button>View Details</button></a>
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'Stores:view_all_shipments' request.session.store_id %}"><button>View all shipments</button></a>
+        </div>
+
+    <div id="extra-buttons-div">
+        <!-- Add Product Button -->
+        <a href="{% url 'Products:add_product' store_id=request.session.store_id %}"><button class="extra-buttons">Add Product</button></a>
+
+        <!-- New Purchase Button -->
+        <a href="{% url 'Stores:new_purchase' request.session.store_id %}"><button class="extra-buttons">New Purchase</button></a>
+    </div>
+        
+    {% endif %}
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
     <!-- Admin and manager only stuff -->
 
     <h3>New Employee or Manager </h3>
 
+<<<<<<< HEAD
     
 
+=======
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
     <!-- Back to Admin Portal Button -->
     {% if request.user.userinfo.account_type == "admin" %}
     <a href="{% url 'Stores:admin_manage_stores' %}"><button>Back to Admin Portal</button></a>
     {% endif %}
 
+<<<<<<< HEAD
     
+=======
+    <h3>Low Stock Items</h3>
+>>>>>>> 577066bcfe18b178711aec58ff8ae3a0a538141f
 
     <!-- Logout Button -->
     <a href="{% url 'Accounts:logout_employee' %}"><button>Log Out</button></a>
