@@ -20,3 +20,4 @@ purchase_data: {{purchase_object.purchase_date}}
 </table>
 
 <p>Total: ${{purchase_object.purchase_total}}</p>
+<a href="{% url 'Stores:manage_store' products_in_purchase.0.product.store_id %}"><button>Back to store manager</button></a>

@@ -200,13 +200,6 @@ def store_home(request, store_id):
         products = Product.objects.filter(store = store)
     return render(request,"store_front.html",context={"store":store,"products":products})
 
-<<<<<<< HEAD
-=======
-
-def new_purchase(request,store_id):
-    return HttpResponse("new purchase time")
->>>>>>> 804bb3482eeade48020eaaa103127e05e10bf719
-
 def view_customer_cart(request,user_id):
     context = {}
     if "cart_errors" in request.session:
@@ -324,7 +317,6 @@ def manage_store(request,store_id):
             pass
         
     else:
-<<<<<<< HEAD
 
         context = {}
         userinfo = request.user.userinfo
@@ -338,14 +330,14 @@ def manage_store(request,store_id):
         else:
             return HttpResponse("Sorry, no stores found with that ID.")
             #Could put a seperate search page for finding a store.
-=======
->>>>>>> 804bb3482eeade48020eaaa103127e05e10bf719
 
         context = {}
         userinfo = request.user.userinfo
         if Store.objects.filter(store_id = store_id).exists():
+            pass
 
-<<<<<<< HEAD
+
+
     shipments = Shipment.objects.filter(destination_store=store_id)
 
     context = { "products":products,
@@ -354,23 +346,6 @@ def manage_store(request,store_id):
                 "customers":customers,
                 "employees":employees,
                 "shipments":shipments }
-=======
-            request.session["store_id"] = store_id
-            context["account_type"] = userinfo.account_type
-            context["Store name"] = Store.objects.get(store_id=store_id).store_name
-            context["user"] = request.user
-            
-        else:
-            return HttpResponse("Sorry, no stores found with that ID.")
-            #Could put a seperate search page for finding a store.
-
-
-    context = {"products":products,
-                   "orders":orders,
-                   "purchases":purchases,
-                   "customers":customers,
-                   "employees":employees}
->>>>>>> 804bb3482eeade48020eaaa103127e05e10bf719
     
     return render(request,"manage_store.html",context)
 
