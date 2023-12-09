@@ -23,6 +23,7 @@ def index(request):
 
 def add_product_to_purchase(request,store_id,product_id,quantity):
     product = Product.objects.get(product_id=product_id)
+        
     if "products_in_purchase" in request.session:
         print(type(product_id))
         products_in_purchase = request.session["products_in_purchase"]
@@ -98,7 +99,11 @@ def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_
     #loop through items and create items in purchase
     for product in request.session.get("products_in_purchase"):
         product_object = Product.objects.get(product_id=product)
+        
         quantity = request.session.get("products_in_purchase").get(product)[1]
+        product_object.update_stock(-quantity)
+        #TODO STOCK IS BEING CHANGED HERE
+        
         new_product_in_purchase = ProductInPurchase(purchase_info_object=new_purchase,product=product_object,quantity=quantity)
         new_product_in_purchase.save()
 
