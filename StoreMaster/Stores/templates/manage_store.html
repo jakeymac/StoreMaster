@@ -140,6 +140,7 @@
 
     <a href="{% url 'Stores:new_purchase' request.session.store_id %}"><button>New Purchase</button></a>
 
+<<<<<<< HEAD
 
     {% if request.user.userinfo.account_type == "admin" or request.user.userinfo.account_type == "manager" %}
         
@@ -204,6 +205,14 @@
     {% endif %}
     <!--Admin and manager only stuff-->
   
+=======
+    <!--Admin and manager only stuff-->
+    <h3>Customer Search</h3>
+
+    <h3>Employee Search</h3>
+
+    <a href="{% url 'Products:add_product' store_id=request.session.store_id %}"><button>Add Product</button></a>
+>>>>>>> 804bb3482eeade48020eaaa103127e05e10bf719
 
     <h3>New Employee or Manager </h3>
 

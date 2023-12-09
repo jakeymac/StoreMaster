@@ -17,10 +17,15 @@ urlpatterns = [
     path('store_home/<int:store_id>',views.store_home,name="store_home"),
     path('view_customer_cart/<int:user_id>',views.view_customer_cart,name="view_customer_cart"),
     path('edit_customer_cart/<int:user_id>',views.edit_customer_cart,name="edit_customer_cart"),
+<<<<<<< HEAD
     path('new_purchase/<int:store_id>',views.new_purchase,name="new_purchase"),
     path('add_product_to_purchase/<int:store_id>/<int:product_id>/<int:quantity>',views.add_product_to_purchase,name="add_product_to_purchase"),
     path('employee_view_purchase/<int:purchase_id>',views.employee_view_purchase,name="employee_view_purchase"),
     path('view_shipment/<int:shipment_id>',views.view_shipment,name='view_shipment'),\
     path('view_all_shipments/<int:store_id>',views.view_shipment,name='view_all_shipments')
     
+=======
+    path('new_purchase/<int:store_id>',views.new_purchase,name='new_purchase'),
+
+>>>>>>> 804bb3482eeade48020eaaa103127e05e10bf719
 ]
