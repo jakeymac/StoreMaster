@@ -19,6 +19,7 @@ class Product(models.Model):
     product_description = models.CharField(max_length=1000)
     product_price = models.FloatField()
     product_location = models.CharField(max_length=10)
+    low_stock_quantity = models.IntegerField()
 
     def __str__(self):
         return self.product_name

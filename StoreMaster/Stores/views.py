@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms.models import model_to_dict
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 
@@ -267,9 +268,42 @@ def manage_store_redirect_from_home(request):
         return render(request,"manage_store_home.html",{"load":True})
     return HttpResponse("testing MANAGE STORE REDIRECT")
 
+def employee_view_customer(request,customer_id):
+    customer = CustomerInfo.objects.get(user_id=customer_id)
+
+    context={"customer":customer}
+    return render(request,"employee_view_customer.html",context=context)
+
+def employee_view_employee(request,employee_id):
+    user_info = UserInfo.objects.get(user_id=employee_id)
+    user = User.objects.get(userinfo=user_info)
+    employee = EmployeeInfo.objects.get(user=user)
+
+    context={"employee":employee}
+    return render(request,"employee_view_employee.html",context=context)
+
+
+def employee_view_product(request,product_id):
+    product = Product.objects.get(product_id=product_id)
+    context={"product":product}
+
+    return render(request,"employee_view_product.html",context=context)
+
+def view_shipment(request,shipment_id):
+    shipment = Shipment.objects.get(shipment_id=shipment_id)
+    context = {"shipment":shipment}
+    return render(request,"view_shipment.html",context=context)
+
+def view_all_shipments(request,store_id):
+    store = Store.objects.get(store_id=store_id)
+    shipments = Shipment.objects.filter(destination_store=store)
+
+    context={"shipments":shipments}
+    return render(request,"view_all_shipments.html",context=context)
 
 @login_required(login_url='/login_employee')
 def manage_store(request,store_id):
+    messages.error(request,"HELLO WORLD")
     store = Store.objects.get(store_id=store_id)
     products = Product.objects.filter(store=store)
     orders = Order.objects.filter(store=store)
@@ -646,12 +680,6 @@ def confirm_store_registration(request):
         del request.session["manager_info"]
 
     return HttpResponse("HI")
-
-def view_shipment(request,shipment_id):
-    print(shipment_id)
-    pass
-def view_all_shipments(request,store_id):
-    pass
 
 
 
