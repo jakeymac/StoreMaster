@@ -22,8 +22,6 @@ model_dict = {"manager":ManagerInfo,
               "employee":EmployeeInfo,
               "customer":CustomerInfo}
 
-
-
 def StoreMasterHome(request):
     if request.method == 'POST':
         pass
@@ -31,11 +29,48 @@ def StoreMasterHome(request):
         return render(request,"home.html",{})
     
 
+
 def employee_view_customer(request,customer_id):
     customer = CustomerInfo.objects.get(user_id=customer_id)
 
     context={"customer":customer}
     return render(request,"employee_view_customer.html",context=context)
+
+def employee_edit_customer(request,customer_id):
+    customer = CustomerInfo.objects.get(user=User.objects.get(id=user_id))
+    new_form = EditCustomerForm(instance=customer)
+    context={"form":new_form}
+
+    if request.method == "POST":
+        errors = []
+        edited_form = EditCustomerForm(request.POST,instance=customer)
+        context["form"] = edited_formz
+        if edited_form.is_valid():
+            if edited_form.cleaned_data["username"] != customer.username:
+                if User.objects.filter(username=edited_form.cleaned_data["username"]).exists():
+                    #TODO Error for repeated username, edit User object
+                    errors.append("That username is already in use")
+
+            if edited_form.cleaned_data["email_address"] != customer.email_address:
+                if edited_form.cleaned_data["email_address"] in User.objects.values_list('email_address', flat=True):
+                    #TODO Error for repeated email, edit User object
+                    errors.append("That email is already in use.")
+
+            if edited_form.cleaned_data["password"] != customer.password:
+                #TODO Edit user object
+                customer.user.password = edited_form.cleaned_data["password"]
+                customer.password = edited_form.cleaned_data["password"]
+                customer.user.save()
+                customer.save()
+
+
+            if not errors:
+                context["errors"] = errors
+            else:
+                edited_form.save()
+                return redirect("Accounts:view_customer",user_id)
+        
+    return render(request,"edit_customer.html",context=context)
 
 def employee_view_employee(request,employee_id):
     user_info = UserInfo.objects.get(user_id=employee_id)
@@ -81,32 +116,39 @@ def view_employee(request,user_id):
 
 def edit_customer(request,user_id):
     customer = CustomerInfo.objects.get(user=User.objects.get(id=user_id))
+    new_form = EditCustomerForm(instance=customer)
+    context={"form":new_form}
 
     if request.method == "POST":
+        errors = []
         edited_form = EditCustomerForm(request.POST,instance=customer)
+        context["form"] = edited_formz
         if edited_form.is_valid():
             if edited_form.cleaned_data["username"] != customer.username:
-                if edited_form.cleaned_data["username"] in User.objects.values_list('username', flat=True):
+                if User.objects.filter(username=edited_form.cleaned_data["username"]).exists():
                     #TODO Error for repeated username, edit User object
-                    pass
-
-            if edited_form.cleaned_data["password"] != customer.password:
-                #TODO Edit user object
-                pass
+                    errors.append("That username is already in use")
 
             if edited_form.cleaned_data["email_address"] != customer.email_address:
                 if edited_form.cleaned_data["email_address"] in User.objects.values_list('email_address', flat=True):
                     #TODO Error for repeated email, edit User object
-                    pass 
+                    errors.append("That email is already in use.")
 
-            edited_form.save()
-            return redirect("Accounts:view_customer",user_id)
-    else:
-        new_form = EditCustomerForm(instance=customer)
-        context={"form":new_form}
+            if edited_form.cleaned_data["password"] != customer.password:
+                #TODO Edit user object
+                customer.user.password = edited_form.cleaned_data["password"]
+                customer.password = edited_form.cleaned_data["password"]
+                customer.user.save()
+                customer.save()
 
-    
-        return render(request,"edit_customer.html",context=context)
+
+            if not errors:
+                context["errors"] = errors
+            else:
+                edited_form.save()
+                return redirect("Accounts:view_customer",user_id)
+        
+    return render(request,"edit_customer.html",context=context)
 
 def edit_user_view(request,user_id):
     #Update info on same object as long as the object is the same account_type. Also needs to check if username or password was updated

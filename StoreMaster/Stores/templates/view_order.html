@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="order-information-div">
+    <h1>Order ID: {{order.order_id}}</h1>
+    <h3>Customer: {{order.customer_id.first_name}} {{order.customer_id.last_name}}</h3>
+    h3>Total: ${{order.order_total}}</h3>
+    <h2>Products In Order</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Sample data, replace this with your actual product data -->
+            <tr>
+                <td>1</td>
+                <td>Product A</td>
+                <td>$19.99</td>
+                <td>50</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Product B</td>
+                <td>$29.99</td>
+                <td>30</td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+    <a href="{% url 'Accounts:view_user' order.customer_id.user.userinfo.user_id %}"><button>Back to account overview</button></a>
+</div>
+
+{% endblock %}
