@@ -272,8 +272,12 @@ def stock_product_from_shipment(request,shipment_id,product_id,render_page=True)
     product = Product.objects.get(product_id=product_id)
     product_in_shipment_object = ProductInShipment.objects.get(shipment_id=shipment_id,product=product)
     product.update_stock(product_in_shipment_object.quantity)
-    product_in_shipment_object.status = "Stocked"
+    product_in_shipment_object.status = "stocked"
     product_in_shipment_object.save()
+
+    shipment = Shipment.objects.get(shipment_id=shipment_id)
+    shipment.status = "stocking in progress"
+    shipment.save()
     if render_page: #Used if stocking all products.
         return redirect("Stores:view_shipment", shipment_id)
 
@@ -282,12 +286,12 @@ def stock_all_products_from_shipment(request, shipment_id):
     shipment = Shipment.objects.get(shipment_id=shipment_id)
     product_in_shipment_objects = ProductInShipment.objects.filter(shipment=shipment)
     for product in product_in_shipment_objects:
-        if product.status == "Not Stocked":
+        if product.status == "not stocked":
             stock_product_from_shipment(request,shipment_id,product.product.product_id,render_page=False)
-            product.status = "Stocked"
+            product.status = "stocked"
             product.save()
 
-    shipment.status = "Closed"
+    shipment.shipment_status = "closed"
     shipment.save()
     
     return redirect("Stores:view_shipment", shipment_id)
@@ -302,8 +306,14 @@ def view_shipment(request,shipment_id):
             shipment.save()
 
         elif "product_status_selector" in request.POST:
+            import pdb
+            pdb.set_trace()
             new_status = request.POST.get("product_status_selector")
             shipment = Shipment.objects.get(shipment_id=shipment_id)
+            if new_status == "not stocked":
+                shipment.shipment_status = "stocking in progress"
+                shipment.save()
+
             product_id = request.POST.get("product_id")
             product = Product.objects.get(product_id=product_id)
             product_in_shipment = ProductInShipment.objects.get(product=product,shipment=shipment)
@@ -323,7 +333,7 @@ def view_all_shipments(request,store_id):
     store = Store.objects.get(store_id=store_id)
     shipments = Shipment.objects.filter(destination_store=store)
 
-    context={"shipments":shipments}
+    context={"shipments":shipments,"store_id":store_id}
     return render(request,"view_all_shipments.html",context=context)
 
 def get_order_information(order_id):

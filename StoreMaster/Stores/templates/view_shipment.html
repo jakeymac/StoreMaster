@@ -33,6 +33,7 @@ shipment time
                         <select name="shipment_status_selector" >
                             <option value="in-transit" {% if shipment.shipment_status == 'in-transit' %}selected{% endif %}>In Transit</option>
                             <option value="delivered" {% if shipment.shipment_status == 'delivered' %}selected{% endif %}>Delivered</option>
+                            <option value="stocking in progress" {% if shipment.shipment_status == 'stocking in progress' %}selected{% endif %}>Stocking in Progress</option>
                             <option value="closed" {% if shipment.shipment_status == 'closed' %}selected{% endif %}>Closed</option>
                         </select>
                         <button type="submit">Update Status</button>
@@ -63,14 +64,14 @@ shipment time
                         <form id="product-status-form" method="POST">
                             {% csrf_token %}
                             <select name="product_status_selector" >
-                                <option value="Not Stocked" {% if product.status == 'Not Stocked' %}selected{% endif %}>Not Stocked</option>
-                                <option value="Stocked" {% if product.status == 'Stocked' %}selected{% endif %}>Stocked</option>
+                                <option value="not stocked" {% if product.status == 'not stocked' %}selected{% endif %}>Not Stocked</option>
+                                <option value="stocked" {% if product.status == 'stocked' %}selected{% endif %}>Stocked</option>
                             </select>
                             <input type="hidden" name="product_id" value={{product.product.product_id}}>
                             <button type="submit">Update Status</button>
                         </form>
                     </td>
-                    <td><a href="{% url 'Stores:stock_product_from_shipment' shipment_id=shipment.shipment_id product_id=product.product.product_id %}"><button {% if product.status == "Stocked" %}disabled{%endif%}>Stock in inventory</button></a></td>
+                    <td><a href="{% url 'Stores:stock_product_from_shipment' shipment_id=shipment.shipment_id product_id=product.product.product_id %}"><button {% if product.status == "stocked" %}disabled{%endif%}>Stock in inventory</button></a></td>
                 </tr>
             {% endfor %}
             
@@ -78,4 +79,6 @@ shipment time
     </table>
     <a href="{% url 'Stores:stock_all_products_from_shipment' shipment.shipment_id %}"><button>Stock All Products</button></a>
 </div>
+
+<a href="{% url 'Stores:view_all_shipments' shipment.destination_store.store_id %}"><button>Back to all shipments</button></a>
 
