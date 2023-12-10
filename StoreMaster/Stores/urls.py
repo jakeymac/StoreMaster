@@ -22,8 +22,11 @@ urlpatterns = [
     path('employee_view_purchase/<int:purchase_id>',views.employee_view_purchase,name="employee_view_purchase"),
     path('view_shipment/<int:shipment_id>',views.view_shipment,name='view_shipment'),
     path('view_all_shipments/<int:store_id>',views.view_all_shipments,name='view_all_shipments'),
+    path('add_new_shipment/<int:store_id>',views.add_new_shipment,name='add_new_shipment'),
     path('employee_view_order/<int:order_id>',views.employee_view_order,name='employee_view_order'),
     path('view_order/<int:order_id>',views.view_order,name='view_order'),
     path('stock_product_from_shipment/<int:shipment_id>/<int:product_id>',views.stock_product_from_shipment,name='stock_product_from_shipment'),
-    path('stock_all_products_from_shipment/<int:shipment_id>',views.stock_all_products_from_shipment,name='stock_all_products_from_shipment')
+    path('stock_all_products_from_shipment/<int:shipment_id>',views.stock_all_products_from_shipment,name='stock_all_products_from_shipment'),
+    path('confirm_new_order/<int:customer_id>',views.confirm_new_order,name='confirm_new_order'),
+    path('finalize_new_order/<int:customer_id>',views.finalize_new_order,name='finalize_new_order'),
 ]   

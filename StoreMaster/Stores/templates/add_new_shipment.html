@@ -1,0 +1,45 @@
+<h1>Add New Shipment</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Add Shipment</button>
+</form>
+
+<div id="search-results">
+    {% if products %}
+        {% for product in products %}
+            <div>
+                <p>product.product_name</p>
+                <form method="POST">
+                    <input type="hidden" value={{product.product_id}} name="product_id">
+                    <select name="quantity_selector" required>
+                        {% for i in range(1000) %}
+                            <option value={{i}}>{{i}}</option>
+                        {% endfor %}
+                    </select>   
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No products found</p>
+    {% endif %}
+</div>
+
+<div id="products-added-to-shipment">
+    {% if request.session.products_in_shipment %}
+        {% for product,details in rqeuest.session.products_in_shipment %}
+            <p>{{details.0}} - {{details.1}}</p>
+            <a href="{% url 'Stores:remove_product_from_shipment product'%}"><button>Remove</button></a>
+        {% endfor %}
+    {% else %}
+        <p>No products added to shipment yet</p>
+    {% endif %}
+</div>
+
+<h3>Import Shipment details from a JSON file</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{json_form.as_p}}
+    <button type="submit">Upload</button>
+</form>

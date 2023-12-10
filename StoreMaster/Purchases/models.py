@@ -9,12 +9,12 @@ from Accounts.models import EmployeeInfo, ManagerInfo, AdminInfo, CustomerInfo
 class Purchase(models.Model):
     purchase_id = models.AutoField(primary_key = True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    employee_id = models.ForeignKey(EmployeeInfo, on_delete=models.CASCADE, related_name="employee",null=True)
-    manager_id = models.ForeignKey(ManagerInfo,on_delete=models.CASCADE,related_name="manager",null=True)
-    admin_id = models.ForeignKey(AdminInfo,on_delete=models.CASCADE, related_name="admin",null=True)
-    customer_id = models.ForeignKey(CustomerInfo,on_delete=models.CASCADE, related_name="customer",null=True)
-    first_name = models.CharField(max_length=25,null=True)
-    last_name = models.CharField(max_length=30,null=True)
+    employee_id = models.ForeignKey(EmployeeInfo, on_delete=models.CASCADE, related_name="employee",null=True,blank=True)
+    manager_id = models.ForeignKey(ManagerInfo,on_delete=models.CASCADE,related_name="manager",null=True,blank=True)
+    admin_id = models.ForeignKey(AdminInfo,on_delete=models.CASCADE, related_name="admin",null=True,blank=True)
+    customer_id = models.ForeignKey(CustomerInfo,on_delete=models.CASCADE, related_name="customer",null=True,blank=True)
+    first_name = models.CharField(max_length=25,null=True,blank=True)
+    last_name = models.CharField(max_length=30,null=True,blank=True)
     purchase_date = models.DateTimeField()
     purchase_total = models.FloatField() #could update this model for tax registration
 

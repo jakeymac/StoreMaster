@@ -1,34 +1,90 @@
-<h1>Add New Product</h1>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="{{ form.product_stock.id_for_label }}">Product Stock:</label>
-    {{ form.product_stock }}
-    <br>
+<style>body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
 
-    <label for="{{ form.product_image.id_for_label }}">Product Image:</label>
-    {{ form.product_image }}
-    <br>
+#form-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-    <label for="{{ form.product_name.id_for_label }}">Product Name:</label>
-    {{ form.product_name }}
-    <br>
+h1 {
+    text-align: center;
+    color: #333;
+}
 
-    <label for="{{ form.product_description.id_for_label }}">Product Description:</label>
-    {{ form.product_description }}
-    <br>
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
 
-    <label for="{{ form.product_price.id_for_label }}">Product Price:</label>
-    {{ form.product_price }}
-    <br>
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
 
-    <label for="{{ form.product_location.id_for_label }}">Product Location:</label>
-    {{ form.product_location }}
-    <br>
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
 
-    <label for="{{ form.low_stock_quantity.id_for_label }}">Low Stock Quantity:</label>
-    {{ form.low_stock_quantity }}
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+</style>
+<div id="form-container">
+    <h1>Add New Product</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="{{ form.product_stock.id_for_label }}">Product Stock:</label>
+        {{ form.product_stock }}
+        <br>
     
-    {{ form.store }}
+        <label for="{{ form.product_image.id_for_label }}">Product Image:</label>
+        {{ form.product_image }}
+        <br>
+    
+        <label for="{{ form.product_name.id_for_label }}">Product Name:</label>
+        {{ form.product_name }}
+        <br>
+    
+        <label for="{{ form.product_description.id_for_label }}">Product Description:</label>
+        {{ form.product_description }}
+        <br>
+    
+        <label for="{{ form.product_price.id_for_label }}">Product Price:</label>
+        {{ form.product_price }}
+        <br>
+    
+        <label for="{{ form.product_location.id_for_label }}">Product Location:</label>
+        {{ form.product_location }}
+        <br>
+    
+        <label for="{{ form.low_stock_quantity.id_for_label }}">Low Stock Quantity:</label>
+        {{ form.low_stock_quantity }}
+        
+        {{ form.store }}
+    
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'Stores:manage_store' request.session.store_id %}"><button>Back to management portal</button></a>
 
-    <button type="submit">Save</button>
-</form>
+</div>

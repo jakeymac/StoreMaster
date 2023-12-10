@@ -1,5 +1,39 @@
 
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
 
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
 <h2>Shipment Information</h2>
 
 <table>
@@ -27,6 +61,7 @@
         {% endfor%}     
     </tbody>
 </table>
+<a href="{% url 'Stores:add_new_shipment' request.session.store_id %}"><button>Add a new shipment</button></a>
 <a href="{% url 'Stores:manage_store' store_id %}"><button>Back to management portal</button></a>
 </body>
 </html>

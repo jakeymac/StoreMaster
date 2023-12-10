@@ -4,6 +4,7 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script>
             $(document).ready(function () {
+                $("#existing-customer-div").show();
                 $("#new-customer-div").hide();
                 // Event listener for radio buttons
                 $("#existing-customer-radio").change(function () {
@@ -27,72 +28,128 @@
                 });
             });
         </script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                overflow: hidden;
+            }
+
+            .flex-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                height:25%;
+            }
+
+            .search-section,
+            #selected-products-div {
+                width: 48%; /* Adjust width as needed */
+                box-sizing: border-box;
+                padding: 10px;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .customer-div {
+                width: 50%;
+                box-sizing: border-box;
+                padding: 10px;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                margin-left:25%;
+            }
+
+            #new-customer-div,
+            #existing-customer-div {
+                display: none;
+            }
+        </style>
     </head>
     <body>
-        <div class="search-section">
-            <h3>Product Search</h3>
-            <form id="product-search-form" method="POST">
-                {% csrf_token %}
-                <input type="text" name="product_search" placeholder="Product Search">
-                <button type="submit">Search</button>
-            </form>
+        <div class="container">
+            <div class="flex-container">
+                <div class="search-section">
+                    <h3>Product Search</h3>
+                    <form id="product-search-form" method="POST">
+                        {% csrf_token %}
+                        <input type="text" name="product_search" placeholder="Product Search">
+                        <button type="submit">Search</button>
+                    </form>
 
-            \
-            {% if products %}
-                <div class="search-results-section" id="product-results-div">
-                    {% for product in products %}
-                        <div class="product">
-                            <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
-                            <p>{{product.product_price}}</p>
-                            <p>{{product.product_location}}</p>
-                            <p>{{product.product_stock}}</p>
-                            <a href="{% url 'Stores:add_product_to_purchase' store_id=store_id product_id=product.product_id quantity=1 %}"><button>Add to purchase</button></a>
+                    {% if products %}
+                        <div class="search-results-section" id="product-results-div">
+                            {% for product in products %}
+                                <div class="product">
+                                    <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
+                                    <p>{{product.product_price}}</p>
+                                    <p>{{product.product_location}}</p>
+                                    <p>{{product.product_stock}}</p>
+                                    <a href="{% url 'Stores:add_product_to_purchase' store_id=store_id product_id=product.product_id quantity=1 %}"><button>Add to purchase</button></a>
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+                    {% else %}
+                        <h3 class="results-label">Sorry, no products found</h3>
+                    {% endif %}
                 </div>
-            {% else %}
-                <h3 class="results-label">Sorry, no products found</h3>
-            {% endif %}
-        </div>
-        <div id="selected-products-div">
-            {% if request.session.products_in_purchase %}
-            {% for product, details in request.session.products_in_purchase.items %}
-                {% with details=details %}
-                    <p>Details: {{ details.0 }}</p>3
-                {% endwith %}
-                    
-                {% endfor %}
-            {% else %}
-                <p>No products added yet</p>
-            {% endif %}
-        </div>
+                <div id="selected-products-div">
+                    {% if request.session.products_in_purchase %}
+                        {% for product, details in request.session.products_in_purchase.items %}
+                            {% with details=details %}
+                                <p>Details: {{ details.0 }}</p>
+                                <p>Quantity: {{details.1}}</p>
+                            {% endwith %}
+                                
+                            {% endfor %}
+                    {% else %}
+                        <p>No products added yet</p>
+                    {% endif %}
+                </div>
 
-        <label for="customer_selection_existing">Existing Customer</label>
-        <input type="radio" name="customer_selection_existing" id="existing-customer-radio" checked/>
-        <label for="customer_selection_new">New Customer</label>
-        <input type="radio" name="customer_selection_new" id="new-customer-radio"/>
-        
-        <div id="new-customer-div">
-            <h3>New Customer</h3>
-            <form id="new-customer-finalize-purchase-form" method="POST">
-                {% csrf_token %} 
-                {{new_customer_form.as_p}}
-                <button type="submit">Finalize</button>
-            </form>
-        </div>
-    
-        <div id="existing-customer-div">
-            <h3>Existing Customer</h3>
-            <form id="existing-customer-finalize-purchase-form" method="POST">
-                {% csrf_token %} 
-                <select name="customer_selector">
-                    <option value="">Select a customer</option>
-                    {% for customer_option in customer_options %}
-                        <option value="{{ customer_option.0 }}">{{ customer_option.1 }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Finalize</button>
-            </form>
+
+                
+                
+            </div>
+            <div class="customer-div">
+                <label for="customer_selection_existing">Existing Customer</label>
+                <input type="radio" name="customer_selection_existing" id="existing-customer-radio" checked/>
+                <label for="customer_selection_new">New Customer</label>
+                <input type="radio" name="customer_selection_new" id="new-customer-radio"/>
+                
+                <div id="new-customer-div">
+                    <h3>New Customer</h3>
+                    <form id="new-customer-finalize-purchase-form" method="POST">
+                        {% csrf_token %} 
+                        {{new_customer_form.as_p}}
+                        <input type="hidden" name="new_indicator">
+                        <button type="submit">Finalize</button>
+                    </form>
+                </div>
+                <div id="existing-customer-div">
+                    <h3>Existing Customer</h3>
+                    <form id="existing-customer-finalize-purchase-form" method="POST">
+                        {% csrf_token %} 
+                        <select name="customer_selector">
+                            <option value="">Select a customer</option>
+                            {% for customer_option in customer_options %}
+                                <option value="{{ customer_option.0 }}">{{ customer_option.1 }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Finalize</button>
+                    </form>
+                </div>
+
+            </div>
+
         </div>
     </body>
-</html>

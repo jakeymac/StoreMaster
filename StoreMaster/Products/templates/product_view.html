@@ -17,7 +17,7 @@
         }
 
         .product-image {
-            width: 45%;
+            width: 100px;
             text-align: center;
         }
 
@@ -79,14 +79,6 @@
             <label>In stock:</label> {{ product.product_stock }}<br>
             <label>Location:</label> {{ product.product_location }}<br>
             
-            {% if user.is_authenticated %}
-                {% if user.userinfo.account_type != "customer" %}
-                    <a href="{% url 'Products:product_edit_view' product.product_id %}">
-                        <button>Edit</button>
-                    </a>
-                    <a href = "{% url 'Stores:manage_store' product.store_id %}"><button>Back to management portal</button></a>
-                {% endif %}
-            {% endif %}
         </div>
 
         <div class="product-image">
@@ -97,17 +89,20 @@
                 
             {% endif %}
         </div>
-        <div id="add-to-cart-div">
-            <form id="add-to-cart-form" method="POST">
-                {% csrf_token %}
-                <select name="quantity" id="quantity-selector">
-                    {% for num in quantities %}
-                        <option value="{{ num }}">{{ num }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Add to cart</button>
-            </form>
-        </div>
+        {% if user.is_authenticated and user.userinfo.account_type == "customer" %}
+
+            <div id="add-to-cart-div">
+                <form id="add-to-cart-form" method="POST">
+                    {% csrf_token %}
+                    <select name="quantity" id="quantity-selector">
+                        {% for num in quantities %}
+                            <option value="{{ num }}">{{ num }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Add to cart</button>
+                </form>
+            </div>
+        {% endif %}
     </div>
     
 {% endblock %}

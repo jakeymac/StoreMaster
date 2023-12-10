@@ -10,7 +10,7 @@ from .models import Store
 class StoreRegistrationForm(forms.Form):
     store_name = forms.CharField(required=True,label="Store Name",max_length=50)
     store_address = forms.CharField(required=True,label="Address",max_length=200)
-    store_line_two = forms.CharField(required=True,label="Address Line Two",max_length=40)
+    store_line_two = forms.CharField(required=False,label="Address Line Two",max_length=40)
     store_city = forms.CharField(required=True,label="City",max_length=50)
     store_state = forms.CharField(required=True,label="State",max_length=50)
     store_zip = forms.IntegerField(required=True,label="ZIP Code",max_value=999999)

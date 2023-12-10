@@ -7,10 +7,9 @@ from Accounts.models import CustomerInfo
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key = True)
-    store = models.OneToOneField(Store, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
     customer_id = models.ForeignKey(CustomerInfo,on_delete=models.CASCADE)
     order_date = models.DateTimeField()
-    destination = models.CharField(max_length = 100, null = True, blank = True)
     order_total = models.FloatField()
 
     shipping_address = models.CharField(max_length=200,null=True,blank=True)

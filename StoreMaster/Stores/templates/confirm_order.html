@@ -1,0 +1,70 @@
+<style>
+    body {
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        #checkout-information-container {
+            width: 300px;
+            margin: 35px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        p {
+            margin-top: 20px;
+            text-align: center;
+        }
+</style>
+<div id="checkout-information-container">
+    <h1>Confirm Checkout</h1>
+    <p>Confirm your delivery address below</p>
+    <form id="customer-details-confirmation-form" method="POST">
+        {% csrf_token %}
+        <label for="address">Address</label>
+        <input type="text" name="address" value="{{customer.address}}">
+        <label for="address_line_two">Address Line Two</label>
+        <input type="text" name="address_line_two" value="{{customer.line_two}}">
+        <label for="city">City</label>
+        <input type="text" name="city" value="{{customer.city}}">
+        <label for="state">State</label>
+        <input type="text" name="state" value="{{customer.state}}">
+        <label for="zip">ZIP Code</label>
+        <input type="number" name="zip" value={{customer.zip}}>
+        <button type="submit">Confirm</button>
+    </form>
+</div>

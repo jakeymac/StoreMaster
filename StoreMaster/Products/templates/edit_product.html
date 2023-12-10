@@ -1,35 +1,95 @@
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="{{ form.product_stock.id_for_label }}">Product Stock:</label>
-    {{ form.product_stock }}
-    <br>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
 
-    <label for="{{ form.product_image.id_for_label }}">Product Image:</label>
-    {{ form.product_image }}
-    <br>
+#edit-information-container {
+    width: 450px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-    <label for="{{ form.product_name.id_for_label }}">Product Name:</label>
-    {{ form.product_name }}
-    <br>
+h1 {
+    text-align: center;
+    color: #333;
+}
 
-    <label for="{{ form.product_description.id_for_label }}">Product Description:</label>
-    {{ form.product_description }}
-    <br>
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 25%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#back-button {
+    margin-left:975px;
+    width:10%;
+}
+</style>
+<div id="edit-information-container">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="{{ form.product_stock.id_for_label }}">Product Stock:</label>
+        {{ form.product_stock }}
+        <br>
     
-    <label for="{{ form.product_price.id_for_label }}">Product Price:</label>
-    {{ form.product_price }}
-    <br>
-
-    <label for="{{ form.product_location.id_for_label }}">Product Location:</label>
-    {{ form.product_location }}
-    <br>
-
-    <label for="{{ form.low_stock_quantity.id_for_label }}">Low Stock Quantity:</label>
-    {{ form.low_stock_quantity }}
-
-    {{ form.store }}
-
-    <button type="submit">Save</button>
+        <label for="{{ form.product_image.id_for_label }}">Product Image:</label>
+        {{ form.product_image }}
+        <br>
     
-</form>
- <a href = "{% url 'Products:employee_view_product' product_id %}"><button>Back</button></a>
+        <label for="{{ form.product_name.id_for_label }}">Product Name:</label>
+        {{ form.product_name }}
+        <br>
+    
+        <label for="{{ form.product_description.id_for_label }}">Product Description:</label>
+        {{ form.product_description }}
+        <br>
+        
+        <label for="{{ form.product_price.id_for_label }}">Product Price:</label>
+        {{ form.product_price }}
+        <br>
+    
+        <label for="{{ form.product_location.id_for_label }}">Product Location:</label>
+        {{ form.product_location }}
+        <br>
+    
+        <label for="{{ form.low_stock_quantity.id_for_label }}">Low Stock Quantity:</label>
+        {{ form.low_stock_quantity }}
+    
+        {{ form.store }}
+    
+        <button type="submit">Save</button>
+        
+    </form>
+</div>
+<a href = "{% url 'Products:employee_view_product' product_id %}"><button id="back-button">Back</button></a>

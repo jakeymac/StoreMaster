@@ -59,18 +59,19 @@
     </style>
 </head>
 <body>
-    <h1>Login</h1>
+    
     {% if error_message %}
         <p>{{ error_message }}</p>
     {% endif %}
+    <div id="login-container">
     <form action="{% url 'Accounts:login_employee' %}" method="POST">
         {% csrf_token %}
-        <div id="login-container">
+            <h1>Login</h1>
             {{ form.username.label_tag }} {{ form.username}}
             {{ form.password.label_tag }} {{ form.password }}
             <button type="submit">Login</button>
         </div>
     </form>
-    <p>Don't have an account? <a href="{% url 'Accounts:register_employee' %}">Sign up</a></p>
+    <p>Forgot password? <a href="{% url 'Accounts:password_reset' %}">Reset</a></p>
 </body>
 </html>

@@ -25,7 +25,8 @@
             justify-content: center;
             margin-top: 20px;
             overflow-y: auto;
-            max-height: 500px;
+            max-height: 1000px;
+            flex-direction:row;
         }
 
         .product {
@@ -54,6 +55,30 @@
         button:hover {
             background-color: #2980b9;
         }
+
+        #product_search_bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        }
+
+        #search {
+            width: 300px; /* Adjust the width as needed */
+            padding: 10px; /* Adjust the padding as needed */
+            font-weight: bold; /* Set the text input to a thicker font */
+            border: 2px solid #333; /* Add a border for a more prominent look */
+            border-radius: 5px; /* Add some border-radius for rounded corners */
+        }
+
+        select {
+            margin-left: 10px; /* Add some space between the input and the select */
+        }
+
+        #search-button {
+            margin-left:10px;
+        }
+
     </style>
 </head>
 
@@ -61,7 +86,15 @@
     <form id="product_search_bar" method="POST">
         {% csrf_token %}
         <input type="text" id="search" name="search-bar" placeholder="Search for products...">
-        <button type="submit">Search</button>
+        <select id="sort-selector" name="sort-selector">
+            <option value=""selected>Sort</option>
+            <option value="alphabetical_descend">A-Z</option>
+            <option value="alphabetical_ascend">Z-A</option>
+            <option value="price-low-to-high">Price: low to high</option>
+            <option value="price-high-to-low">Price: high to low</option>
+            
+        </select>
+        <button type="submit" id="search-button">Search</button>
     </form>
 
     <div id="content">
@@ -73,7 +106,7 @@
                             <img src="{{product.product_image.url}}" alt="{{product.product_name}}">
                         {% endif %}
                         <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
-                        <p>{{product.product_price}}</p>
+                        <p>${{product.product_price}}</p>
                     </div>
                 {% endfor %}
             </div>

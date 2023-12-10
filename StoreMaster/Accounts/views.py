@@ -4,6 +4,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
 
 from .forms import CustomerRegistrationForm,EmployeeRegistrationForm,UserSelectorForm,EditManagerForm,EditAdminForm, EditCustomerForm, EditEmployeeForm
 
@@ -27,6 +30,18 @@ def StoreMasterHome(request):
         pass
     else:
         return render(request,"home.html",{})
+    
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name="password_reset.html"
+    email_template_name="password_reset_email.html"
+    subject_template_name="password_reset_subject.txt"
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('')
+
     
 
 
@@ -502,6 +517,7 @@ def register_employee(request):
             last_name = new_form.cleaned_data["last_name"]
             other_information = new_form.cleaned_data["other_information"]
             birthday = new_form.cleaned_data["birthday"]
+            stock_notifications = new_form.cleaned_data.get("stock_notifications")
 
             store = new_form.cleaned_data["store"]
             if store:
@@ -520,6 +536,7 @@ def register_employee(request):
                 #raise forms.ValidationError("This email is already in use")
             
             else:
+                
                 user = User(username=username,
                             password=make_password(password), 
                             email=email_address)
@@ -537,7 +554,7 @@ def register_employee(request):
                                                 other_information=other_information,
                                                 birthday=birthday,
                                                 store=store_object,
-                                                account_type="employee")
+                                                account_type="employee",)
                     new_employee.save()
 
                 #TODO add verification to create a manager account
@@ -552,7 +569,8 @@ def register_employee(request):
                                                 other_information=other_information,
                                                 birthday=birthday,
                                                 store=store_object,
-                                                account_type="manager")
+                                                account_type="manager",
+                                                stock_notifications=stock_notifications)
                     new_manager.save()
                     
                 #TODO add verification to create an admin account
@@ -572,10 +590,11 @@ def register_employee(request):
                 #customer
                 else:
                     pass
-
+                
+                #TODO add a better success page here, send directly to view employee page
                 return HttpResponse("Successssssssss")
         else:
-            
+            #TODO need to create a better error response than this
             return HttpResponse(f"INVALID FORM,\n{new_form.errors}")
     
         

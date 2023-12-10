@@ -4,264 +4,242 @@
 <head>
     <style>
         body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    max-width: 1200px; /* Set your preferred max-width */
-    margin: 0 auto; /* Center the content */
-}
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
 
-h1 {
-    margin-bottom: 10px;
-}
+        .row:after {
+            display: table;
+            clear: both;
+        }
 
-h2 {
-    margin-bottom: 20px;
-}
+        h1,
+        h2 {
+            margin-bottom: 10px;
+        }
 
-.search-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
+        h2 {
+            margin-bottom: 20px;
+        }
 
-.search-section {
-    border: 2px solid #3498db;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    height: 500px;
-    width: 300px;
-    max-height: 500px;
-    box-sizing: border-box;
-}
+        .search-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
 
-.search-section h3 {
-    text-align: center;
-}
+        .search-section {
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            height: 500px;
+            width: 30%;
+            max-height: 500px;
+            box-sizing: border-box;
+            background-color: #ecf0f1;
+        }
 
-.search-section form {
-    text-align: center;
-    margin-bottom: 10px;
-}
+        .search-results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            max-height: 380px;
+        }
 
-.search-section input {
-    padding: 5px;
-    width: 70%;
-    margin-right: 5px;
-}
+        .low-stock-product {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            box-sizing: border-box;
+            background-color: #f9ebae;
+        }
 
-.search-section button {
-    padding: 8px;
-    width: 25%;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
 
-.search-section button:hover {
-    background-color: #2980b9;
-}
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            
+        }
 
-.search-results-section {
-    overflow-y: auto;
-    max-height: 380px;
-}
+        button:hover {
+            background-color: #2980b9;
+        }
 
-.result-item {
-    margin-bottom: 15px;
-}
+        .extra-buttons button {
+            margin-top: 10px;
+            
+        }
+        .extra-buttons {
+            margin-bottom:15px;
+        }
 
-img,
-#no-image {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 10px;
-}
+        .wide-section {
+            width: 30%; /* Adjust as needed */
+        }
 
-#no-image {
-    border: 1px solid #2980b9;
-}
-
-button {
-    padding: 10px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-.results-label {
-    color: #e74c3c;
-}
-
-.shipment,
-.low-stock {
-    margin: 10px;
-    padding: 10px;
-    border: 2px solid #3498db;
-    border-radius: 10px;
-    box-sizing: border-box;
-}
-
-.extra-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
 
     </style>
 </head>
 
 <body>
-    <h1>Store Name</h1>
+    <h1>{{store.store_name}}</h1>
     <h2>Welcome, {{ request.user }}</h2>
+    <div class="row">
+        <div class="search-container">
+            <!-- Product Search Section -->
+            <div class="search-section">
+                <h3>Product Search</h3>
+                <form id="product-search-form" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="product_search" placeholder="Product Search">
+                    <button type="submit">Search</button>
+                </form>
+                {% if products %}
+                <div class="search-results-section" id="product-results-div">
+                    {% for product in products %}
+                    <div class="result-item">
+                        
+                        <a href="{% url 'Products:employee_view_product' product.product_id %}"><h2>{{product.product_name}}</h2></a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h3 class="results-label">Sorry, no products found</h3>
+                {% endif %}
+            </div>
+    
+            <!-- Order Search Section -->
+            <div class="search-section">
+                <h3>Order Search</h3>
+                <form id="order-search-form" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="order_search" placeholder="Order Search">
+                    <button type="submit">Search</button>
+                </form>
+                {% if orders %}
+                <div class="search-results-section" id="order-results-div">
+                    {% for order in orders %}
+                    <div class="result-item order">
+                        <a href="{% url 'Stores:employee_view_order' order.order_id %}"><h2>{{order.order_id}}</h2></a>
+                        <p>{{order.customer_id.first_name}} {{order.customer_id.last_name}}</p>
+                        <p>{{order.order_date}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h3 class="results-label">Sorry, no orders found</h3>
+                {% endif %}
+            </div>
+    
+            <!-- Purchase Search Section -->
+            <div class="search-section">
+                <h3>Purchase Search</h3>
+                <form id="purchase-search-form" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="purchase_search" placeholder="Purchase Search">
+                    <button type="submit">Search</button>
+                </form>
+                {% if purchases %}
+                <div class="search-results-section" id="purchase-results-div">
+                    {% for purchase in purchases %}
+                    <div class="result-item purchase">
+                        <a href="{% url 'Stores:employee_view_purchase' purchase.purchase_id %}"><h2>{{purchase.purchase_id}}</h2></a>
+                        <p>{{purchase.customer_id.first_name}} {{purchase.customer_id.last_name}}</p>
+                        <p>{{purchase.purchase_date}}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h3 class="results-label">Sorry, no purchases found</h3>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Admin and Manager Sections -->
+    {% if request.user.userinfo.account_type == "admin" or request.user.userinfo.account_type == "manager" %}
 
     <div class="search-container">
-        <!-- Product Search Section -->
+        <!-- Customer Search Section -->
         <div class="search-section">
-            <h3>Product Search</h3>
-            <form id="product-search-form" method="POST">
+            <h3>Customer Search</h3>
+            <form id="customer-search-form" method="POST">
                 {% csrf_token %}
-                <input type="text" name="product_search" placeholder="Product Search">
+                <input type="text" name="customer_search" placeholder="Customer Search">
                 <button type="submit">Search</button>
             </form>
-            {% if products %}
-            <div class="search-results-section" id="product-results-div">
-                {% for product in products %}
-                <div class="result-item">
-                    {% if product.product_image %}
-                    <img src="{{product.product_image.url}}" alt="{{product.product_name}}">
-                    {% endif %}
-                    <a href="{% url 'Products:employee_view_product' product.product_id %}"><h2>{{product.product_name}}</h2></a>
-                    <p>{{product.product_price}}</p>
-                    <p>{{product.product_location}}</p>
-                    <p>{{product.product_stock}}</p>
+            {% if customers %}
+            <div class="search-results-section" id="customer-results-div">
+                {% for customer in customers %}
+                <div class="result-item customer">
+                    <a href="{% url 'Accounts:view_user' customer.user.userinfo.user_id %}"><h2>{{customer.user_id}}</h2></a>
+                    <p>{{customer.first_name}} {{customer.last_name}}</p>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <h3 class="results-label">Sorry, no products found</h3>
+            <h3 class="results-label">Sorry, no customers found</h3>
             {% endif %}
         </div>
 
-        <!-- Order Search Section -->
+        <!-- Employee Search Section -->
         <div class="search-section">
-            <h3>Order Search</h3>
-            <form id="order-search-form" method="POST">
+            <h3>Employee Search</h3>
+            <form id="employee-search-form" method="POST">
                 {% csrf_token %}
-                <input type="text" name="order_search" placeholder="Order Search">
+                <input type="text" name="employee_search" placeholder="Employee Search">
                 <button type="submit">Search</button>
             </form>
-            {% if orders %}
-            <div class="search-results-section" id="order-results-div">
-                {% for order in orders %}
-                <div class="result-item order">
-                    <a href="{% url 'Stores:employee_view_order' order.order_id %}"><h2>{{order.order_id}}</h2></a>
-                    <p>{{order.customer_id.first_name}} {{order.customer_id.last_name}}</p>
-                    <p>{{order.order_date}}</p>
+            {% if employees %}
+            <div class="search-results-section" id="employee-results-div">
+                {% for employee in employees %}
+                <div class="result-item employee">
+                    <a href="{% url 'Accounts:view_employee' employee.user.userinfo.user_id %}"><h2>{{employee.user_id}}</h2></a>
+                    <p>{{employee.first_name}} {{employee.last_name}}</p>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <h3 class="results-label">Sorry, no orders found</h3>
+            <h3 class="results-label">Sorry, no employees found</h3>
             {% endif %}
         </div>
-
-        <!-- Purchase Search Section -->
-        <div class="search-section">
-            <h3>Purchase Search</h3>
-            <form id="purchase-search-form" method="POST">
-                {% csrf_token %}
-                <input type="text" name="purchase_search" placeholder="Purchase Search">
-                <button type="submit">Search</button>
-            </form>
-            {% if purchases %}
-            <div class="search-results-section" id="purchase-results-div">
-                {% for purchase in purchases %}
-                <div class="result-item purchase">
-                    <a href="{% url 'Stores:employee_view_purchase' purchase.purchase_id %}"><h2>{{purchase.purchase_id}}</h2></a>
-                    <p>{{purchase.customer_id.first_name}} {{purchase.customer_id.last_name}}</p>
-                    <p>{{purchase.purchase_date}}</p>
-                </div>
+        <div id="low-stock-products-div" class="search-section">
+            <h3>Low Stock Items</h3>
+            {% if low_stock_products %}
+                {% for product in low_stock_products %}
+                    <div class="low-stock-product">
+                        <p>{{product.product_id}} - {{product.product_name}}</p>
+                        <a href="{% url 'Products:employee_view_product' product.product_id %}"><button>View</button></a>
+                    </div>
                 {% endfor %}
-            </div>
             {% else %}
-            <h3 class="results-label">Sorry, no purchases found</h3>
+                <p>No low stock items</p>
             {% endif %}
         </div>
     </div>
 
-    <!-- Admin and Manager Sections -->
-    {% if request.user.userinfo.account_type == "admin" or request.user.userinfo.account_type == "manager" %}
+    
 
-        <div class="search-container">
-            <!-- Customer Search Section -->
-            <div class="search-section">
-                <h3>Customer Search</h3>
-                <form id="customer-search-form" method="POST">3
-                    {% csrf_token %}
-                    <input type="text" name="customer_search" placeholder="Customer Search">
-                    <button type="submit">Search</button>
-                </form>
-                {% if customers %}
-                <div class="search-results-section" id="customer-results-div">
-                    {% for customer in customers %}
-                    <div class="result-item customer">
-                        <a href="{% url 'Accounts:view_user' customer.user.userinfo.user_id %}"><h2>{{customer.user_id}}</h2></a>
-                        <p>{{customer.first_name}} {{customer.last_name}}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <h3 class="results-label">Sorry, no customers found</h3>
-                {% endif %}
-            </div>
 
-            <!-- Employee Search Section -->
-            <div class="search-section">
-                <h3>Employee Search</h3>
-                <form id="employee-search-form" method="POST">
-                    {% csrf_token %}
-                    <input type="text" name="employee_search" placeholder="Employee Search">
-                    <button type="submit">Search</button>
-                </form>
-                {% if employees %}
-                <div class="search-results-section" id="employee-results-div">
-                    {% for employee in employees %}
-                    <div class="result-item employee">
-                        <a href="{% url 'Accounts:view_employee' employee.user.userinfo.user_id %}"><h2>{{employee.user_id}}</h2></a>
-                        <p>{{employee.first_name}} {{employee.last_name}}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <h3 class="results-label">Sorry, no employees found</h3>
-                {% endif %}
-            </div>
-        </div>
-
-        <h3>Low Stock Items</h3>
-    {% if low_stock_products %}
-        <div id="low-stock-products-div" class="search-container">
-            
-            {% for product in low_stock_products %}
-            <p>{{product.product_id}} - {{product.product_name}}</p>
-            <a href="{% url 'Products:employee_view_product' product.product_id %}"><button>View</button></a>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No low stock items</p>
-    {% endif %}
-
-        
+    </div>
+    
 
     <div id="extra-buttons-div">
         <!-- Add Product Button -->
@@ -274,14 +252,11 @@ button:hover {
     </div>
         
     {% endif %}
-    <!-- Admin and manager only stuff -->
-
-    <h3>New Employee or Manager </h3>
 
     
     <!-- Back to Admin Portal Button -->
     {% if request.user.userinfo.account_type == "admin" %}
-    <a href="{% url 'Stores:admin_manage_stores' %}"><button>Back to Admin Portal</button></a>
+    <a href="{% url 'Stores:admin_manage_stores' %}"><button class="extra-buttons">Back to Admin Portal</button></a>
     {% endif %}
 
     <!-- Logout Button -->

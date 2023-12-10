@@ -89,6 +89,7 @@
         </table>
         <button type="submit">Update Cart</button>
     </form>
+    <a href="{% url 'Stores:confirm_new_order' user_id %}"><button>Checkout</button></a>
 </body>
 {% endblock %}
 </html>

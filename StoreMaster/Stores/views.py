@@ -8,6 +8,7 @@ from .models import *
 from Accounts.models import *
 from Products.models import *
 from Shipments.models import *
+from Shipments.forms import *
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms.models import model_to_dict
@@ -17,6 +18,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 
 from datetime import datetime
+
+import json
+
 
 # Create your views here.
 def index(request):
@@ -64,9 +68,68 @@ def employee_view_purchase(request,purchase_id):
 
     return render(request,"employee_view_purchase.html",context=context)
 
+def confirm_new_order(request,customer_id):
+    #TODO check to make sure no fields are empty
+        total = 0 
+        customer = CustomerInfo.objects.get(user_id=customer_id)
+        products_in_cart = ProductInCart.objects.filter(customer_id=customer)
+        for product_in_cart in products_in_cart:
+            product = product_in_cart.product
+            
+            if product.product_stock < product_in_cart.quantity:
+                #TODO error here for not enough stock
+                return redirect("Stores:view_customer_cart",customer_id)
+            
+            if request.method == "POST":
+                total += product_in_cart.quantity * product.product_price
+
+
+        if request.method == "POST":
+            address = request.POST.get("address")
+            line_two = request.POST.get("line_two")
+            city = request.POST.get("city")
+            state = request.POST.get("state")
+            zip = request.POST.get("zip")
+
+            date = datetime.now()
+            customer = CustomerInfo.objects.get(user_id=customer_id)
+            store = Store.objects.get(store_id=customer.store_id)
+
+            new_order = Order(store=store,
+                              customer_id=customer,
+                              order_date=date,
+                              order_total=total,
+                              shipping_address=address,
+                              shipping_line_two=line_two,
+                              shipping_city=city,
+                              shipping_state=state,
+                              shipping_zip=zip)
+            
+            new_order.save()
+            for product_in_cart in products_in_cart:
+                new_product_in_order = ProductInOrder(order_info_object=new_order,
+                                                      product=product_in_cart.product,
+                                                      quantity=product_in_cart.quantity)
+                
+                new_product_in_order.save()
+                product_in_cart.product.update_stock(-product_in_cart.quantity)
+
+            return redirect("Stores:view_order",new_order.order_id)
+        
+        
+        return render(request,"confirm_order.html",{"customer":customer})
+
+def finalize_new_order(request,customer_id):
+    pass
+
+
+
+
+
 
 def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_name=None):
-
+    import pdb
+    pdb.set_trace()
     account_type = request.user.userinfo.account_type
     user_id = request.user.userinfo.user_id
     employee_id = None
@@ -86,10 +149,27 @@ def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_
         admin_id = AdminInfo.objects.get(user_id=user_id)
 
     total = 0
+    context = {}
+    #TODO ADD messages support instead of context, to re redner the new_purchase page. Use redirect instead of render. 
+    # Use the messages framework to render the out of stock items in the html doc
     for product in request.session.get("products_in_purchase"):
         product_object = Product.objects.get(product_id=product)
-        total += (product_object.product_price * request.session.get("products_in_purchase").get(product)[1])
-        
+        quantity = request.session.get("products_in_purchase").get(product)[1]
+        if product_object.product_stock < quantity:
+            if "not_enough_stock" in context:
+                context["not_enough_stock"].append(product_object.product_name)
+            else:
+                context["not_enough_stock"] = [product_object.product_name]
+
+            print("NOT ENOUGH STOCKKKKK")
+        total += (product_object.product_price * quantity)
+
+
+    if "not_enough_stock" in context:
+        return redirect("Stores:new_purchase",store_id=store_id)
+
+        return render(request,"new_purchase.html",context=context)
+    
     new_purchase = Purchase(store=store,employee_id=employee_id,manager_id=manager_id,admin_id=admin_id,
                             customer_id=customer,first_name=first_name,last_name=last_name,
                             purchase_date = datetime.now().date(),purchase_total=total)
@@ -113,7 +193,9 @@ def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_
     return redirect("Stores:employee_view_purchase",new_purchase.purchase_id)
 
 def new_purchase(request,store_id):
-    
+    context = {}
+    products = []
+    context["products"] = products
     if "products_in_purchase" in request.session:
         print("TESTING")
         print(request.session["products_in_purchase"])
@@ -121,6 +203,7 @@ def new_purchase(request,store_id):
     store = Store.objects.get(store_id=store_id)
     if request.method == 'POST':
         if 'product_search' in request.POST:
+            print(product_search)
             search_text = request.POST.get('product_search')
             search_terms = search_text.split()
             query = Q(store_id=store_id)
@@ -132,28 +215,45 @@ def new_purchase(request,store_id):
             
             products = Product.objects.filter(query)
         elif "customer_selector" in request.POST:
+            print("existing")
             customer_id = request.POST.get("customer_selector")
             print(customer_id)
             
 
-            return finalize_purchase(request,store_id,customer_id)
+            return finalize_purchase(request,store_id=store_id,customer_id=customer_id)
 
             
             
-        elif "new_customer_form" in request.POST:
+        elif "new_indicator" in request.POST:
+            import pdb
+            pdb.set_trace()
+            print("new_customer")
             new_customer_form = CustomerRegistrationForm(request.POST)
+            print(new_customer_form.errors)
             if new_customer_form.is_valid():
-                new_customer_form.save()
+                print("hi")
+                data = new_customer_form.cleaned_data
+                user = User.objects.create(username=data["username"],
+                                           password=data["password"],
+                                           email=data["email_address"])
                 
+                
+                new_customer = CustomerInfo.objects.create(**new_customer_form.cleaned_data,user=user,store=Store.objects.get(store_id=store_id))
+                # new_customer.store = Store.objects.get(store_id=store_id)
+                # new_customer.user = user
+                new_customer.save()
+                user.save()
+                customer_id = new_customer.user_id
                 #may need new user as well
                 return finalize_purchase(request,store_id,customer_id)
 
             else:
                 #TODO error in registering a new customer to the store
                 pass
-        
-    
     else:
+
+    
+    
         products = Product.objects.filter(store=Store.objects.get(store_id=store_id))
         context["customer_options"] = get_all_customers(store_id)
         context["new_customer_form"] = CustomerRegistrationForm()
@@ -192,7 +292,22 @@ def store_home(request, store_id):
                 query |= Q(product_name__icontains=term) | Q(product_description__icontains=term)
 
             products = Product.objects.filter(query,store_id=store_id)
+
+            sort_choice = request.POST.get("sort-selector")
             
+            if sort_choice:
+                if sort_choice == "alphabetical_descend":
+                    products = Product.objects.filter(query,store_id=store_id).order_by("product_name")
+                elif sort_choice == "alphabetical_ascend":
+                    products = Product.objects.filter(query,store_id=store_id).order_by("-product_name")
+                elif sort_choice == "price-low-to-high":
+                    products = Product.objects.filter(query,store_id=store_id).order_by("product_price")
+                elif sort_choice == "price-high-to-low":
+                    print("sorting")
+                    products = Product.objects.filter(query,store_id=store_id).order_by("-product_price")
+            
+            print(products)
+                
         else:
             return redirect("Stores:store_home",store_id)
         
@@ -296,6 +411,107 @@ def stock_all_products_from_shipment(request, shipment_id):
     
     return redirect("Stores:view_shipment", shipment_id)
 
+def add_item_to_shipment(request,product_id,quantity):
+    product = Product.objects.get(product_id=product_id)
+    if "items_in_shipment" in request.session:
+        if product_id in request.session["items_in_shipment"]:
+            request.session.get(product_id)[1] += quantity
+        else:
+            request.session["items_in_shipment"][product_id] = [product.product_name,quantity]
+    else:
+        request.session["items_in_shipment"] = {product_id:[product.product_name,quantity]}
+
+    
+    return redirect("add_new_shipment",product.store.store_id)
+
+
+def add_new_shipment(request,store_id):
+    store = Store.objects.get(store_id=store_id)
+    if request.method == "POST":
+        #Add new item to the shipment
+        if "quantity_selector" in request.POST:
+            product_id = request.POST.get("product_id")
+            quantity = request.POST.get('quantity_selector')
+
+            return add_item_to_shipment(request,product_id,quantity)
+        
+        #Import shipment and items details from an uploaded file
+        elif "json_file" in request.POST:
+            form = ShipmentJSONFileForm(request.POST,request.FILES)
+            if form.is_valid():
+                json_file = form.cleaned_data['json_file']
+
+                try:
+                    json_data = json.load(json_file)
+                    try:
+                        shipment_origin = json_data.get("shipment_origin")
+                        destination_store = Store.objects.get(product_id=json_data.get("destination_store_id"))
+                        shipped_date = json_data.get("shipped_date")
+                        expected_date = json_data.get("expected_date")
+                        shipment_tracking_num = json_data.get("tracking_number")
+                        shipment_freight_company =  json_data.get("shipping_company")
+
+                        new_shipment = Shipment(shipment_origin=shipment_origin,
+                                                destination_store=destination_store,
+                                                shipped_date=shipped_date,
+                                                expected_date=expected_date,
+                                                shipment_tracking_num=shipment_tracking_num,
+                                                shipment_freight_company=shipment_freight_company)
+                        
+                        new_shipment.save()
+                       
+                        for product in json_data.get("products"):
+                            shipment_id = new_shipment.shipment_id
+                            product = Product.objects.get(product_id=product.get("product_id"))
+                            quantity = product.get("quantity")
+                            
+                            new_product_in_shipment = ProductInShipment(shipment_id=shipment_id,
+                                                                        product=product,
+                                                                        quantity=quantity,
+                                                                        status="not stocked")
+                            
+                            new_product_in_shipment.save()
+
+
+
+                    except KeyError:
+                        pass
+                except json.JSONDecodeError as e : 
+                    error_message = f"Error parsing JSOn file: {e}"
+
+                return redirect("view_shipment",new_shipment.shipment_id)
+            else:
+                #TODO error cehcking here for error in json form
+                pass
+
+
+        #Finalizing new shipment with details and items
+        elif "shipped_date" in request.POST:
+            form = NewShipmentForm(request.POST,store=store)
+            if form.is_valid():
+                new_shipment = form.save()
+                shipment_id = new_shipment.shipment_id
+
+                for product in request.session["items_in_shipment"]:
+                    current_product = Product.objects.get(product_id=product)
+                    quantity = request.session["items_in_shipment"].get(product)[1]
+                    new_product_in_shipment = ProductInShipment(shipment=new_shipment,
+                                                                product=current_product,
+                                                                quantity = quantity,
+                                                                status="not stocked")
+                    
+                    new_product_in_shipment.save()
+
+                return redirect("view_shipment",shipment_id)
+
+            
+    else:
+        #if json_data is not None:
+            #pass
+        #else:
+            clean_form = NewShipmentForm()
+            json_form = ShipmentJSONFileForm()
+            return render(request,"add_new_shipment.html",context={"form":clean_form,"json_form":json_form}) 
 
 def view_shipment(request,shipment_id):
     if request.method == "POST":
@@ -306,8 +522,6 @@ def view_shipment(request,shipment_id):
             shipment.save()
 
         elif "product_status_selector" in request.POST:
-            import pdb
-            pdb.set_trace()
             new_status = request.POST.get("product_status_selector")
             shipment = Shipment.objects.get(shipment_id=shipment_id)
             if new_status == "not stocked":
@@ -467,7 +681,8 @@ def manage_store(request,store_id):
 
     shipments = Shipment.objects.filter(destination_store=store_id)
 
-    context = { "products":products,
+    context = { "store":Store.objects.get(store_id=store_id),
+                "products":products,
                 "orders":orders,
                 "purchases":purchases,
                 "customers":customers,
@@ -662,6 +877,7 @@ def register_store_page_2(request,error = None):
 
             context["load_new_manager_first"] = False
             context["manager"] = manager #Passing the manager object itself to the template
+            context["store"] = manager.store
             return render(request,"register_store_page_3.html",context=context)
         
         #If the user is registering a new manager to ues for this store
@@ -771,7 +987,7 @@ def confirm_store_registration(request):
     elif "manager_info" in request.session:
         del request.session["manager_info"]
 
-    return HttpResponse("HI")
+    return redirect("Stores:manage_store",new_store.store_id)
 
 
 
