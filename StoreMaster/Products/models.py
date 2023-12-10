@@ -1,9 +1,11 @@
 from django.db import models
 from Stores.models import Store
-from Accounts.models import CustomerInfo
+from Accounts.models import CustomerInfo, ManagerInfo
 from Orders.models import Order
 from Purchases.models import Purchase
 from Shipments.models import Shipment
+
+from django.core.mail import send_mail
 
 def product_image_path(instance, filename):
     return f'stores/{instance.store.store_id}/products/{instance.product_id}/{filename}'
@@ -78,6 +80,30 @@ class Product(models.Model):
     def update_stock(self,quantity):
         self.product_stock += quantity
         self.save()
+        
+        if self.product_stock <= 0 or self.product_stock <= self.low_stock_quantity:
+            if self.product_stock <= 0:
+                message = f"Product ID - {self.product_id} - {self.product_name} is now out of stock. Please log in to StoreMaster and make arrangements for new stock to be shipped to your location. "
+            elif self.product_stock <= self.low_stock_quantity:
+                message = f"Product ID - {self.product_id} - {self.product_name} is low on stock, currently at {self.product_stock}. Please log in to StoreMaster and make arrangements for more stock to be shipped to your location."
+            
+            store = self.store
+            email_list = ManagerInfo.objects.filter(store=store, stock_notifications=True).values_list('email_address',flat=True)
+                
+            subject = 'StoreMaster Stock Notification'
+            from_address = 'storemastersystem@gmail.com'
+
+            send_mail(subject,
+                      message,
+                      from_address,
+                      email_list,
+                      fail_silently=True
+                      )
+
+
+
+
+        
         #TODO add here to check for stock levels needing to be updated. iE if stock hits zero, alert the manager(s)( could add option for managers to
         #  have notifications on or off. If the stock hits a certain level? 
         # )

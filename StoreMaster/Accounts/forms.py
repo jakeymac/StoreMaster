@@ -144,6 +144,7 @@ class EmployeeRegistrationForm(forms.Form):
     username = forms.CharField(required=True,label="Username",max_length=30)
     password = forms.CharField(required=True, widget=forms.PasswordInput,label="Password",max_length=30)
     other_information = forms.CharField(required=False,label="Other Information",max_length = 1000)
+    stock_notifications = forms.BooleanField(required=True,label="Receive notifications for stock levels")
 
     birthday = forms.DateField(widget=DateInput(attrs={'type':'date'}),label="Birthday")
     

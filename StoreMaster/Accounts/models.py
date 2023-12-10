@@ -135,9 +135,11 @@ class AdminInfo(UserInfo):
 
 
 class ManagerInfo(UserInfo):
+    stock_notifications = models.BooleanField()
     def __init__(self, *args, **kwargs):
         super(ManagerInfo, self).__init__(*args,**kwargs)
         self.account_type = 'manager'
+        
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
