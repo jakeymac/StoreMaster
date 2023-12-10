@@ -37,14 +37,14 @@ def employee_view_customer(request,customer_id):
     return render(request,"employee_view_customer.html",context=context)
 
 def employee_edit_customer(request,customer_id):
-    customer = CustomerInfo.objects.get(user=User.objects.get(id=user_id))
+    customer = CustomerInfo.objects.get(user=User.objects.get(id=customer_id))
     new_form = EditCustomerForm(instance=customer)
     context={"form":new_form}
 
     if request.method == "POST":
         errors = []
         edited_form = EditCustomerForm(request.POST,instance=customer)
-        context["form"] = edited_formz
+        context["form"] = edited_form
         if edited_form.is_valid():
             if edited_form.cleaned_data["username"] != customer.username:
                 if User.objects.filter(username=edited_form.cleaned_data["username"]).exists():
@@ -68,25 +68,65 @@ def employee_edit_customer(request,customer_id):
                 context["errors"] = errors
             else:
                 edited_form.save()
-                return redirect("Accounts:view_customer",user_id)
-        
-    return render(request,"edit_customer.html",context=context)
+                return redirect("Accounts:employee_view_customer",customer_id)
+    
+    context["customer_id"] = customer_id
+    return render(request,"employee_edit_customer.html",context=context)
 
-def employee_view_employee(request,employee_id):
+def view_employee(request,employee_id):
     user_info = UserInfo.objects.get(user_id=employee_id)
     user = User.objects.get(userinfo=user_info)
-    account_type = user.userinfo.account_type
+    account_type = user.userinfo.account_type 
     account = model_dict.get(account_type).objects.get(user=user)
-    context = {account_type:account, "account_type":account_type} 
+    context = {"employee":account, "account_type":account_type} 
 
-    return render(request,"employee_view_employee.html",context=context)
+    return render(request,"view_employee.html",context=context)
     
+def edit_employee(request,employee_id,employee_type):
+    employee = model_dict.get(employee_type).objects.get(user_id=employee_id)
+    new_form = form_dict.get(employee_type)(instance=employee)
+    context = {"form":new_form}
+
+    if request.method == "POST":
+        errors = []
+        edited_form = form_dict.get(employee_type)(request.POST,instance=employee)
+        context["form"] = edited_form
+        if edited_form.is_valid():
+            if edited_form.cleaned_data["username"] != employee.username:
+                if User.objects.filter(username=edited_form.cleaned_data["username"]).exists():
+                    #TODO Error for repeated username, edit User object
+                    errors.append("That username is already in use")
+
+            if edited_form.cleaned_data["email_address"] != employee.email_address:
+                if edited_form.cleaned_data["email_address"] in User.objects.values_list('email_address', flat=True):
+                    #TODO Error for repeated email, edit User object
+                    errors.append("That email is already in use.")
+
+            if edited_form.cleaned_data["password"] != employee.password:
+                #TODO Edit user object
+                employee.user.password = edited_form.cleaned_data["password"]
+                employee.password = edited_form.cleaned_data["password"]
+                employee.user.save()
+                employee.save()
+
+
+            if errors:
+                context["errors"] = errors
+            else:
+                edited_form.save()
+                return redirect("Accounts:view_employee",employee_id)
+            
+    context["employee_id"] = employee_id
+
+    return render(request,"edit_employee.html",context=context)
+   
+
+
 
 def view_user(request, user_id):
+    template_start = ""
     if request.user.is_authenticated:
-        if request.user.userinfo.account_type == "customer":
-            template_start = ""
-        else:
+        if request.user.userinfo.account_type != "customer":
             template_start = "employee_"
     else:
         #TODO add security here to not allow just anyoen without an account to access. Update below to m
@@ -110,9 +150,6 @@ def view_customer(request,user_id):
     context = {"customer":customer}
     return render(request,"view_customer.html",context)
 
-def view_employee(request,user_id):
-    pass
-
 
 def edit_customer(request,user_id):
     customer = CustomerInfo.objects.get(user=User.objects.get(id=user_id))
@@ -122,7 +159,7 @@ def edit_customer(request,user_id):
     if request.method == "POST":
         errors = []
         edited_form = EditCustomerForm(request.POST,instance=customer)
-        context["form"] = edited_formz
+        context["form"] = edited_form
         if edited_form.is_valid():
             if edited_form.cleaned_data["username"] != customer.username:
                 if User.objects.filter(username=edited_form.cleaned_data["username"]).exists():
@@ -147,7 +184,7 @@ def edit_customer(request,user_id):
             else:
                 edited_form.save()
                 return redirect("Accounts:view_customer",user_id)
-        
+    context["customer_id"] = user_id
     return render(request,"edit_customer.html",context=context)
 
 def edit_user_view(request,user_id):
@@ -163,12 +200,8 @@ def edit_user_view(request,user_id):
         #SHOULD PERHAPS UPDATE REGISTRATION TO MAKE IT SO THAT THE USER FIELD JUST IMMEDIATELY POINTS TO THE MANGERINOF, 
         #ADMININFO, NOT A GENERIC USERINFO MODEL
         if new_form.is_valid():
-            new_form.save()
-            if original_type != request.POST.get("account_type"):
-                new_object = original_object.switchModelType(request.POST.get("account_type"))
-                print(new_object)
-                original_object.delete()
-                new_object.save()
+            
+            
             #TODO finalize error handling here and
             if request.POST["username"] != user.username:
                 if not User.objects.filter(username=request.POST["username"]).exists():
@@ -185,15 +218,32 @@ def edit_user_view(request,user_id):
                     user.email = request.POST["email"]
                     #model_dict.get(request.POST.get("account_type")).objects.get(user=user).email = request.POST["email"]
 
+
+            if original_type != request.POST.get("account_type"):
+                new_object = original_object.switchModelType(request.POST.get("account_type"))
+                print(new_object)
+                original_object.delete()
+                new_object.save()
+
+
+             
             model_dict.get(request.POST.get("account_type")).objects.get(user=user).save()
             user.save()
 
-            return redirect('Accounts:view_user',user_id=user.id)
+            if request.user.userinfo.account_type == "customer":
+                return redirect("Accounts:view_customer",user_id)
 
+            elif user.userinfo.account_type == "customer":
+                return redirect('Accounts:employee_view_customer',user_id)
+
+            else:
+                return redirect("Accounts:view_employee",user_id)
+                
+        
     else:
         form_type = form_dict.get(original_type)
         form = form_type(instance=original_object)
-
+        
         return render(request,"edit_user.html",context={"user":user,"form":form})
         
 

@@ -268,10 +268,55 @@ def manage_store_redirect_from_home(request):
         return render(request,"manage_store_home.html",{"load":True})
     return HttpResponse("testing MANAGE STORE REDIRECT")
 
+def stock_product_from_shipment(request,shipment_id,product_id,render_page=True):
+    product = Product.objects.get(product_id=product_id)
+    product_in_shipment_object = ProductInShipment.objects.get(shipment_id=shipment_id,product=product)
+    product.update_stock(product_in_shipment_object.quantity)
+    product_in_shipment_object.status = "Stocked"
+    product_in_shipment_object.save()
+    if render_page: #Used if stocking all products.
+        return redirect("Stores:view_shipment", shipment_id)
+
+def stock_all_products_from_shipment(request, shipment_id):
+
+    shipment = Shipment.objects.get(shipment_id=shipment_id)
+    product_in_shipment_objects = ProductInShipment.objects.filter(shipment=shipment)
+    for product in product_in_shipment_objects:
+        if product.status == "Not Stocked":
+            stock_product_from_shipment(request,shipment_id,product.product.product_id,render_page=False)
+            product.status = "Stocked"
+            product.save()
+
+    shipment.status = "Closed"
+    shipment.save()
+    
+    return redirect("Stores:view_shipment", shipment_id)
+
 
 def view_shipment(request,shipment_id):
+    if request.method == "POST":
+        if "shipment_status_selector" in request.POST:
+            new_status = request.POST.get("shipment_status_selector")
+            shipment = Shipment.objects.get(shipment_id=shipment_id)
+            shipment.shipment_status = new_status
+            shipment.save()
+
+        elif "product_status_selector" in request.POST:
+            new_status = request.POST.get("product_status_selector")
+            shipment = Shipment.objects.get(shipment_id=shipment_id)
+            product_id = request.POST.get("product_id")
+            product = Product.objects.get(product_id=product_id)
+            product_in_shipment = ProductInShipment.objects.get(product=product,shipment=shipment)
+            product_in_shipment.status = new_status
+            product_in_shipment.save()
+
+
+
     shipment = Shipment.objects.get(shipment_id=shipment_id)
-    context = {"shipment":shipment}
+    products = ProductInShipment.objects.filter(shipment=shipment)
+
+    context = {"shipment":shipment,"products":products}
+        
     return render(request,"view_shipment.html",context=context)
 
 def view_all_shipments(request,store_id):
@@ -293,8 +338,6 @@ def view_order(request,order_id):
     order, products = get_order_information(order_id)
     context = {"order":order,"products":products,}
 
-    
-
     return render(request,"view_order.html",context=context)
 
 def employee_view_order(request,order_id):
@@ -307,7 +350,6 @@ def employee_view_order(request,order_id):
 
 @login_required(login_url='/login_employee')
 def manage_store(request,store_id):
-    messages.error(request,"HELLO WORLD")
     store = Store.objects.get(store_id=store_id)
     products = Product.objects.filter(store=store)
     orders = Order.objects.filter(store=store)
@@ -388,7 +430,7 @@ def manage_store(request,store_id):
 
             employees = EmployeeInfo.objects.filter(query)
             managers = ManagerInfo.objects.filter(query)
-            
+
             employees = list(employees) + list(managers)
 
     else:

@@ -2,4 +2,6 @@
     {% csrf_token %}
     {{form.as_p}}   
     <button type="submit">Save</button>
+    
 </form>
+<a href="{% url 'Accounts:employee_view_customer' customer_id%}"><button>Back</button></a>

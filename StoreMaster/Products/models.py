@@ -3,7 +3,7 @@ from Stores.models import Store
 from Accounts.models import CustomerInfo
 from Orders.models import Order
 from Purchases.models import Purchase
-
+from Shipments.models import Shipment
 
 def product_image_path(instance, filename):
     return f'stores/{instance.store.store_id}/products/{instance.product_id}/{filename}'
@@ -81,6 +81,12 @@ class Product(models.Model):
         #TODO add here to check for stock levels needing to be updated. iE if stock hits zero, alert the manager(s)( could add option for managers to
         #  have notifications on or off. If the stock hits a certain level? 
         # )
+
+class ProductInShipment(models.Model):
+    shipment = models.ForeignKey(Shipment,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    status = models.CharField(max_length=20) #Placed into inventory/stocked already or not. 
 
 class ProductInCart(models.Model):
     customer_id = models.ForeignKey(CustomerInfo,on_delete=models.CASCADE)

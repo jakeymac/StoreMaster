@@ -1,3 +1,81 @@
 shipment time
 
 <h1>Shipment ID: {{shipment.shipment_id}}</h1>
+
+<div id="shipment-details-div">
+    <h3>Shipment Details:</h3>
+    <!--Could throw this into a one row table?-->
+    <table>
+        <thead>
+            <tr>
+                <th>Shipment ID</th>
+                <th>Shipping Company</th>
+                <th>Shipment Origin</th>
+                <th>Shipped Date</th>
+                <th>Expected Date</th>
+                <th>Tracking Number</th>
+                <th>Tracking Link</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{shipment.shipment_id}}</td>
+                <td>{{shipment.shipping_freight_company}}</td>
+                <td>{{shipment.shipment_origin}}</td>
+                <td>{{shipment.shipped_date}}</td>
+                <td>{{shipment.expected_date}}</td>
+                <td>{{shipment.shipment_tracking_num}}</td>
+                <td>{{shipment.shipment_tracking_link}}</td>
+                <td>
+                    <form id="shipment-status-form" method="POST">
+                        {% csrf_token %}
+                        <select name="shipment_status_selector" >
+                            <option value="in-transit" {% if shipment.shipment_status == 'in-transit' %}selected{% endif %}>In Transit</option>
+                            <option value="delivered" {% if shipment.shipment_status == 'delivered' %}selected{% endif %}>Delivered</option>
+                            <option value="closed" {% if shipment.shipment_status == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                        <button type="submit">Update Status</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+</div>
+
+<div id="products-div">
+    <h3>Products in shipment</h3>
+    <table>
+        <thead>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Status</th>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{product.product.product_id}}</td>
+                    <td>{{product.product.product_name}}</td>
+                    <td>{{product.quantity}}</td>
+                    <td>
+                        <form id="product-status-form" method="POST">
+                            {% csrf_token %}
+                            <select name="product_status_selector" >
+                                <option value="Not Stocked" {% if product.status == 'Not Stocked' %}selected{% endif %}>Not Stocked</option>
+                                <option value="Stocked" {% if product.status == 'Stocked' %}selected{% endif %}>Stocked</option>
+                            </select>
+                            <input type="hidden" name="product_id" value={{product.product.product_id}}>
+                            <button type="submit">Update Status</button>
+                        </form>
+                    </td>
+                    <td><a href="{% url 'Stores:stock_product_from_shipment' shipment_id=shipment.shipment_id product_id=product.product.product_id %}"><button {% if product.status == "Stocked" %}disabled{%endif%}>Stock in inventory</button></a></td>
+                </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+    <a href="{% url 'Stores:stock_all_products_from_shipment' shipment.shipment_id %}"><button>Stock All Products</button></a>
+</div>
+

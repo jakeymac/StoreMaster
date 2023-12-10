@@ -206,7 +206,7 @@ button:hover {
             <!-- Customer Search Section -->
             <div class="search-section">
                 <h3>Customer Search</h3>
-                <form id="customer-search-form" method="POST">
+                <form id="customer-search-form" method="POST">3
                     {% csrf_token %}
                     <input type="text" name="customer_search" placeholder="Customer Search">
                     <button type="submit">Search</button>
@@ -237,7 +237,7 @@ button:hover {
                 <div class="search-results-section" id="employee-results-div">
                     {% for employee in employees %}
                     <div class="result-item employee">
-                        <a href="{% url 'Accounts:view_user' employee.user.userinfo.user_id %}"><h2>{{employee.user_id}}</h2></a>
+                        <a href="{% url 'Accounts:view_employee' employee.user.userinfo.user_id %}"><h2>{{employee.user_id}}</h2></a>
                         <p>{{employee.first_name}} {{employee.last_name}}</p>
                     </div>
                     {% endfor %}

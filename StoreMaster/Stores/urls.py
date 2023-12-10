@@ -23,5 +23,7 @@ urlpatterns = [
     path('view_shipment/<int:shipment_id>',views.view_shipment,name='view_shipment'),
     path('view_all_shipments/<int:store_id>',views.view_all_shipments,name='view_all_shipments'),
     path('employee_view_order/<int:order_id>',views.employee_view_order,name='employee_view_order'),
-    path('view_order/<int:order_id>',views.view_order,name='view_order')
+    path('view_order/<int:order_id>',views.view_order,name='view_order'),
+    path('stock_product_from_shipment/<int:shipment_id>/<int:product_id>',views.stock_product_from_shipment,name='stock_product_from_shipment'),
+    path('stock_all_products_from_shipment/<int:shipment_id>',views.stock_all_products_from_shipment,name='stock_all_products_from_shipment')
 ]   

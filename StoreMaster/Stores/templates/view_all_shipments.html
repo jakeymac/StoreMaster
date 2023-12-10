@@ -1,1 +1,31 @@
-View All Shipments
+
+
+<h2>Shipment Information</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Shipment ID</th>
+            <th>Shipping Company</th>
+            <th>Shipment Origin</th>
+            <th>Expected Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for shipment in shipments %} 
+            <tr>
+                <td>{{shipment.shipment_id}}</td>
+                <td>{{shipment.shipping_freight_company}}</td>
+                <td>{{shipment.shipment_origin}}</td>
+                <td>{{shipment.shipped_date}}</td>
+                <td>{{shipment.expected_date}}</td>
+                <td>{{shipment.shipment_status}}</td>
+                <td><a href="{% url 'Stores:view_shipment' shipment.shipment_id %}"><button>View</button></a></td>
+            </tr>
+        {% endfor%}     
+    </tbody>
+</table>
+</body>
+</html>

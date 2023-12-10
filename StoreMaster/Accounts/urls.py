@@ -18,5 +18,8 @@ urlpatterns = [
     path('logout_employee',views.logout_employee,name='logout_employee'),
     path('logout_customer',views.logout_customer,name='logout_customer'),
     path('view_user/<int:user_id>',views.view_user,name='view_user'),
-    path('employee_edit_customer/<int:customer_id>',views.employee_edit_customer,name='employee_edit_customer')
+    path('employee_edit_customer/<int:customer_id>',views.employee_edit_customer,name='employee_edit_customer'),
+    path('employee_view_customer/<int:customer_id>',views.employee_view_customer,name='employee_view_customer'),
+    path('view_employee/<int:employee_id>/',views.view_employee,name='view_employee'),
+    path('edit_employee/<int:employee_id>/<str:employee_type>',views.edit_employee,name='edit_employee')
 ]
