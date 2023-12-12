@@ -89,7 +89,6 @@ class Product(models.Model):
             
             store = self.store
             email_list = ManagerInfo.objects.filter(store=store, stock_notifications=True).values_list('email_address',flat=True)
-<<<<<<< HEAD
             print(email_list)
                 
             subject = 'StoreMaster Stock Notification'
@@ -105,7 +104,6 @@ class Product(models.Model):
                 print(f"an error occurred: \n{e}")
                 
 
-=======
                 
             subject = 'StoreMaster Stock Notification'
             from_address = 'storemastersystem@gmail.com'
@@ -116,12 +114,7 @@ class Product(models.Model):
                       email_list,
                       fail_silently=True
                       )
-
-
-
-
-        
->>>>>>> 19bb22c2b6653117cb85f9ec662824d6216d92b1
+            
         #TODO add here to check for stock levels needing to be updated. iE if stock hits zero, alert the manager(s)( could add option for managers to
         #  have notifications on or off. If the stock hits a certain level? 
         # )
