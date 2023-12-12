@@ -146,4 +146,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'storemastersystem@gmail.com'
+<<<<<<< HEAD
 EMAIL_HOST_PASSWORD = 'rjdy xfnh rnqd csxn'
+=======
+EMAIL_HOST_PASSWORD = 'thisismyseniorproject'
+>>>>>>> 19bb22c2b6653117cb85f9ec662824d6216d92b1
