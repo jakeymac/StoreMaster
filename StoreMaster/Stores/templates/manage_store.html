@@ -249,13 +249,17 @@
 
         <!-- New Purchase Button -->
         <a href="{% url 'Stores:new_purchase' request.session.store_id %}"><button class="extra-buttons">New Purchase</button></a>
+       
     </div>
+
+
         
     {% endif %}
 
-    
+    <a href="{% url 'Accounts:register_employee'%}"><button class="extra-buttons">Add new manager or employee</button></a>
     <!-- Back to Admin Portal Button -->
     {% if request.user.userinfo.account_type == "admin" %}
+    
     <a href="{% url 'Stores:admin_manage_stores' %}"><button class="extra-buttons">Back to Admin Portal</button></a>
     {% endif %}
 

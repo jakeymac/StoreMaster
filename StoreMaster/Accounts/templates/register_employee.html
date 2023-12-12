@@ -94,7 +94,14 @@
                 {{ form.state.label_tag }} {{ form.state }}
                 {{ form.zip.label_tag }} {{ form.zip }}
                 {{ form.store.label_tag }} {{ form.store }}
-                {{ form.account_type.label_tag }} {{ form.account_type}}
+                {% if user.userinfo.account_type == "admin"%}
+                    {{ form.account_type.label_tag }} {{ form.account_type}}
+                {% else %}
+                    <select name="account_type">
+                        <option value="manager">Manager</option>
+                        <option value="employee">Employee</option>
+                    </select>
+                {% endif %}
                 {{ form.stock_notifications.label_tag }} {{ form.stock_notifications }}
             
         </div>
