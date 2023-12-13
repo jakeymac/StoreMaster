@@ -139,6 +139,8 @@ def edit_employee(request,employee_id,employee_type):
 
 
 def view_user(request, user_id):
+    import pdb
+    pdb.set_trace()
     template_start = ""
     if request.user.is_authenticated:
         if request.user.userinfo.account_type != "customer":
@@ -151,6 +153,7 @@ def view_user(request, user_id):
     instance = model_dict.get(account_type).objects.get(user=user)
     context = {account_type:instance}
     if account_type == "customer":
+        print(template_start)
         return render(request,template_start+"view_customer.html",context=context)
     else:
         if request.user.userinfo.account_type != "customer":

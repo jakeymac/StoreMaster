@@ -6,24 +6,20 @@
             $(document).ready(function () {
                 $("#existing-customer-div").show();
                 $("#new-customer-div").hide();
-                // Event listener for radio buttons
+                
                 $("#existing-customer-radio").change(function () {
-                        // Show existing customer div, hide new customer div
+                       
                         $("#existing-customer-div").show();
                         $("#new-customer-div").hide();
     
-                        // Deselect new customer radio button
                         $("#new-customer-radio").prop("checked", false);
                     
                 });
     
                 $("#new-customer-radio").change(function () {
-            
-                        // Show new customer div, hide existing customer div
                         $("#existing-customer-div").hide();
                         $("#new-customer-div").show();
                         
-                        // Deselect existing customer radio button
                         $("#existing-customer-radio").prop("checked", false);
                 });
             });

@@ -189,7 +189,7 @@
             <div class="search-results-section" id="customer-results-div">
                 {% for customer in customers %}
                 <div class="result-item customer">
-                    <a href="{% url 'Accounts:view_user' customer.user.userinfo.user_id %}"><h2>{{customer.user_id}}</h2></a>
+                    <a href="{% url 'Accounts:employee_view_customer' customer.user.userinfo.user_id %}"><h2>{{customer.user_id}}</h2></a>
                     <p>{{customer.first_name}} {{customer.last_name}}</p>
                 </div>
                 {% endfor %}

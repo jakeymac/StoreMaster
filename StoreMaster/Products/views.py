@@ -250,7 +250,7 @@ def build_graph(queryset):
     
     data = {time_title:times,"Values":values}
 
-    fig, ax = plt.subplots(figsize=(12,7))
+    fig, ax = plt.subplots(figsize=(7,4))
 
     ax.plot(data[time_title],data["Values"])
                             
