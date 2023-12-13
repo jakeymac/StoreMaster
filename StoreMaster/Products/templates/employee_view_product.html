@@ -293,7 +293,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 60%;
+        width: 70%;
         margin: auto;
         padding: 15px;
         border: 1px solid #ddd;
@@ -383,6 +383,10 @@
     #edit-button,
     #management-button {
         margin-right: 10px;
+    }
+
+    #graph-top-label {
+        margin-left:250px;
     }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -491,7 +495,7 @@
             <!-- Graphs -->
             {% for graph_info_list in graph_information %}
                 <div id="{{graph_info_list.1}}" class="graph-div">
-                    <h3>{{graph_info_list.2}}</h3>
+                    <h3 id="graph-top-label">{{graph_info_list.2}}</h3>
                 <img src="data:image/png;base64,{{graph_info_list.0}}" alt="Issue loading graph">
                 </div>
             {% endfor %}
