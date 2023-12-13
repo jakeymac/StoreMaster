@@ -492,7 +492,7 @@ def register_customer(request):
                 
                 new_customer.save()
 
-                return redirect(request,"Stores:home",store_id=store.store_id)
+                return redirect("Stores:store_home",store_id=store.store_id)
 
         else:
             

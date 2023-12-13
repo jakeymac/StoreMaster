@@ -114,16 +114,12 @@ def confirm_new_order(request,customer_id):
                 new_product_in_order.save()
                 product_in_cart.product.update_stock(-product_in_cart.quantity)
 
+            del request.session["products_in_cart"]
             return redirect("Stores:view_order",new_order.order_id)
-        
+
+                   
         
         return render(request,"confirm_order.html",{"customer":customer})
-
-def finalize_new_order(request,customer_id):
-    pass
-
-
-
 
 
 

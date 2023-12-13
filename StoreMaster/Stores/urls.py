@@ -28,5 +28,4 @@ urlpatterns = [
     path('stock_product_from_shipment/<int:shipment_id>/<int:product_id>',views.stock_product_from_shipment,name='stock_product_from_shipment'),
     path('stock_all_products_from_shipment/<int:shipment_id>',views.stock_all_products_from_shipment,name='stock_all_products_from_shipment'),
     path('confirm_new_order/<int:customer_id>',views.confirm_new_order,name='confirm_new_order'),
-    path('finalize_new_order/<int:customer_id>',views.finalize_new_order,name='finalize_new_order'),
 ]   
