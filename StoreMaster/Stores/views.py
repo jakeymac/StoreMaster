@@ -124,8 +124,6 @@ def confirm_new_order(request,customer_id):
 
 
 def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_name=None):
-    import pdb
-    pdb.set_trace()
     account_type = request.user.userinfo.account_type
     user_id = request.user.userinfo.user_id
     employee_id = None
@@ -221,9 +219,6 @@ def new_purchase(request,store_id):
             
             
         elif "new_indicator" in request.POST:
-            import pdb
-            pdb.set_trace()
-            print("new_customer")
             new_customer_form = CustomerRegistrationForm(request.POST)
             print(new_customer_form.errors)
             if new_customer_form.is_valid():

@@ -139,8 +139,6 @@ def edit_employee(request,employee_id,employee_type):
 
 
 def view_user(request, user_id):
-    import pdb
-    pdb.set_trace()
     template_start = ""
     if request.user.is_authenticated:
         if request.user.userinfo.account_type != "customer":
