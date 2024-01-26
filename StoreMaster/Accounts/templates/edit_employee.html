@@ -69,6 +69,10 @@
     }
 </style>
 
+{% for error in errors %}
+ <p>{{error}}</p>
+{% endfor %}
+
 <form id="edit_employee_form" method="POST">
     <div id="edit-information-container">
         <h1>Edit Account Information</h1>

@@ -24,6 +24,12 @@ import base64
 def index(request):
     return HttpResponse("Products Home")
 
+def delete_product(request,product_id):
+    product = Product.objects.get(product_id=product_id)
+    store = product.store
+    product.delete()
+    return redirect("Stores:manage_store",store.store_id)
+
 def add_product_view(request,store_id):
     store = Store.objects.get(store_id=store_id)
     if request.method == "POST":
@@ -74,23 +80,16 @@ def product_view(request, product_id):
 def product_edit_view(request,product_id):
     product = Product.objects.get(product_id=product_id)
     #store = Store.objects.get(store_id=product.store_id)
-    print("Step 1")
     
     if request.method == 'POST':
-        print("Step 2")
         form = EditProductForm(request.POST,request.FILES,instance = product)
         if form.is_valid():
-            print("Step 3")
             form.save()
         else:
             form_errors = form.errors
-            print("Step 4")
-            print(form_errors)
-            print("\n")
-            
+
         return redirect('Products:employee_view_product',product_id=product_id)
     else:
-        print("Not POST step 2")
         product_form = EditProductForm(instance=product)
         return render(request, "edit_product.html",{'form':product_form,'product_id':product_id})
     
@@ -117,18 +116,16 @@ def load_product_history_data(product_id):
         orders_in_range = ProductInOrder.objects.filter(product=product,
                                                         order_info_object__order_date__range=[six_month_date, datetime.now()]) \
                                                         .order_by('order_info_object__order_date')
-        print("Made ittt")
+
     except ProductInOrder.DoesNotExist:
         orders = False
-        print("nailed itttt")
+
     try:
         purchases_in_range = ProductInPurchase.objects.filter(product=product,
                                                             purchase_info_object__purchase_date__range=[six_month_date, datetime.now()]) \
                                                     .order_by('purchase_info_object__purchase_date')
-        print("Made ittt")
     except ProductInPurchase.DoesNotExist:
         purchases = False
-        print("nailed ittt")
 
 
     order_daily_total_results = orders_in_range.annotate(date_group=TruncDate('order_info_object__order_date')).values('date_group').annotate(total_quantity=Sum('quantity'))
@@ -146,7 +143,6 @@ def load_product_history_data(product_id):
     overall_daily_total_results = []
     all_dates = set(order_totals_dict.keys()) | set(purchase_totals_dict.keys())
     all_dates = sorted(all_dates)
-    print(all_dates)
     for date in all_dates:
         overall_daily_total_results.append({
             'date_group':date,

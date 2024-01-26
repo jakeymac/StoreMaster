@@ -30,7 +30,6 @@ def add_product_to_purchase(request,store_id,product_id,quantity):
     product = Product.objects.get(product_id=product_id)
         
     if "products_in_purchase" in request.session:
-        print(type(product_id))
         products_in_purchase = request.session["products_in_purchase"]
         key = str(product_id)
         
@@ -114,13 +113,14 @@ def confirm_new_order(request,customer_id):
                 new_product_in_order.save()
                 product_in_cart.product.update_stock(-product_in_cart.quantity)
 
-            del request.session["products_in_cart"]
+                product_in_cart.delete()
+
+
             return redirect("Stores:view_order",new_order.order_id)
 
                    
         
         return render(request,"confirm_order.html",{"customer":customer})
-
 
 
 def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_name=None):
@@ -154,8 +154,6 @@ def finalize_purchase(request,store_id,customer_id = None, first_name=None,last_
                 context["not_enough_stock"].append(product_object.product_name)
             else:
                 context["not_enough_stock"] = [product_object.product_name]
-
-            print("NOT ENOUGH STOCKKKKK")
         total += (product_object.product_price * quantity)
 
 
@@ -191,13 +189,11 @@ def new_purchase(request,store_id):
     products = []
     context["products"] = products
     if "products_in_purchase" in request.session:
-        print("TESTING")
         print(request.session["products_in_purchase"])
     context = {"store_id":store_id}
     store = Store.objects.get(store_id=store_id)
     if request.method == 'POST':
         if 'product_search' in request.POST:
-            print(product_search)
             search_text = request.POST.get('product_search')
             search_terms = search_text.split()
             query = Q(store_id=store_id)
@@ -209,9 +205,7 @@ def new_purchase(request,store_id):
             
             products = Product.objects.filter(query)
         elif "customer_selector" in request.POST:
-            print("existing")
             customer_id = request.POST.get("customer_selector")
-            print(customer_id)
             
 
             return finalize_purchase(request,store_id=store_id,customer_id=customer_id)
@@ -220,9 +214,7 @@ def new_purchase(request,store_id):
             
         elif "new_indicator" in request.POST:
             new_customer_form = CustomerRegistrationForm(request.POST)
-            print(new_customer_form.errors)
             if new_customer_form.is_valid():
-                print("hi")
                 data = new_customer_form.cleaned_data
                 user = User.objects.create(username=data["username"],
                                            password=data["password"],
@@ -307,6 +299,7 @@ def store_home(request, store_id):
         products = Product.objects.filter(store = store)
     return render(request,"store_front.html",context={"store":store,"products":products})
 
+
 def view_customer_cart(request,user_id):
     context = {}
     if "cart_errors" in request.session:
@@ -317,12 +310,9 @@ def view_customer_cart(request,user_id):
     context["products_in_cart"] = products_in_cart
     context["user_id"] = user_id
     return render(request,"view_customer_cart.html",context=context)
-    return HttpResponse("CART TIMEEE")
 
 def edit_customer_cart(request,user_id):
     products_in_cart = ProductInCart.objects.filter(customer_id=user_id)
-    print(products_in_cart)
-    print(request.POST)
     errors = []
     for product in products_in_cart:
         new_quantity = int(request.POST.get(f'quantity_{product.product.product_id}'))
@@ -689,9 +679,9 @@ def admin_manage_stores(request):
         if 'store_selector' in request.POST:
             return redirect("Stores:manage_store",store_id=request.POST.get('store_selector'))
         elif 'employee_selector' in request.POST:
-            return redirect('Accounts:view_user',user_id=request.POST.get('employee_selector'))
+            return redirect('Accounts:view_employee',employee_id=request.POST.get('employee_selector'),original_page="admin portal")
         elif 'customer_selector' in request.POST:
-            return redirect('Accounts:view_user',user_id=request.POST.get('customer_selector'))
+            return redirect('Accounts:employee_view_customer',customer_id=request.POST.get('customer_selector'),original_page="admin portal")
     
     else:
         stores = []

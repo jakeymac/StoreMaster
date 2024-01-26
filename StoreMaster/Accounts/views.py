@@ -25,12 +25,7 @@ model_dict = {"manager":ManagerInfo,
               "employee":EmployeeInfo,
               "customer":CustomerInfo}
 
-def StoreMasterHome(request):
-    if request.method == 'POST':
-        pass
-    else:
-        return render(request,"home.html",{})
-    
+
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name="password_reset.html"
@@ -42,13 +37,16 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                       "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('')
 
+def StoreMasterHome(request):
+    if request.method == 'POST':
+        pass
+    else:
+        return render(request,"home.html",{})
     
-
-
-def employee_view_customer(request,customer_id):
+def employee_view_customer(request,customer_id,original_page="manage store"):
     customer = CustomerInfo.objects.get(user_id=customer_id)
 
-    context={"customer":customer}
+    context={"customer":customer,"original_page":original_page}
     return render(request,"employee_view_customer.html",context=context)
 
 def employee_edit_customer(request,customer_id):
@@ -88,25 +86,31 @@ def employee_edit_customer(request,customer_id):
     context["customer_id"] = customer_id
     return render(request,"employee_edit_customer.html",context=context)
 
-def view_employee(request,employee_id):
+def view_employee(request,employee_id,original_page="manage store"):
     user_info = UserInfo.objects.get(user_id=employee_id)
     user = User.objects.get(userinfo=user_info)
     account_type = user.userinfo.account_type 
     account = model_dict.get(account_type).objects.get(user=user)
     context = {"employee":account, "account_type":account_type} 
 
+    
+    context["original_page"] = original_page
+
     return render(request,"view_employee.html",context=context)
     
-def edit_employee(request,employee_id,employee_type):
+def edit_employee(request,employee_id,employee_type,original_page="manage store"):
+    print("Starting edit")
     employee = model_dict.get(employee_type).objects.get(user_id=employee_id)
     new_form = form_dict.get(employee_type)(instance=employee)
     context = {"form":new_form}
 
     if request.method == "POST":
+        print("Starting POST")
         errors = []
         edited_form = form_dict.get(employee_type)(request.POST,instance=employee)
         context["form"] = edited_form
         if edited_form.is_valid():
+            print("IS P")
             if edited_form.cleaned_data["username"] != employee.username:
                 if User.objects.filter(username=edited_form.cleaned_data["username"]).exists():
                     #TODO Error for repeated username, edit User object
@@ -129,9 +133,15 @@ def edit_employee(request,employee_id,employee_type):
                 context["errors"] = errors
             else:
                 edited_form.save()
-                return redirect("Accounts:view_employee",employee_id)
+            return redirect("Accounts:view_employee",employee_id=employee_id,original_page=original_page)
+        else:
+            print("ERRORS")
+            for field, errors in edited_form.errors.items():
+                for error in errors:
+                    print(f"Error in field '{field}': {error}")
             
     context["employee_id"] = employee_id
+    context["original_page"] = original_page
 
     return render(request,"edit_employee.html",context=context)
    
@@ -151,7 +161,6 @@ def view_user(request, user_id):
     instance = model_dict.get(account_type).objects.get(user=user)
     context = {account_type:instance}
     if account_type == "customer":
-        print(template_start)
         return render(request,template_start+"view_customer.html",context=context)
     else:
         if request.user.userinfo.account_type != "customer":
@@ -216,8 +225,7 @@ def edit_user_view(request,user_id):
         #SHOULD PERHAPS UPDATE REGISTRATION TO MAKE IT SO THAT THE USER FIELD JUST IMMEDIATELY POINTS TO THE MANGERINOF, 
         #ADMININFO, NOT A GENERIC USERINFO MODEL
         if new_form.is_valid():
-            
-            
+
             #TODO finalize error handling here and
             if request.POST["username"] != user.username:
                 if not User.objects.filter(username=request.POST["username"]).exists():
@@ -237,7 +245,6 @@ def edit_user_view(request,user_id):
 
             if original_type != request.POST.get("account_type"):
                 new_object = original_object.switchModelType(request.POST.get("account_type"))
-                print(new_object)
                 original_object.delete()
                 new_object.save()
 
@@ -348,7 +355,6 @@ def login_customer(request):
                 else:
                     error = "Incorrect username or password"
 
-
         else:
             error = None
 
@@ -374,7 +380,6 @@ def login_employee(request):
             return redirect("Stores:store_home",store_id=store.store_id)
         
         else:
-            print(request.user.userinfo.store)
             if request.user.userinfo.store:
                 return redirect("Stores:manage_store",store_id=request.session["store_id"])
 
@@ -431,16 +436,12 @@ def login_employee(request):
                 else:
                     error = "Incorrect username or password"
 
-
         else:
             error = None
             
         form = AuthenticationForm(request)
         return render(request,"login_employee.html",{"form":form,"error":error})
         
-
-
-
 def register_customer(request):
     if not "store_id" in request.session:
         return HttpResponse("Sorry, no store was found. Try visiting your desired store's website and registering there")
@@ -489,17 +490,15 @@ def register_customer(request):
                                             store=store)
                 
                 new_customer.save()
-
                 return redirect("Stores:store_home",store_id=store.store_id)
 
         else:
-            
+            #TODO add error handling here
             return HttpResponse(f"INVALID FORM,\n{new_form.errors}")
 
     
     else:
         clean_form = CustomerRegistrationForm()
-        print("Testing:",request.session["store_id"])
 
         return render(request,"register_customer.html",{'form':clean_form})
 

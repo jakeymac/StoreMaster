@@ -89,7 +89,6 @@ class Product(models.Model):
             
             store = self.store
             email_list = ManagerInfo.objects.filter(store=store, stock_notifications=True).values_list('email_address',flat=True)
-            print(email_list)
                 
             subject = 'StoreMaster Stock Notification'
             from_address = 'storemastersystem@gmail.com'

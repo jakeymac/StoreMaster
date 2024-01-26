@@ -495,6 +495,7 @@
                 <a href="{% url 'Products:product_edit_view' product.product_id %}">
                     <button id="edit-button">Edit</button>
                 </a>
+                <a href="{% url 'Products:delete_product' product.product_id %}"><button id="delete-product-button">Delete</button></a>
                 <a href="{% url 'Stores:manage_store' product.store_id %}">
                     <button id="management-button">Back to management portal</button>
                 </a>

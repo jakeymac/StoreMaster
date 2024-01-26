@@ -12,7 +12,8 @@ urlpatterns = [
     path('product_view/<int:product_id>ß',views.product_view,name="product_view"),
     path('product_edit_view/<int:product_id>',views.product_edit_view,name="product_edit_view"),
     path('<int:store_id>/add_product_view',views.add_product_view,name="add_product"),
-    path("employee_view_product/<int:product_id>",views.employee_view_product,name="employee_view_product")
+    path("employee_view_product/<int:product_id>",views.employee_view_product,name="employee_view_product"),
+    path("delete_product/<int:product_id>",views.delete_product,name="delete_product")
 ]
 
 if settings.DEBUG:

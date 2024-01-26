@@ -26,8 +26,8 @@ class UserInfo(models.Model):
                      ('employee','Employee'),
                      ('manager', 'Manager'),
                      ('admin','Admin'))
+                     
     account_type = models.CharField(max_length=15,null=False,default="employee",choices=account_types)
-
 
     def switchModelType(self,new_account_type):
         model_dict = {"manager":ManagerInfo,
@@ -124,7 +124,6 @@ class UserInfo(models.Model):
     def set_birthday(self, birthday):
         self.birthday = birthday
 
-
 class AdminInfo(UserInfo):
     def __init__(self, *args, **kwargs):
         super(AdminInfo, self).__init__(*args,**kwargs)
@@ -132,15 +131,12 @@ class AdminInfo(UserInfo):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
-
-
 class ManagerInfo(UserInfo):
     stock_notifications = models.BooleanField()
     def __init__(self, *args, **kwargs):
         super(ManagerInfo, self).__init__(*args,**kwargs)
         self.account_type = 'manager'
         
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 

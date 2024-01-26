@@ -14,7 +14,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+h3 {
     text-align: center;
     color: #333;
 }
@@ -62,6 +62,12 @@ p {
     <p>Birthday: {{employee.birthday}}</p>
     <p>Account type: {{employee.account_type}}</p>
     <a href="{% url 'Accounts:edit_employee' employee_id=employee.user_id employee_type=account_type %}"><button>Edit Information</button></a>
-    <a href="{% url 'Stores:manage_store' employee.store.store_id %}"><button>Back to management portal</button></a>
+
+    {% if original_page == "admin portal" %}
+        <a href="{% url 'Stores:admin_manage_stores' %}"><button>Back to admin portal</button></a>
+    {% else %}
+        <a href="{% url 'Stores:manage_store' employee.store.store_id %}"><button>Back to management portal</button></a>
+    {% endif %}
+
 
 </div>

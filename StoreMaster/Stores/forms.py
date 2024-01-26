@@ -18,12 +18,6 @@ class StoreRegistrationForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         #Valid store information fields first
-        print("Running clean now, PRE VALIDATION")
-        print(f"Checking {cleaned_data.get('store_name')}")
-        print(f"List: {Store.objects.values_list('store_name')} ")
-
-
-
         if Store.objects.filter(
             store_name = cleaned_data.get('store_name'),
             address = cleaned_data.get('store_address'),
