@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import make_password
@@ -13,6 +13,8 @@ from .forms import CustomerRegistrationForm,EmployeeRegistrationForm,UserSelecto
 from django.contrib.auth.models import User
 from django import forms
 from .models import *
+
+import json
 
 
 form_dict = {"manager":EditManagerForm,
@@ -362,8 +364,15 @@ def login_customer(request):
         return render(request,"login_customer.html",{"form":form,"error":error})
     
 def login_employee(request):
+    import pdb
+    #pdb.set_trace()
     error = None
+    print("OK TRYING TO LOG IN")
+    print("User:")
+    print(request.user)
+
     if request.user.is_authenticated:
+        print("Ok logging in")
         if request.user.userinfo.account_type == "admin":
             return redirect("Stores:admin_manage_stores")
         
@@ -375,72 +384,91 @@ def login_employee(request):
                 store = request.session["store_id"]
                 
             else:
-                return HttpResponse("Error: No store found for the current account, try going to the store you're looking to access and logging in from there.")
+                return JsonResponse({"message":"Error: No store found for the current account, try going to the store you're looking to access and logging in from there."})
+                #return HttpResponse("Error: No store found for the current account, try going to the store you're looking to access and logging in from there.")
 
             return redirect("Stores:store_home",store_id=store.store_id)
-        
+            
         else:
             if request.user.userinfo.store:
                 return redirect("Stores:manage_store",store_id=request.session["store_id"])
 
             else:
                 #Return to manage store search
-                return HttpResponse("Error: No store found for the current account")
+                return JsonResponse({"message":"Error: No store found for the current account"})
+                #return HttpResponse("Error: No store found for the current account")
 
     else:
+        print("Ok no user logged in ")
         if request.method == "POST":
-            form = AuthenticationForm(request,request.POST)
-            if form.is_valid():
-                username = form.cleaned_data.get("username")
-                password = form.cleaned_data.get("password")
-                user = authenticate(request, username=username, password=password)
-                if user is not None:
-                    login(request,user)
-
-                    if user.userinfo.store:
-                        store = user.userinfo.store
-                    elif "store_id" in request.session:
-                        store = request.session["store_id"]
-                        # account_type = user.userinfo.account_type 
-                        # print(account_type)
-                        # if account_type == "admin":
-                        #     store = request.session["store_id"]
-                        # elif model_dict.get(account_type).objects.get(user=user).store.store_id == request.session["store_id"]:
-                        #     store = request.session["store_id"]
-                        # else:
-                        #     return HttpResponse("No store found for that account")
-                        
-                        # return redirect("Stores:manage_store",store_id=store)
+            #return JsonResponse({"Hi":"hi"})
+            try:
+                data = json.loads(request.body.decode('utf-8'))
                 
-                        
-                    else:
-    
-                        #No store ID found.
-                        pass
-                        #return logout_manual(request)
-                        
-                        
-                    account_type = user.userinfo.account_type
-                    if account_type == "customer":
-                        return redirect("Stores:store_home",store_id=store.store_id)
-                    else:
-                        if account_type == "admin":
-                            return redirect("Stores:admin_manage_stores")
-                        elif model_dict.get(account_type).objects.get(user=user).store.store_id == store:
-                            return redirect("Stores:manager_store",store_id=store.store_id)
+            except json.JSONDecodeError:
+                return JsonResponse({'message': 'Invalid JSON data'})
 
-                        #return logout_manual(request)
-                        return HttpResponse("No store found for that account")
-                        #add option to log out here
 
+            
+            user = authenticate(request,username=data.get("username"),password=data.get("password"))
+            
+            if user is not None:
+                print(user)
+                login(request,user)   
+
+                if user.userinfo.store:
+                    store = user.userinfo.store
+                elif "store_id" in request.session:
+                    store = request.session["store_id"]
+                    # account_type = user.userinfo.account_type 
+                    # print(account_type)
+                    # if account_type == "admin":
+                    #     store = request.session["store_id"]
+                    # elif model_dict.get(account_type).objects.get(user=user).store.store_id == request.session["store_id"]:
+                    #     store = request.session["store_id"]
+                    # else:
+                    #     return HttpResponse("No store found for that account")
+                    
+                    # return redirect("Stores:manage_store",store_id=store)
+            
+                    
+                # else:
+
+                #     #No store ID found.
+                #     pass
+                #     #return logout_manual(request)
+                    
+                    
+                account_type = user.userinfo.account_type
+                print(account_type)
+                if account_type == "customer":
+                    #return redirect(f'/store_home/{store.store_id}/')
+                    return redirect("Stores:store_home",store_id=store.store_id)
                 else:
-                    error = "Incorrect username or password"
+                    if account_type == "admin":
+                        print()
+                        #return redirect("/admin_manage_store/")
+                        return redirect("Stores:admin_manage_stores")
+                    elif model_dict.get(account_type).objects.get(user=user).store.store_id == store:
+                        #return redirect(f'/manager_store/{store.store_id}/')
+                        return redirect("Stores:manager_store",store_id=store.store_id)
+
+                    #return logout_manual(request)
+                    return JsonResponse({"message":"No store found for that account"})
+
+                    #return HttpResponse("No store found for that account")
+                    #add option to log out here
+
+            else:
+                return JsonResponse({"message":"Incorrect username or password"})
+
+                #error = "Incorrect username or password"
 
         else:
             error = None
             
-        form = AuthenticationForm(request)
-        return render(request,"login_employee.html",{"form":form,"error":error})
+
+        return render(request,"login_employee.html")
         
 def register_customer(request):
     if not "store_id" in request.session:

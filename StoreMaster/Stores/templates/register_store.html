@@ -1,51 +1,88 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html>
-<head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/store_registration_dynamic_form.js' %}"></script>
-    <title>Register New Store</title>
-    <!-- Add your CSS links or styles here -->
-</head>
-<body>
-    <h1>Register New Store</h1>
-    <form id="store_registration_form" action="{% url 'Stores:register_store' %}" method="POST">
-        {% csrf_token %}
 
-        {{ form.store_name.label_tag }} {{ form.store_name }} <br>
-        {{ form.store_address.label_tag }} {{ form.store_address }} <br>
-        {{ form.store_line_two.label_tag }} {{ form.store_line_two }} <br>
-        {{ form.store_city.label_tag }} {{ form.store_city }} <br>
-        {{ form.store_state.label_tag }} {{ form.store_state }} <br>
-        {{ form.store_zip.label_tag }} {{ form.store_zip }} <br>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login Page</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f9f9f9;
+            }
+
+            #login-container {
+                width: 300px;
+                margin: 100px auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+                text-align: center;
+                color: #333;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #333;
+            }
+
+            input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                box-sizing: border-box;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                background-color: #3498db;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+
+            p {
+                margin-top: 20px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="registration-container-1">
+            <h1>Register New Store</h1>
+            <p id="message-space"></p>
+            <form id="store_registration_form_1">
+                {% csrf_token %}
+                
+                <label for="store-name-entry">Store Name:</label> <input id="store-name-entry" required>
+                <label for="store-address-entry">Address:</label> <input id="store-address-entry" required>
+                <label for="store-line-two-entry">Address Line Two:</label> <input id="store-line-two-entry">
+                <label for="store-city-entry">City:</label> <input id="store-city-entry" required>
+                <label for="store-state-entry">State:</label> <input id="store-state-entry" required>
+                <label for="store-zip-entry">Zip:</label> <input type="number" id="store-zip-entry" required>
         
-        <div id="select_existing_manager">
-            {{ form.manager.label_tag }} {{ form.manager }}<br>
-            <button id="add_new_manager_form_button" type="button">New Manager</button>
-        </div>
-            
-        <div id="register_new_manager" style="display: none;">
-            {{ form.manager_first_name.label_tag }} {{ form.manager_first_name }}<br>
-            {{ form.manager_last_name.label_tag }} {{ form.manager_last_name }}<br>
-            {{ form.manager_address.label_tag }} {{ form.manager_address }}<br>
-            {{ form.manager_line_two.label_tag }} {{ form.manager_line_two }}<br>
-            {{ form.manager_city.label_tag }} {{ form.manager_city }}<br>
-            {{ form.manager_state.label_tag }} {{ form.manager_state }}<br>
-            {{ form.manager_zip.label_tag }} {{ form.manager_zip }}<br>
-            {{ form.manager_username.label_tag }} {{ form.manager_username }}<br>
-            {{ form.manager_password.label_tag }} {{ form.manager_password }}<br>
-            {{ form.manager_email_address.label_tag }} {{ form.manager_email_address }}<br>
-            {{ form.manager_other_info.label_tag }} {{ form.manager_other_info }}<br>
-            {{ form.manager_birthday.label_tag }} {{ form.manager_birthday }}<br>
-            
+                <button type="submit">Next</button>
+            </form>
+            </div>
 
-            <button id="return_button" type="button">Select Existing Manager</button>
-        </div>
-
-    
-        <input type="hidden" name="manager_type_choice" value="pre-existing">
-        
-        <button type="submit">Register</button>
-    </form>
-</body>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{% static 'js/register_new_store.js' %}" defer></script>
+    </body>
 </html>
+
+
+

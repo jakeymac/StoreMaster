@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,14 +65,19 @@
         <p>{{ error_message }}</p>
     {% endif %}
     <div id="login-container">
-    <form action="{% url 'Accounts:login_employee' %}" method="POST">
-        {% csrf_token %}
-            <h1>Login</h1>
-            {{ form.username.label_tag }} {{ form.username}}
-            {{ form.password.label_tag }} {{ form.password }}
-            <button type="submit">Login</button>
-        </div>
-    </form>
+        <h1>Login</h1>
+        <p id="message-space"></p>
+        <form id="employee-login-form">
+            {% csrf_token %}
+            <input id="username-entry" class="employee-login-fields" placeholder="Username" required>
+            <input type="password" class="employee-login-fields" id="password-entry" placeholder="Password" required>
+            <button id="employee-login-button" type="submit">Login</button>
+        </form>
+        
+    </div>
     <p>Forgot password? <a href="{% url 'Accounts:password_reset' %}">Reset</a></p>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/login_employee_page.js' %}" defer></script>
 </body>
 </html>

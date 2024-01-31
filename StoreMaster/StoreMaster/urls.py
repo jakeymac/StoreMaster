@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path, include 
 from Accounts.views import StoreMasterHome
 from django.contrib.auth import views as auth_views
+from Stores.views import *
 
 urlpatterns = [
     path('',StoreMasterHome,name='home'),
     path('admin/', admin.site.urls),
+    path('search_for_stores',search_for_stores,name='search_for_stores'),
     path("",include("Accounts.urls")),
     path("",include("Orders.urls")),
     path("",include("Products.urls")),

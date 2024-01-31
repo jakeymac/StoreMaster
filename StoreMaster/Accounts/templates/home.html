@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
+    {% csrf_token %}
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -133,40 +136,40 @@
         }
 
     </style>
+
+    
 </head>
 <body>
     <h1>Welcome to StoreMaster</h1>
     <div id="main-container">
         <!-- Manage Store Button -->
+        
         <a href="{% url 'Accounts:login_employee' %}" id="manage-store-button">Employee Login</a>
     
         <!-- Register Store Button -->
         <a href="{% url 'Stores:register_store_page_1' %}" id="register-store-button">Register a New Store</a>
-        <div id="search-div">
+        <!-- <div id="search-div">
             <form id="store-search-form" action="{% url 'Stores:search_for_store' %}" method="POST">
                 {% csrf_token %}
-                <input type="text" id="search-bar" name="store_search_bar" placeholder="Search for a store by name or ID">
-                <button type="submit" id="search-button">Search</button>
+                <input type="text" id="home-store-search-bar" name="store_search_bar" placeholder="Search for a store by name or ID">
+                <button type="submit" id="home-store-search-button">Search</button>
             </form>
-            <div id="search-results-div">
-                {% if no_results %} 
-                    <p>{{ no_results }}</p>                
-                {% else %}
-                    {% for result in results %} 
-                        <div class="store-entry">
-                            <div class="store-info">
-                                <p class="store-name">{{result.store_name}}</p>
-                                <p class="store-address">{{result.address}} {{result.line_two}} {{result.city}}</p>
-                            </div>
-                            <a href="{% url 'Stores:store_home' result.store_id %}"><button class="open-store-button">Open Store</button></a>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>  
-    
+            
+        </div>   -->
+        <div id="search-div">
+            <input type="text" id="home-store-search-bar" name="store_search_bar" placeholder="Search for a store by name or ID">
+            <button id="home-store-search-button">Search</button>
+        </div>
+        <div id="search-results-div">
+            <p>Hi</p>
+        </div>
     </div>
+        
     <!-- Search Bar -->
     
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/home_page.js' %}" defer></script>
 </body>
 </html>

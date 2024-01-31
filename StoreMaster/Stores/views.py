@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+
+from django.core.serializers import serialize
 
 from .forms import *
 from Accounts.forms import CustomerRegistrationForm,EmployeeRegistrationForm, StoreRegistrationManagerForm
@@ -734,31 +736,69 @@ def product_search(request):
     return render(request, "product_search_results.html",context=context)
 
 
-def search_for_store(request):
+def search_for_stores(request):
     if request.method == 'POST':
-        context = {}
-        search_contents = request.POST.get('store_search_bar')
-        #TODO could add address searching
-        if search_contents.isdigit():
-            if Store.objects.filter(store_id=int(search_contents)).exists():
-                context["results"] = Store.objects.filter(store_id=int(search_contents))
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            search_term = data.get('search_term')
+
+            if search_term.isdigit():
+                if Store.objects.filter(store_id=int(search_term)).exists():
+                    results = serialize('json',Store.objects.filter(store_id=int(search_term)))
+                else:
+                    results = "Sorry, no stores were found with that store ID"
 
             else:
-                context["no_results"] = "Sorry, no stores were found with that ID"
-        else:
-            search_words = search_contents.split()
-            result = Q()
-            for word in search_words:
-                result |= Q(store_name__icontains=word)
+                search_words = search_term.split()
+                results = Q()
+                for word in search_words:
+                    results |= Q(store_name__icontains=word)
+
+                results = serialize('json', Store.objects.filter(results))
+                if not results:
+                    results = "Sorry, no stores found"
+
+
+
+            print(search_term)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'})
+
+
+        return JsonResponse(results,safe=False)
+    
+    # if request.method == 'POST':
+    #     context = {}
+    #     search_contents = request.POST.get('store_search_bar')
+    #     print(search_contents)
+    #     #TODO could add address searching
+    #     if search_contents.isdigit():
+    #         if Store.objects.filter(store_id=int(search_contents)).exists():
+    #             context["results"] = Store.objects.filter(store_id=int(search_contents))
+
+    #         else:
+    #             context["no_results"] = "Sorry, no stores were found with that ID"
+    #     else:
+    #         search_words = search_contents.split()
+    #         result = Q()
+    #         for word in search_words:
+    #             result |= Q(store_name__icontains=word)
             
-            search_results = Store.objects.filter(result)
-            if search_results:
+    #         search_results = Store.objects.filter(result)
+    #         if search_results:
                 
-                context["results"] = search_results
-            else:
-                context["no_results"] = "Sorry, no stores found"
+    #             context["results"] = search_results
+    #         else:
+    #             context["no_results"] = "Sorry, no stores found"
 
-        return render(request,"home.html",context)
+    
+    #     return JsonResponse(context)
+
+    #     #return render(request,"home.html",context)
+
+
+
 
 def get_all_customers(store_id):
     customers = []
@@ -774,6 +814,25 @@ def get_all_managers():
         managers.append((manager.user_id,str(manager)))
 
     return managers
+
+def register_store(request):
+    if request.method == "POST":
+        print("submitting")
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            if data["step"] == 1:
+                print(data)
+            elif data["step"] == 2:
+                pass
+            elif data["step"] == 3:
+                pass
+            elif data["step"] == 4:
+                pass
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "Invalid JSON data"})
+    else:
+        return render(request, "register_store.html")
+
 
 def register_store_page_1(request):
     if "store_info" in request.session:
