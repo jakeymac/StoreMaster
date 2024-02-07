@@ -364,8 +364,6 @@ def login_customer(request):
         return render(request,"login_customer.html",{"form":form,"error":error})
     
 def login_employee(request):
-    import pdb
-    #pdb.set_trace()
     error = None
     print("OK TRYING TO LOG IN")
     print("User:")

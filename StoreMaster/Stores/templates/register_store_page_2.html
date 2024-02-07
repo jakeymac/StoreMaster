@@ -83,58 +83,7 @@
         </style>
     </head>
     <body>
-            <div class='registration-container' id="register_existing_manager_div">
-                <h1>Select a manager</h1>
-                <button id="add_new_manager_form_button" class="form-switch-button" type="button">Register a New Manager</button>
-                {% if error %}
-                    <h5>{{error}}</h5>
-                {% endif %}
-                
-                <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
-                    {% csrf_token %}
-                    <select name="manager_selector" required>
-                        <option value="">Select a manager</option>
-                        {% for manager_option in manager_options %}
-                            <option value="{{ manager_option.0 }}">{{ manager_option.1 }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="hidden" name="form_type" value="register_existing">
-                    <button class="next-button" type="submit">Next</button>
-                </form>
-                
-            </div>
-            <div class='registration-container' id="register_new_manager_div"> 
-                <h1>Register a manager</h1>
-                <button id="return_button" class="form-switch-button" type="button">Select Existing Manager</button>
-                <!--TODO make this error message dissapear-->
-                {% if error %}
-                    <h5>{{ error|striptags }}</h5>
-                {% endif %}
             
-                <form id="register_store_new_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
-                    {% csrf_token %}    
-                    
-                    {{ form.first_name.label_tag }} {{ form.first_name }}<br>
-                    {{ form.last_name.label_tag }} {{ form.last_name }}<br>
-                    {{ form.address.label_tag }} {{ form.address }}<br>
-                    {{ form.line_two.label_tag }} {{ form.line_two }}<br>
-                    {{ form.city.label_tag }} {{ form.city }}<br>
-                    {{ form.state.label_tag }} {{ form.state }}<br>
-                    {{ form.zip.label_tag }} {{ form.zip }}<br>
-                    {{ form.username.label_tag }} {{ form.username }}<br>
-                    {{ form.password.label_tag }} {{ form.password }}<br>
-                    {{ form.email_address.label_tag }} {{ form.email_address }}<br>
-                    {{ form.other_info.label_tag }} {{ form.other_info }}<br>
-                    {{ form.birthday.label_tag }} {{ form.birthday }}<br>
-                    {{ form.stock_notifications.label_tag }} {{ form.stock_notifications }}
-
-                    <input type="hidden" name="form_type" value="register_new">
-                    <button class="next-button" type="submit">Next</button>
-                    
-                </form>
-                
-            </div>
-        <a href="{% url 'Stores:register_store_page_1'%}"><button>Back</button></a>
         <!--TODO Change the look of this back button-->
     </body>
 </html>

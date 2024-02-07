@@ -803,36 +803,81 @@ def search_for_stores(request):
 def get_all_customers(store_id):
     customers = []
     for customer in CustomerInfo.objects.filter(store=Store.objects.get(store_id=store_id)):
-        customers.append((customer.user_id,str(customer)))
+        customers.append([customer.user_id,str(customer)])
 
     return customers
 
-def get_all_managers():
+def get_all_managers(request):
     #Get all existing managers to use in manager selector
     managers= []
     for manager in ManagerInfo.objects.all():
-        managers.append((manager.user_id,str(manager)))
+        managers.append({"id":manager.user_id,
+                         "manager_name":str(manager)})
 
-    return managers
+    return JsonResponse({"managers":managers})
 
+def get_manager_by_id(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            id = data["id"]
+            chosen_manager = ManagerInfo.objects.get(user_id=id)
+            return JsonResponse({"manager":chosen_manager})
+
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "Invalid JSON data"})
+    
+ 
 def register_store(request):
     if request.method == "POST":
         print("submitting")
         try:
             data = json.loads(request.body.decode('utf-8'))
             if data["step"] == 1:
-                print(data)
+                if Store.objects.filter(
+                    store_name = data["store_name"],
+                    address = data["store_address"],
+                    line_two = data["store_line_two"],
+                    city = data["store_city"],
+                    state = data["store_state"],
+                    zip = int(data["store_zip"])
+                ).exists():
+                    return JsonResponse({"valid":0})
+                else:
+                    return JsonResponse({"valid":1})
+
             elif data["step"] == 2:
-                pass
+                data = json.loads(request.body.decode('utf-8'))
+                id = int(data["id"])
+                chosen_manager = ManagerInfo.objects.get(user_id=id)
+                chosen_manager_info = model_to_dict(chosen_manager)
+                
+                return JsonResponse({"manager":chosen_manager_info})
+
+                return JsonResponse({"manager":chosen_manager_info})
             elif data["step"] == 3:
-                pass
+                email_address = data["email_address"]
+                username = data["username"]
+                
+                if UserInfo.objects.filter(email_address=email_address).exists() and UserInfo.objects.filter(username=username):
+                    return JsonResponse({"valid":3})
+                elif UserInfo.objects.filter(email_address=email_address).exists():
+                    return JsonResponse({"valid":2})
+                elif UserInfo.objects.filter(username=username).exists():
+                    return JsonResponse({"valid":1})
+                else:
+                    return JsonResponse({"valid":0})
+                    
             elif data["step"] == 4:
-                pass
+                import pdb
+                pdb.set_trace()
+                print(data)
+                return JsonResponse({"message":"done"})
+
         except json.JSONDecodeError:
             return JsonResponse({"message": "Invalid JSON data"})
     else:
         return render(request, "register_store.html")
-
 
 def register_store_page_1(request):
     if "store_info" in request.session:

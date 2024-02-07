@@ -59,25 +59,171 @@
                 margin-top: 20px;
                 text-align: center;
             }
+
+            .empty-highlight {
+                border: 1px solid red;
+            }
+
         </style>
     </head>
     <body>
-        <div id="registration-container-1">
-            <h1>Register New Store</h1>
-            <p id="message-space"></p>
+        <h1>Register New Store</h1>
+        <p id="message-space"></p>
+        <div id="store-registration-container-1">
             <form id="store_registration_form_1">
                 {% csrf_token %}
                 
-                <label for="store-name-entry">Store Name:</label> <input id="store-name-entry" required>
-                <label for="store-address-entry">Address:</label> <input id="store-address-entry" required>
+                <label for="store-name-entry">Store Name:</label> <input id="store-name-entry" class="form-1 form-required-entry">
+                <label for="store-address-entry">Address:</label> <input id="store-address-entry" class="form-1 form-required-entry">
                 <label for="store-line-two-entry">Address Line Two:</label> <input id="store-line-two-entry">
-                <label for="store-city-entry">City:</label> <input id="store-city-entry" required>
-                <label for="store-state-entry">State:</label> <input id="store-state-entry" required>
-                <label for="store-zip-entry">Zip:</label> <input type="number" id="store-zip-entry" required>
+                <label for="store-city-entry">City:</label> <input id="store-city-entry" class="form-1 form-required-entry">
+                <label for="store-state-entry">State:</label> <input id="store-state-entry" class="form-1 form-required-entry">
+                <label for="store-zip-entry">Zip:</label> <input type="number" id="store-zip-entry" class="form-1 form-required-entry">
         
                 <button type="submit">Next</button>
             </form>
+        </div>
+
+
+        <div id="store-registration-container-2" style="display: none;">
+
+            <form id="store_registration_form_2">
+                {% csrf_token %}
+                <select name="manager_selector" id="manager_selector" class="form-required-entry">
+                    <option value="">Select a manager</option>
+                </select>
+
+                <label for="existing_manager_stock_notifications_entry">Stock Notifications:</label>
+                <input type="checkbox" id="existing_manager_stock_notifications_entry" name="stock_notifications"><br>
+               
+                <button type="submit">Next</button>
+            </form>
+            <button class="form-switch-button" id="form-switch-button" type="button">Register a New Manager</button>
+        </div>
+
+        <div id="store-registration-container-3" style="display: none;">
+            <form id="store_registration_form_3">
+                {% csrf_token %}
+                <label for="new_manager_first_name_entry">First Name:</label>
+                <input type="text" id="new_manager_first_name_entry" name="first_name"><br>
+
+                <label for="new_manager_last_name_entry">Last Name:</label>
+                <input type="text" id="new_manager_last_name_entry" name="last_name"><br>
+
+                <label for="new_manager_address_entry">Address:</label>
+                <input type="text" id="new_manager_address_entry" name="address"><br>
+
+                <label for="new_manager_line_two_entry">Line Two:</label>
+                <input type="text" id="new_manager_line_two_entry" name="line_two"><br>
+
+                <label for="new_manager_city_entry">City:</label>
+                <input type="text" id="new_manager_city_entry" name="city"><br>
+
+                <label for="new_manager_state_entry">State:</label>
+                <input type="text" id="new_manager_state_entry" name="state"><br>
+
+                <label for="new_manager_zip_entry">Zip:</label>
+                <input type="text" id="new_manager_zip_entry" name="zip"><br>
+
+                <label for="new_manager_username_entry">Username:</label>
+                <input type="text" id="new_manager_username_entry" name="username"><br>
+
+                <label for="new_manager_password_entry">Password:</label>
+                <input type="password" id="new_manager_password_entry" name="password"><br>
+
+                <label for="new_manager_email_address_entry">Email Address:</label>
+                <input type="email" id="new_manager_email_address_entry" name="email_address"><br>
+
+                <label for="new_manager_other_info_entry">Other Info:</label>
+                <textarea id="new_manager_other_info_entry" name="other_info"></textarea><br>
+
+                <label for="new_manager_birthday_entry">Birthday:</label>
+                <input type="text" id="new_manager_birthday_entry" name="birthday"><br>
+
+                <label for="new_manager_stock_notifications_entry">Stock Notifications:</label>
+                <input type="checkbox" id="new_manager_stock_notifications_entry" name="stock_notifications"><br>
+                
+                <button type="submit">Next</button>
+            </form>
+            <button class="form-switch-button" id="form-switch-button" type="button">Select an Existing Manager</button>
+        </div>
+
+        <div id="store-registration-container-4" style="display: none;">
+            <div id="confirm-store-information-container">
+                <label id="store-name-confirmation-label"></label>
+                <button type="button" class="store-edit-button">Edit</button>
+                
+                <label id="store-address-confirmation-label"></label>
+                <button type="button" class="store-edit-button">Edit</button>
+                
+                <label id="store-city-confirmation-label"></label>
+                <button type="button" class="store-edit-button">Edit</button>
+
+                <label id="store-state-confirmation-label"></label>
+                <button type="button" class="store-edit-button">Edit</button>
+                
+                <label id="store-zip-confirmation-label"></label>
+                <button type="button" class="store-edit-button">Edit</button>
             </div>
+            <div id="confirm-manager-information-container"></div>
+
+            <button id="store-registration-confirmation-button">Confirm</button>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        </div>
+        
+            
+        <!-- <div class='registration-container' id="register_existing_manager_div">
+                <h1>Select a manager</h1>
+                <button id="add_new_manager_form_button" class="form-switch-button" type="button">Register a New Manager</button>
+                {% if error %}
+                    <h5>{{error}}</h5>
+                {% endif %}
+                
+                <form id="register_store_existing_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
+                    {% csrf_token %}
+                    <select name="manager_selector" required>
+                        <option value="">Select a manager</option>
+                        {% for manager_option in manager_options %}
+                            <option value="{{ manager_option.0 }}">{{ manager_option.1 }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="form_type" value="register_existing">
+                    <button class="next-button" type="submit">Next</button>
+                </form>
+                
+            </div>
+            <div class='registration-container' id="register_new_manager_div"> 
+                <h1>Register a manager</h1>
+                <button id="return_button" class="form-switch-button" type="button">Select Existing Manager</button>
+                TODO make this error message dissapear
+                {% if error %}
+                    <h5>{{ error|striptags }}</h5>
+                {% endif %}
+            
+                <form id="register_store_new_manager_form" action="{% url 'Stores:register_store_page_2' %}" method="POST">
+                    {% csrf_token %}    
+                    
+                    {{ form.first_name.label_tag }} {{ form.first_name }}<br>
+                    {{ form.last_name.label_tag }} {{ form.last_name }}<br>
+                    {{ form.address.label_tag }} {{ form.address }}<br>
+                    {{ form.line_two.label_tag }} {{ form.line_two }}<br>
+                    {{ form.city.label_tag }} {{ form.city }}<br>
+                    {{ form.state.label_tag }} {{ form.state }}<br>
+                    {{ form.zip.label_tag }} {{ form.zip }}<br>
+                    {{ form.username.label_tag }} {{ form.username }}<br>
+                    {{ form.password.label_tag }} {{ form.password }}<br>
+                    {{ form.email_address.label_tag }} {{ form.email_address }}<br>
+                    {{ form.other_info.label_tag }} {{ form.other_info }}<br>
+                    {{ form.birthday.label_tag }} {{ form.birthday }}<br>
+                    {{ form.stock_notifications.label_tag }} {{ form.stock_notifications }}
+
+                    <input type="hidden" name="form_type" value="register_new">
+                    <button class="next-button" type="submit">Next</button>
+                    
+                </form>
+                
+            </div> -->
+        <!-- <a href="Stores:register_store_page_1"><button>Back</button></a> -->
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="{% static 'js/register_new_store.js' %}" defer></script>
