@@ -270,6 +270,9 @@ function load_form_2() {
 
 
 function load_form_4(type_of_manager) {
+    console.log("Running form 4");
+
+    console.log("Ok gooo");
     $("#store-registration-container-2").hide();
     $("#store-registration-container-3").hide();
     $("#store-registration-container-4").show();
@@ -299,24 +302,17 @@ function load_form_4(type_of_manager) {
         console.log("New manager chosen");
 
         $("#confirm-manager-information-container").append(`<label>Manager Name: <strong>${new_manager_first_name} ${new_manager_last_name}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
         $("#confirm-manager-information-container").append(`<label>Manager Address: <strong>${new_manager_address}</strong></label>`);
         if (new_manager_line_two) {
             $("#confirm-manager-information-container").append(`<label><strong>Line Two: ${new_manager_line_two}</strong></label>`);
-            $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
         }
         $("#confirm-manager-information-container").append(`<label><strong>City: ${new_manager_city}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
         $("#confirm-manager-information-container").append(`<label><strong>State: ${new_manager_state}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
         $("#confirm-manager-information-container").append(`<label><strong>Zip: ${new_manager_zip}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
         $("#confirm-manager-information-container").append(`<label><strong>Username: ${new_manager_username}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
         $("#confirm-manager-information-container").append(`<label><strong>Other Info: ${new_manager_other_info}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
         $("#confirm-manager-information-container").append(`<label><strong>Birthday: ${new_manager_birthday}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="new-manager-edit-button">Edit</button>`);
+        
         var stock_label = "Off";
         if (new_manager_stock_notifications) {
             stock_label = "On";
@@ -343,17 +339,14 @@ function load_form_4(type_of_manager) {
     } else { //Pre-existing manager chosen
         console.log("Pre-existing manager chosen");
         $("#confirm-manager-information-container").append(`<label>Manager name: <strong>${chosen_manager_info.first_name} ${chosen_manager_info.last_name}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="chosen-manager-edit-button">Edit</button>`);
         $("#confirm-manager-information-container").append(`<label>Manager email: <strong>${chosen_manager_info.email_address}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="chosen-manager-edit-button">Edit</button>`);
-
         var stock_label = "Off";
         if (chosen_manager_stock_notifications) {
             stock_label = "On";
         }
         
         $("#confirm-manager-information-container").append(`<label>Stock Notifications: <strong>${stock_label}</strong></label>`);
-        $("#confirm-manager-information-container").append(`<button class="chosen-manager-edit-button">Edit</button>`);
+        //$("#confirm-manager-information-container").append(`<button class="chosen-manager-edit-button">Edit</button>`);
 
         requestData = {"manager_info": chosen_manager_info,
                        "stock_notifications": chosen_manager_stock_notifications,

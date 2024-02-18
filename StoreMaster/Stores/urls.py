@@ -9,6 +9,7 @@ urlpatterns = [
     path('search_for_store', views.search_for_stores, name='search_for_store'),
     path('register_store',views.register_store,name='register_store'),
     path('get-all-managers',views.get_all_managers,name='get-all-managers'),
+    path('get-all-available-managers', views.get_all_available_managers,name='get-all-available-managers'),
     path('register_store_manager',views.register_store_page_2,name='register_store_page_2'),
     path('manage_store/<int:store_id>',views.manage_store,name='manage_store'),
     path("admin_manage_stores",views.admin_manage_stores,name='admin_manage_stores'),

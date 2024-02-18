@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 
@@ -572,8 +573,6 @@ def manage_store(request,store_id):
         if product.product_stock <= product.low_stock_quantity:
             products_in_low_stock.append(product)
 
-    
-
     if request.method == 'POST':
         if 'product_search' in request.POST:
             search_text = request.POST.get('product_search')
@@ -807,6 +806,14 @@ def get_all_customers(store_id):
 
     return customers
 
+def get_all_available_managers(request):
+    managers= []
+    for manager in ManagerInfo.objects.filter(store=None):
+        managers.append({"id":manager.user_id,
+                         "manager_name":str(manager)})
+
+    return JsonResponse({"managers":managers})
+
 def get_all_managers(request):
     #Get all existing managers to use in manager selector
     managers= []
@@ -872,7 +879,92 @@ def register_store(request):
                 import pdb
                 pdb.set_trace()
                 print(data)
-                return JsonResponse({"message":"done"})
+                store_info = data["store_info"]
+                print(store_info)
+                result_messages = []
+                if Store.objects.filter(store_name = store_info["name"],
+                                        address = store_info["address"],
+                                        line_two = store_info["line_two"],
+                                        city = store_info["city"],
+                                        state = store_info["state"],
+                                        zip = store_info["zip"]).exists():
+                    result_messages.append("There already exists a store with that name at this location.")
+        
+                if data["manager_type"] == "new":
+                    email_address = data["manager_info"]["email"]
+                    username = data["manager_info"]["username"]
+
+                    if UserInfo.objects.filter(email_address=email_address).exists() and UserInfo.objects.filter(username=username):
+                        manager_confirmation = "invalid email username"
+                        result_messages.append("A user exists with that username and email address")
+                    elif UserInfo.objects.filter(email_address=email_address).exists():
+                        result_messages.append("A user exists with that email address")
+
+                    elif UserInfo.objects.filter(username=username).exists():
+                        result_messages.append("A user exists with that username")
+
+
+                if result_messages:
+                    return JsonResponse({"confirmation": False, "messages": result_messages})
+                #No errors found, add store and manager to database. 
+                else:   
+                    store_name = store_info["name"]
+                    address = store_info["address"]
+                    line_two = store_info["line_two"]
+                    city = store_info["city"]
+                    state = store_info["state"]
+                    zip_code = store_info["zip"]
+                    
+                    new_store = Store(store_name = store_name,
+                                      address = address,
+                                      line_two = line_two,
+                                      city = city,
+                                      state = state,
+                                      zip = zip_code)
+                    new_store.save()
+
+                    if data["manager_type"] == "new":
+                        manager_info = data["manager_info"]
+                        new_user = User(username=manager_info["username"],
+                                        password=make_password(manager_info["password"]),
+                                        email=manager_info["email"])
+                        new_user.save()
+
+                        new_manager = ManagerInfo(first_name=manager_info["first_name"],
+                                                  last_name=manager_info["last_name"],
+                                                  email_address=manager_info["email"],
+                                                  address=manager_info["address"],
+                                                  line_two=manager_info["line_two"],
+                                                  city=manager_info["city"],
+                                                  state=manager_info["state"],
+                                                  zip=manager_info["zip"],
+                                                  username=manager_info["username"],
+                                                  password=manager_info["password"],
+                                                  other_information=manager_info["other_info"],
+                                                  birthday=manager_info["birthday"],
+                                                  stock_notifications=manager_info["stock_notifications"])
+
+                        new_manager.user = new_user
+                        new_manager.store = new_store
+                        new_manager.save()
+
+                    else:
+                        manager = ManagerInfo.objects.get(id = data["id"])
+                        manager.store = new_store
+                        manager.save()
+
+                    user = authentication(request, username=manager_info["username"],password=manager_info["password"])
+                    login(request,user)
+
+                    return JsonResponse({"confirmation": True,
+                                         "store_id": new_store.store_id})
+
+        
+
+
+
+
+
 
         except json.JSONDecodeError:
             return JsonResponse({"message": "Invalid JSON data"})
