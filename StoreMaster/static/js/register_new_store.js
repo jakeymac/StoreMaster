@@ -92,7 +92,7 @@ function load_form_1() {
 }
     
 function load_form_2() {
-
+    console.log("Loading Form 2 page NOWWWW");
     // OK BIG COMMENT HERE
     // MAKE SURE THAT A MANAGER ISNT REGISTERED TO A STORE ALREADY FOR THE DROP DOWN 
     // SELECTOR MAYBE IDK
@@ -384,8 +384,8 @@ function load_form_4(type_of_manager) {
             //then add edit button functionality - show specific manager div depending on choice
             console.log("data");
             if (data["confirmation"]) {
-                window.location.href = `manage_store/${data["store_id"]}`;
-                
+                //window.location.href = `manage_store/${data["store_id"]}`;
+                console.log("great, success");
             } else {
                 console.log(data["messages"]);
             }
@@ -396,9 +396,6 @@ function load_form_4(type_of_manager) {
     })
 }
 
-function load_final_confirmation() {
-    console.log("Running final confirmation");ß
-}
 
 $(document).ready(function() {
     $("#message-space").text(" ");

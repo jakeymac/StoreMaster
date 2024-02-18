@@ -19,3 +19,81 @@
         <a href="{% url 'Stores:register_store_page_2' %}"><button>Back</button></a>
         <!--TODO change the look of this back button-->
 </html>
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.registration-container {
+    width: 600px;
+    margin: 100px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    gap: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #333; /* span both columns */
+    grid-column: span 2; /* span both columns May need to adjust this, this was originally for form 1 */
+}
+
+.column {
+    grid-column: span 1; /* span one column */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input,select {
+    width: 100%;
+    padding: 2px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    grid-column: span 2; /* Again, this one may need to be adjusted, this was originally for form 1*/
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+
+.form-switch-button {
+    background-color:rgb(5, 161, 68)
+}
+.form-switch-button:hover{
+    background-color:#136d37
+}
+.next-button{
+
+    background-color: #3498db;
+}
+
+.next-button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}

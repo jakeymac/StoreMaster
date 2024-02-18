@@ -14,29 +14,36 @@
                 padding: 0;
                 background-color: #f9f9f9;
             }
-
-            #login-container {
-                width: 300px;
+            .registration-container {
+                width: 600px;
                 margin: 100px auto;
                 padding: 20px;
                 border: 1px solid #ddd;
                 background-color: #fff;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                display: grid;
+                gap: 10px;
             }
 
             h1 {
                 text-align: center;
-                color: #333;
+                color: #333; /* span both columns */
+                grid-column: span 2; /* span both columns May need to adjust this, this was originally for form 1 */
+            }
+
+            .column {
+                grid-column: span 1; /* span one column */
             }
 
             label {
+                display: block;
                 margin-bottom: 8px;
                 color: #333;
             }
 
-            input {
+            input,select {
                 width: 100%;
-                padding: 10px;
+                padding: 2px;
                 margin-bottom: 20px;
                 box-sizing: border-box;
             }
@@ -48,9 +55,26 @@
                 color: #fff;
                 border: none;
                 cursor: pointer;
+                grid-column: span 2; /* Again, this one may need to be adjusted, this was originally for form 1*/
             }
 
             button:hover {
+                background-color: #2980b9;
+            }
+
+
+            .form-switch-button {
+                background-color:rgb(5, 161, 68)
+            }
+            .form-switch-button:hover{
+                background-color:#136d37
+            }
+            .next-button{
+
+                background-color: #3498db;
+            }
+
+            .next-button:hover {
                 background-color: #2980b9;
             }
 
@@ -69,8 +93,6 @@
                 grid-gap: 10px;
             }
 
-
-            
             #store-registration-container-4 {
                 width: 100%;
                 overflow:hidden;
@@ -88,7 +110,7 @@
     <body>
         <h1>Register New Store</h1>
         <p id="message-space"></p>
-        <div id="store-registration-container-1">
+        <div id="store-registration-container-1" class="registration-container">
             <form id="store_registration_form_1">
                 {% csrf_token %}
                 
@@ -104,7 +126,7 @@
         </div>
 
 
-        <div id="store-registration-container-2" style="display: none;">
+        <div id="store-registration-container-2" style="display: none;" class="registration-container">
 
             <form id="store_registration_form_2">
                 {% csrf_token %}
@@ -117,10 +139,10 @@
                
                 <button type="submit">Next</button>
             </form>
-            <button class="form-switch-button" id="form-switch-button" type="button">Register a New Manager</button>
+            <button class="form-switch-button" id="switch-to-new-button" type="button">Register a New Manager</button>
         </div>
 
-        <div id="store-registration-container-3" style="display: none;">
+        <div id="store-registration-container-3" style="display: none;" class="registration-container">
             <form id="store_registration_form_3">
                 {% csrf_token %}
                 <label for="new_manager_first_name_entry">First Name:</label>
@@ -142,7 +164,7 @@
                 <input type="text" id="new_manager_state_entry" name="state" class="form-3 form-required-entry"><br>
 
                 <label for="new_manager_zip_entry">Zip:</label>
-                <input type="text" id="new_manager_zip_entry" name="zip" class="form-3 form-required-entry"><br>
+                <input type="number" id="new_manager_zip_entry" name="zip" class="form-3 form-required-entry"><br>
 
                 <label for="new_manager_username_entry">Username:</label>
                 <input type="text" id="new_manager_username_entry" name="username" class="form-3 form-required-entry"><br>
@@ -164,32 +186,24 @@
                 
                 <button type="submit">Next</button>
             </form>
-            <button class="form-switch-button" id="form-switch-button" type="button">Select an Existing Manager</button>
+            <button class="form-switch-button" id="switch-to-existing-button" type="button">Select an Existing Manager</button>
         </div>
 
         <div id="store-registration-container-4" style="display: none;">
             <div id="confirm-store-information-container" class="final-confirmation-div">
-                <label id="store-name-confirmation-label"></label>
-                
-                
-                <label id="store-address-confirmation-label"></label>
-               
-                
-                <label id="store-city-confirmation-label"></label>
-                
-
-                <label id="store-state-confirmation-label"></label>
-                
-                <label id="store-zip-confirmation-label"></label>
+                <label id="store-name-confirmation-label"></label><br>
+                <label id="store-address-confirmation-label"></label><br>               
+                <label id="store-city-confirmation-label"></label><br>
+                <label id="store-state-confirmation-label"></label><br>
+                <label id="store-zip-confirmation-label"></label><br>
 
                 <button type="button" id="confirmation-store-edit-button">Edit</button>
                 
             </div>
             <div id="confirm-manager-information-container" class="final-confirmation-div">
-                <p>Testing</p>
             </div>
 
-            <button id="store-registration-confirmation-button">Confirm</button>
+            
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         </div>
 
