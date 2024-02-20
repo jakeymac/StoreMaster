@@ -400,7 +400,7 @@ function load_final_confirmation(managerType) {
     let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
     requestData["csrfmiddlewaretoken"] = csrftoken;
 
-    $("#store-registration-confirmation-button").on("click", function() {
+    $("#confirm-info-button").on("click", function() {
         //TODO here could be changed to make one final check on the information,
         //to make sure nothing has changed in the database at the last minute
         
@@ -427,7 +427,13 @@ function load_final_confirmation(managerType) {
                 window.location.href = `manage_store/${data["store_id"]}`;
                 
             } else {
+                
                 console.log(data["messages"]);
+                var messages_string = "";
+                data["messages"].forEach(function(message) {
+                    messages_string += `${message}\n`;
+                });
+                $("#message-space").text(messages_string);
             }
         })
         .catch(error => {

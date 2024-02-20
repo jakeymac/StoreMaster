@@ -945,11 +945,12 @@ def register_store(request):
                         new_manager.save()
 
                     else:
-                        manager = ManagerInfo.objects.get(id = data["id"])
+                        user = User.objects.get(id=data["id"])
+                        manager = ManagerInfo.objects.get(user=user)
                         manager.store = new_store
                         manager.save()
 
-                    user = authentication(request, username=manager_info["username"],password=manager_info["password"])
+                    user = authenticate(request, username=data["manager_info"]["username"],password=data["manager_info"]["password"])
                     login(request,user)
 
                     return JsonResponse({"confirmation": True,
