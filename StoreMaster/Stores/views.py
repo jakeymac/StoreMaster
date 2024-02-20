@@ -876,11 +876,7 @@ def register_store(request):
                     return JsonResponse({"valid":0})
                     
             elif data["step"] == 4:
-                import pdb
-                pdb.set_trace()
-                print(data)
                 store_info = data["store_info"]
-                print(store_info)
                 result_messages = []
                 if Store.objects.filter(store_name = store_info["name"],
                                         address = store_info["address"],

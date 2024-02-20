@@ -36,9 +36,7 @@ function load_forms() {
     $("#store_registration_form_1").submit(function(event) {
         event.preventDefault();
         var complete = true;
-        $(".form-1.form-required-entry").each(function() {
-            console.log("blah");
-            console.log($(this).attr('id'));
+        $(".form-1-input.form-required-entry").each(function() {
             if ($(this).val().trim() === "") {
                 $(this).addClass('empty-highlight');
                 $("#message-space").text("Make sure all fields are filled in");
@@ -96,8 +94,11 @@ function load_forms() {
     });
 
     $("#switch-to-new-button").on("click", function() {
-        console.log("Pressed buttons????");
         load_step_3();
+        $(".form-required-entry").each(function (){
+            $(this).removeClass('empty-highlight');
+            $("#message-space").text(" ");
+        });
     });
 
     $("#store_registration_form_2").submit(function(event) {
@@ -140,12 +141,16 @@ function load_forms() {
             })
         } else {
             $("#manager_selector").addClass('empty-highlight');
+            $("#message-space").text("Select a manager");
         }
     });
 
     $("#switch-to-existing-button").on("click", function() {
-        console.log("pressed button");
         load_step_2();
+        $(".form-required-entry").each(function (){
+            $(this).removeClass('empty-highlight');
+            $("#message-space").text(" ");
+        });
     });
 
     $("#store_registration_form_3").submit(function(event) {

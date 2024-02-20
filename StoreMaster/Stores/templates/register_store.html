@@ -14,9 +14,11 @@
                 padding: 0;
                 background-color: #f9f9f9;
             }
+
             .registration-container {
                 width: 600px;
                 margin: 100px auto;
+                margin-top: 20px;
                 padding: 20px;
                 border: 1px solid #ddd;
                 background-color: #fff;
@@ -42,14 +44,33 @@
             }
 
             input,select {
-                width: 100%;
                 padding: 2px;
                 margin-bottom: 20px;
                 box-sizing: border-box;
             }
+            
+            .form-1-label {
+                margin-left:120px;
+            }
+
+            .form-1-input {
+                width:60%;
+                margin-left:120px;
+            }
+
+            
+            .form-2-input {
+                width:40%;
+                margin-left:180px;
+            }
+
+            #manager-picker-input {
+                margin-left: 220px;
+            }
 
             button {
-                width: 100%;
+                width: 50%;
+                margin-left:150px;
                 padding: 10px;
                 background-color: #3498db;
                 color: #fff;
@@ -61,16 +82,17 @@
             button:hover {
                 background-color: #2980b9;
             }
-
-
+            
             .form-switch-button {
-                background-color:rgb(5, 161, 68)
+                margin-top:5px;
+                background-color:rgb(5, 161, 68);
             }
-            .form-switch-button:hover{
-                background-color:#136d37
-            }
-            .next-button{
 
+            .form-switch-button:hover{
+                background-color:#136d37;
+            }
+
+            .next-button{
                 background-color: #3498db;
             }
 
@@ -87,24 +109,66 @@
                 border: 1px solid red;
             }
 
-            .final-confirmation-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-gap: 10px;
+            #store-registration-container-3 {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+            }
+
+            .column {
+                width: 40%;
+                display:inline-block;
+                vertical-align: top;
+                
+            }
+
+            #left-column {
+                margin-left:15%;
+            }
+
+            #new-manager-buttons-div {
+                margin-top: 20px;
+                text-align:center;
+            }
+
+            .new-manager-button {
+                margin-left:25%;
             }
 
             #store-registration-container-4 {
-                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-gap: 10px;
+                /* width: 60%; */
                 overflow:hidden;
-
             }
+
             .final-confirmation-div {
-                width: 50%;
-                float:left;
+                /* width: 35%; */
                 box-sizing: border-box;
                 padding:20px;
                 border: 1px solid #ccc;
             }
+
+            #info-container {
+                margin-bottom:20px;
+            }
+
+            #confirmation-store-edit-button {
+                margin-left:25%;
+            }
+
+            .manager-edit-button {
+                margin-left:25%;
+            }
+            
+            #confirm-info-button {
+                justify-self: center;
+                grid-column: 1 / -1;
+                margin-left:0px;
+            }
+             
         </style>
     </head>
     <body>
@@ -114,12 +178,12 @@
             <form id="store_registration_form_1">
                 {% csrf_token %}
                 
-                <label for="store-name-entry">Store Name:</label> <input id="store-name-entry" class="form-1 form-required-entry">
-                <label for="store-address-entry">Address:</label> <input id="store-address-entry" class="form-1 form-required-entry">
-                <label for="store-line-two-entry">Address Line Two:</label> <input id="store-line-two-entry">
-                <label for="store-city-entry">City:</label> <input id="store-city-entry" class="form-1 form-required-entry">
-                <label for="store-state-entry">State:</label> <input id="store-state-entry" class="form-1 form-required-entry">
-                <label for="store-zip-entry">Zip:</label> <input type="number" id="store-zip-entry" class="form-1 form-required-entry">
+                <label for="store-name-entry" class="form-1-label">Store Name:</label> <input id="store-name-entry" class="form-1-input form-required-entry">
+                <label for="store-address-entry" class="form-1-label">Address:</label> <input id="store-address-entry" class="form-1-input form-required-entry">
+                <label for="store-line-two-entry" class="form-1-label">Address Line Two:</label> <input id="store-line-two-entry" class="form-1-input">
+                <label for="store-city-entry" class="form-1-label">City:</label> <input id="store-city-entry" class="form-1-input form-required-entry">
+                <label for="store-state-entry" class="form-1-label">State:</label> <input id="store-state-entry" class="form-1-input form-required-entry">
+                <label for="store-zip-entry" class="form-1-label">Zip:</label> <input type="number" id="store-zip-entry" class="form-1-input form-required-entry">
         
                 <button type="submit">Next</button>
             </form>
@@ -127,84 +191,94 @@
 
 
         <div id="store-registration-container-2" style="display: none;" class="registration-container">
-
             <form id="store_registration_form_2">
                 {% csrf_token %}
-                <select name="manager_selector" id="manager_selector" class="form-required-entry">
-                    <option value="">Select a manager</option>
-                </select>
-
-                <label for="existing_manager_stock_notifications_entry">Stock Notifications:</label>
-                <input type="checkbox" id="existing_manager_stock_notifications_entry" name="stock_notifications"><br>
-               
+                <div class="registration-inner-div-2" id="selector-div">
+                    <select name="manager_selector" id="manager_selector" class="form-required-entry form-2-input" >
+                        <option value="">Select a manager</option>
+                    </select>
+                </div>
+                
+                <label for="existing_manager_stock_notifications_entry" class="form-2-input" id="manager-picker-input">
+                    Stock Notifications<input type="checkbox" id="existing_manager_stock_notifications_entry"  name="stock_notifications">
+                </label>
+                       
                 <button type="submit">Next</button>
+                <button class="form-switch-button" id="switch-to-new-button" type="button">Register a New Manager</button>
+                
             </form>
-            <button class="form-switch-button" id="switch-to-new-button" type="button">Register a New Manager</button>
+            
         </div>
 
         <div id="store-registration-container-3" style="display: none;" class="registration-container">
             <form id="store_registration_form_3">
                 {% csrf_token %}
-                <label for="new_manager_first_name_entry">First Name:</label>
-                <input type="text" id="new_manager_first_name_entry" name="first_name" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_last_name_entry">Last Name:</label>
-                <input type="text" id="new_manager_last_name_entry" name="last_name" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_address_entry">Address:</label>
-                <input type="text" id="new_manager_address_entry" name="address" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_line_two_entry">Line Two:</label>
-                <input type="text" id="new_manager_line_two_entry" name="line_two"><br>
-
-                <label for="new_manager_city_entry">City:</label>
-                <input type="text" id="new_manager_city_entry" name="city" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_state_entry">State:</label>
-                <input type="text" id="new_manager_state_entry" name="state" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_zip_entry">Zip:</label>
-                <input type="number" id="new_manager_zip_entry" name="zip" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_username_entry">Username:</label>
-                <input type="text" id="new_manager_username_entry" name="username" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_password_entry">Password:</label>
-                <input type="password" id="new_manager_password_entry" name="password" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_email_address_entry">Email Address:</label>
-                <input type="email" id="new_manager_email_address_entry" name="email_address" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_other_info_entry">Other Info:</label>
-                <textarea id="new_manager_other_info_entry" name="other_info"></textarea><br>
-
-                <label for="new_manager_birthday_entry">Birthday:</label>
-                <input type="date" id="new_manager_birthday_entry" name="birthday" class="form-3 form-required-entry"><br>
-
-                <label for="new_manager_stock_notifications_entry">Stock Notifications:</label>
-                <input type="checkbox" id="new_manager_stock_notifications_entry" name="stock_notifications"><br>
+                <div class="column" id="left-column">
+                    <label for="new_manager_first_name_entry">First Name:</label>
+                    <input type="text" id="new_manager_first_name_entry" name="first_name" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_last_name_entry">Last Name:</label>
+                    <input type="text" id="new_manager_last_name_entry" name="last_name" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_address_entry">Address:</label>
+                    <input type="text" id="new_manager_address_entry" name="address" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_line_two_entry">Line Two:</label>
+                    <input type="text" id="new_manager_line_two_entry" name="line_two"><br>
+    
+                    <label for="new_manager_city_entry">City:</label>
+                    <input type="text" id="new_manager_city_entry" name="city" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_state_entry">State:</label>
+                    <input type="text" id="new_manager_state_entry" name="state" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_zip_entry">Zip:</label>
+                    <input type="number" id="new_manager_zip_entry" name="zip" class="form-3 form-required-entry"><br>
+                </div>
+                <div class="column">
+                    <label for="new_manager_username_entry">Username:</label>
+                    <input type="text" id="new_manager_username_entry" name="username" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_password_entry">Password:</label>
+                    <input type="password" id="new_manager_password_entry" name="password" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_email_address_entry">Email Address:</label>
+                    <input type="email" id="new_manager_email_address_entry" name="email_address" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_other_info_entry">Other Info:</label>
+                    <textarea id="new_manager_other_info_entry" name="other_info" style="width:225px; height: 100px; resize:none;"></textarea><br>
+    
+                    <label for="new_manager_birthday_entry">Birthday:</label>
+                    <input type="date" id="new_manager_birthday_entry" name="birthday" class="form-3 form-required-entry"><br>
+    
+                    <label for="new_manager_stock_notifications_entry">Stock Notifications:
+                        <input type="checkbox" id="new_manager_stock_notifications_entry" name="stock_notifications">
+                    </label><br>
+                    
+                </div>
                 
-                <button type="submit">Next</button>
+                    <button class="new-manager-button" type="submit">Next</button>
+                    <button class="new-manager-button form-switch-button" id="switch-to-existing-button" type="button">Select an Existing Manager</button>
+                
             </form>
-            <button class="form-switch-button" id="switch-to-existing-button" type="button">Select an Existing Manager</button>
         </div>
 
-        <div id="store-registration-container-4" style="display: none;">
+        <div id="store-registration-container-4" class="registration-container" style="display: none;">
             <div id="confirm-store-information-container" class="final-confirmation-div">
-                <label id="store-name-confirmation-label"></label><br>
-                <label id="store-address-confirmation-label"></label><br>               
-                <label id="store-city-confirmation-label"></label><br>
-                <label id="store-state-confirmation-label"></label><br>
-                <label id="store-zip-confirmation-label"></label><br>
+                <label class="store-info-confirmation-label" id="store-name-confirmation-label"></label><br>
+                <label class="store-info-confirmation-label" id="store-address-confirmation-label"></label><br>               
+                <label class="store-info-confirmation-label" id="store-city-confirmation-label"></label><br>
+                <label class="store-info-confirmation-label" id="store-state-confirmation-label"></label><br>
+                <label class="store-info-confirmation-label" id="store-zip-confirmation-label"></label><br>
 
                 <button type="button" id="confirmation-store-edit-button">Edit</button>
-                
             </div>
-            <div id="confirm-manager-information-container" class="final-confirmation-div">
-            </div>
-
+    
+            <div id="confirm-manager-information-container" class="final-confirmation-div"></div>
             
+
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <button id="confirm-info-button">Confirm</button>
         </div>
 
         <div id="store-registration-confirmed" style="display: none">
