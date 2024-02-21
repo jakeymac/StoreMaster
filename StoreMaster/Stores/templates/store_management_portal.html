@@ -9,14 +9,20 @@
                 padding: 0;
                 background-color: #f9f9f9;
             }
-
+            
             .search-section {
                 height:500px;
-                width:300px;
+                width:350px;
                 border: 1px solid #ddd;
                 background-color: #fff;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 margin:10px;
+                
+            }
+
+            .search-results-section {
+                height:400px;
+                overflow: auto;
             }
 
             #main-div-container {
@@ -29,18 +35,57 @@
                 display: flex;
                 justify-content: center;
             }
+            #product-search-top-label {
+                width:153px;
+                margin-left:105px;
+            }
 
+            #no-products-text {
+                margin-left:105px;
+            }
+            #product-search-bar {
+                margin-bottom:15px;
+                margin-left:98.5px;
+            }
+
+            .individual-product-div {
+                display: flex;
+                margin-bottom:5px;
+                margin-left: 28px;
+                
+            }
+
+            .product-name-p,
+            .view-product-button {
+                margin-top:16px;
+            }
+
+        
+            .product-name-p {
+                width:75%;
+            }
+
+            .view-product-button {
+                height:20px;
+
+            }
+            
+            
+            
         </style>
     </head>
     <body>
+        {% csrf_token %}
         <h1>{{store_name}}</h1>
         <h2>Welcome {{username}}</h2>
         <div id="main-div-container">
             <div class="row">
                 <div class="search-section">
-                    <h3>Product Search</h3>
+                    <h3 id="product-search-top-label">Product Search</h3>
                     <input type="text" id="product-search-bar" placeholder="Search">
-                    <div class="search-results-section" id="purchase-results-div"></div>
+                    <div class="search-results-section" id="product-results-div">
+                        <p id="no-products-text" style="display:none;">No products found</p>
+                    </div>
                 </div>
 
                 <div class="search-section">
@@ -74,7 +119,8 @@
                 
             </div>
         </div>
+        <script>var store_id = "{{store_id}}" </script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="{% static 'js/store_management_portal.js' %}" defer></script>
     </body>
-</html>a
+</html>

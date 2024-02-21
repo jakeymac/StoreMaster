@@ -672,9 +672,9 @@ def manage_store(request,store_id):
     
     return render(request,"manage_store.html",context)
 
-
 @login_required(login_url='/login_employee')
 def manage_store(request, store_id):
+    store = Store.objects.get(store_id = store_id)
     if request.method == "POST":
         products = Product.objects.filter(store=store)
         orders = Order.objects.filter(store=store)
@@ -683,7 +683,7 @@ def manage_store(request, store_id):
         employees = EmployeeInfo.objects.filter(store=store)
         managers = ManagerInfo.objects.filter(store=store)
 
-        employees = list(employees) + list(managers)
+        
 
         products_low_in_stock = []
         for product in products:
@@ -691,8 +691,8 @@ def manage_store(request, store_id):
                 products_low_in_stock.append(product)
 
 
-        products_low_in_stock = [{'id': product.id,
-                                'name': product.name,
+        products_low_in_stock = [{'id': product.product_id,
+                                'name': product.product_name,
                                 'product_stock': product.product_stock} 
                                 for product in products_low_in_stock]
 
@@ -700,7 +700,7 @@ def manage_store(request, store_id):
         orders = list(orders.values())
         purchases = list(purchases.values())
         customers = list(customers.values())
-        employees = list(employees.values())
+        employees = list(employees.values()) + list(managers.values())
         managers = list(managers.values())
 
         response_data = {
@@ -709,20 +709,19 @@ def manage_store(request, store_id):
             "purchases": purchases,
             "customers": customers,
             "employees": employees,
-            "managers": managers,
             "products_low_in_stock": products_low_in_stock
         }
 
         return JsonResponse(response_data)
 
     else:
-        store = Store.objects.get(store_id=store_id)
         store_name = store.store_name
 
         username = str(request.user)
 
         context =  {"store_name": store_name,
-                    "username": username}
+                    "username": username,
+                    "store_id": store_id}
 
         return render(request, "store_management_portal.html", context=context)
 
