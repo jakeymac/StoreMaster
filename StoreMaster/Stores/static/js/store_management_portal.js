@@ -71,6 +71,11 @@ function load_listeners() {
         var search_text = $(this).val().trim();
         filterProducts(search_text);
     });
+
+    $(document).on("click", ".view-product-button", function () {
+        var product_id = $(this).attr("product_id");
+        window.location.href = `/employee_view_product/${product_id}`;
+    });
 }
 
 function load_page() {
