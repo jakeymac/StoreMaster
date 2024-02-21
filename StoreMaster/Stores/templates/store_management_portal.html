@@ -17,11 +17,11 @@
                 background-color: #fff;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 margin:10px;
-                
+                padding:4px;
             }
 
             .search-results-section {
-                height:400px;
+                height:360px;
                 overflow: auto;
             }
 
@@ -52,7 +52,6 @@
                 display: flex;
                 margin-bottom:5px;
                 margin-left: 28px;
-                
             }
 
             .product-name-p,
@@ -60,17 +59,17 @@
                 margin-top:16px;
             }
 
-        
             .product-name-p {
                 width:75%;
             }
 
             .view-product-button {
                 height:20px;
-
             }
-            
-            
+
+            .individual-order-div {
+                display: flex;
+            }
             
         </style>
     </head>
@@ -91,7 +90,9 @@
                 <div class="search-section">
                     <h3>Order Search</h3>
                     <input type="text" id="order-search-bar" placeholder="Search">
-                    <div class="search-results-section" id="order-results-div"></div>
+                    <div class="search-results-section" id="order-results-div">
+                        <p id="no-orders-text" style="display:none;">No orders found</p>
+                    </div>
                 </div>
 
                 <div class="search-section">

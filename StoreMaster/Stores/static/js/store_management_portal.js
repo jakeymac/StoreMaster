@@ -54,6 +54,27 @@ function load_store_data() {
 
             $("#product-results-div").append(new_product_div);
         });
+        
+        orders = data["orders"];
+        orders.forEach(function(order) {
+            var new_order_div = `<div class="individual-order-div">
+                                    <table class="order-info-table"> 
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                        </tr>
+                                        <tr>
+                                            <td>${order.order_id}</td>
+                                            <td>${order.order_date}</td>
+                                        </tr>
+                                    </table>
+                                    <button class="view-order-button" order_id="${order.order_id}">View</button>
+                                </div>`;
+
+            $("#order-results-div").append(new_order_div);
+
+            
+        });
             
             
         
@@ -79,7 +100,7 @@ function load_listeners() {
 }
 
 function load_page() {
-    
+    console.log("hi");
 }
 
 $(document).ready(function() {

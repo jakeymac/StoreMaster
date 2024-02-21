@@ -465,7 +465,7 @@ def add_new_shipment(request,store_id):
 
                 return redirect("view_shipment",new_shipment.shipment_id)
             else:
-                #TODO error cehcking here for error in json form
+                #TODO error checking here for error in json form
                 pass
 
 
@@ -585,7 +585,7 @@ def manage_store(request,store_id):
             products = Product.objects.filter(query)
 
         elif 'order_search' in request.POST:
-            #TODO could add searhcing for user as well.
+            #TODO could add searching for user as well.
             search_text = request.POST.get("order_search")
             search_terms = search_text.split()
             query = Q(store=store)
@@ -598,7 +598,7 @@ def manage_store(request,store_id):
             orders = Order.objects.filter(query)
 
         elif 'purchase_search' in request.POST:
-            #TODO could add searhcing for user as well.
+            #TODO could add seaching for user as well.
             search_text = request.POST.get("purchase_search")
             search_terms = search_text.split()
             query = Q(store=store)
