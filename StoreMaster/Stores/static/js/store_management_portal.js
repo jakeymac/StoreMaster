@@ -56,25 +56,36 @@ function load_store_data() {
         });
         
         orders = data["orders"];
-        orders.forEach(function(order) {
-            var new_order_div = `<div class="individual-order-div">
-                                    <table class="order-info-table"> 
+        var new_order_div_html = `<div class="individual-order-div">
+                                    <table id="order-info-table">
                                         <tr>
                                             <th>Order ID</th>
                                             <th>Date</th>
-                                        </tr>
-                                        <tr>
-                                            <td>${order.order_id}</td>
-                                            <td>${order.order_date}</td>
-                                        </tr>
-                                    </table>
-                                    <button class="view-order-button" order_id="${order.order_id}">View</button>
-                                </div>`;
+                                            <th>Customer</th>
+                                        </tr>`;
 
-            $("#order-results-div").append(new_order_div);
+        orders.forEach(function(order) {
+            var order_date = new Date(order.order_date);
+            var month = String(order_date.getMonth() + 1).padStart(2, '0'); 
+            var day = String(order_date.getDate()).padStart(2, '0');
+            var year = order_date.getFullYear();
+            var formattedDate = `${month}-${day}-${year}`;
+            
+            new_order_div_html += `<tr>
+                                        <td id="order-cell">${order.order_id}</td>
+                                        <td>${formattedDate}</td>
+                                        <td>${order.customer_name}</td>
+                                        <td><button class="view-order-button" order_id="${order.order_id}">View</button> </td>
+                                    </tr>`
+
+                                    
 
             
         });
+
+        new_order_div_html += `</table> </div>`;
+    
+        $("#order-results-div").append(new_order_div_html);
             
             
         

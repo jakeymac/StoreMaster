@@ -683,8 +683,6 @@ def manage_store(request, store_id):
         employees = EmployeeInfo.objects.filter(store=store)
         managers = ManagerInfo.objects.filter(store=store)
 
-        
-
         products_low_in_stock = []
         for product in products:
             if product.product_stock <= product.low_stock_quantity:
@@ -702,6 +700,16 @@ def manage_store(request, store_id):
         customers = list(customers.values())
         employees = list(employees.values()) + list(managers.values())
         managers = list(managers.values())
+
+        for order in orders:
+            customer = CustomerInfo.objects.get(user_id=order["customer_id_id"])
+            name = customer.first_name + " " + customer.last_name
+            order["customer_name"] = name
+    
+        for purchase in purchases:
+            customer = CustomerInfo.objects.get(user_id=purchase["customer_id_id"])
+            name = customer.first_name + " " + customer.last_name
+            purchase["customer_name"] = name
 
         response_data = {
             "products": products,

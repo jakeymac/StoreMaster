@@ -14,11 +14,10 @@
 
 
 var get_store_search_results = function() {
-    console.log("hi there");
     var searchTerm = $("#home-store-search-bar").val();
 
     var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
-    console.log(searchTerm);
+    
     var data = {
         search_term: searchTerm,
         csrfmiddlewaretoken: csrftoken
