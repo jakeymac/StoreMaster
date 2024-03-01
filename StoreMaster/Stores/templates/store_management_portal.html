@@ -67,14 +67,52 @@
                 height:20px;
             }
 
+            #order-results-div {
+                font-size:12px;
+            }
+
+            #order-search-top-label {
+                width:153px;
+                margin-left:115px;
+            }
+
+            #order-search-bar {
+                margin-bottom:15px;
+                margin-left:98.5px;
+            }
+
+
+            #order-info-table {
+                margin-left:10px;    
+            }
+            
             .individual-order-div {
                 display: flex;
             }
 
-            
-
             #order-results-div {
-                font-size:12px;
+                margin-left:2%;
+            }
+
+
+            #order-date-column-header, #order-customer-name-column-header {
+                padding-right:12px;
+            }
+            .order-id-cell {
+                width:20%;
+                text-align: right;
+                padding-right:12px;
+                
+            }
+
+            
+            
+            .order-row td {
+                padding-right:20px;
+            }
+
+            .order-row td:last-child {
+                padding-right:20px;
             }
 
             .view-order-button {
@@ -98,10 +136,17 @@
                 </div>
 
                 <div class="search-section">
-                    <h3>Order Search</h3>
+                    <h3 id="order-search-top-label">Order Search</h3>
                     <input type="text" id="order-search-bar" placeholder="Search">
                     <div class="search-results-section" id="order-results-div">
                         <p id="no-orders-text" style="display:none;">No orders found</p>
+                        <table id="order-info-table">
+                            <tr class="order-row">
+                                <th>Order ID</th>
+                                <th id="order-date-column-header">Date</th>
+                                <th id="order-customer-name-column-header">Customer</th>
+                            </tr>
+                        </table>
                     </div>
                 </div>
 
@@ -126,10 +171,9 @@
                     <h3>Employee Search</h3>
                     <input type="text" id="employee-search-bar" placeholder="Search">
                 </div>
-
-                
             </div>
         </div>
+
         <script>var store_id = "{{store_id}}" </script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="{% static 'js/store_management_portal.js' %}" defer></script>

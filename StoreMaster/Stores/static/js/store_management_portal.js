@@ -1,7 +1,7 @@
 var products;
 var orders;
 var purchases;
-var customers;
+var customers;3
 var employees;
 var products_low_in_stock;
 
@@ -21,6 +21,29 @@ function filterProducts(search_text) {
         $("#no-products-text").show();
     } else {
         $("#no-products-text").hide();
+
+    }
+}
+
+function filterOrders(search_text) {
+    var ordersFound = false;
+    $(".order-row").each(function() {
+        var orderId = $(this).find(".order-id-cell").first().text();
+        var orderCustomerName = $(this).find(".order-customer-name-cell").first().text();
+        if(orderId.includes(search_text) || orderCustomerName.includes(search_text)) {
+            ordersFound = true;
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    })
+
+    if(!ordersFound) {
+        $("#no-orders-text").show();
+        $("#order-info-table").hide();
+    } else {
+        $("#no-orders-text").hide();
+        $("#order-info-table").show();
 
     }
 }
@@ -54,42 +77,29 @@ function load_store_data() {
 
             $("#product-results-div").append(new_product_div);
         });
-        
+         
         orders = data["orders"];
-        var new_order_div_html = `<div class="individual-order-div">
-                                    <table id="order-info-table">
-                                        <tr>
-                                            <th>Order ID</th>
-                                            <th>Date</th>
-                                            <th>Customer</th>
-                                        </tr>`;
 
+        var new_order_div_html = "";
         orders.forEach(function(order) {
             var order_date = new Date(order.order_date);
             var month = String(order_date.getMonth() + 1).padStart(2, '0'); 
             var day = String(order_date.getDate()).padStart(2, '0');
             var year = order_date.getFullYear();
             var formattedDate = `${month}-${day}-${year}`;
-            
-            new_order_div_html += `<tr>
-                                        <td id="order-cell">${order.order_id}</td>
-                                        <td>${formattedDate}</td>
-                                        <td>${order.customer_name}</td>
+            ``
+            new_order_div_html += `<tr class="order-row">
+                                        <td class="order-id-cell">${order.order_id}</td>
+                                        <td class="order-date-cell">${formattedDate}</td>
+                                        <td class="order-customer-name-cell">${order.customer_name}</td>
                                         <td><button class="view-order-button" order_id="${order.order_id}">View</button> </td>
                                     </tr>`
-
-                                    
-
-            
         });
 
-        new_order_div_html += `</table> </div>`;
+        //new_order_div_html += `</table> </div>`;
     
-        $("#order-results-div").append(new_order_div_html);
+        $("#order-info-table").append(new_order_div_html);
             
-            
-        
-
         orders = data["orders"];
         purchases = data["purchases"];
         customers = data["customers"];
@@ -104,10 +114,20 @@ function load_listeners() {
         filterProducts(search_text);
     });
 
-    $(document).on("click", ".view-product-button", function () {
+    $("#order-search-bar").on("input", function() {
+        var search_text = $(this).val().trim();
+        filterOrders(search_text);
+    })
+
+    $(document).on("click", ".view-product-button", function() {
         var product_id = $(this).attr("product_id");
         window.location.href = `/employee_view_product/${product_id}`;
     });
+
+    $(document).on("click", ".view-order-button", function() {
+        var order_id = $(this).attr("order_id");
+        window.location.href = `/employee_view_order/${order_id}`
+    })
 }
 
 function load_page() {
