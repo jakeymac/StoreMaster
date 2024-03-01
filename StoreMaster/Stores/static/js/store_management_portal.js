@@ -48,6 +48,19 @@ function filterOrders(search_text) {
     }
 }
 
+function filterPurchases(search_text) {
+    var purchasesFound = false;
+    $(".purchase-row").each(function() {
+        var purchaseId = $(this).find(".purchase-id-cell").fist().text();
+        if(purchaseId.includes(search_text) || purcahseCustomerName.includes(search_text)) { //May adjust for employee search as well
+            purcahsesFound = true;
+            $(this).show();
+        } else {
+            $(this).hide();
+        } 
+    })
+}
+
 function load_store_data() {
     let csrftoken = $("input[name=csrfmiddlewaretoken]").val();    
     fetch(store_id, { //Send the store_id that is passed within the html through context
@@ -99,9 +112,29 @@ function load_store_data() {
         //new_order_div_html += `</table> </div>`;
     
         $("#order-info-table").append(new_order_div_html);
-            
-        orders = data["orders"];
+        
+
         purchases = data["purchases"];
+        
+        var new_purchase_div_html = "";
+
+        purchases.forEach(function(purchase) {
+            var purchase_date = new Date(purchase.purchase_date);
+            var month = String(purchase_date.getMonth() + 1).padStart(2,'0');
+            var day = String(purchase_date.getDate()).padStart(2,'0');
+            var year = purchase_date.getFullYear();
+            var formattedDate = `${month}-${day}-${year}`;
+
+            new_purchase_div_html += `<tr class="purchase-row">
+                                        <td class="purchase-id-cell">${purchase.purchase_id}</td>
+                                        <td class="purchase-date-cell">${formattedDate}</td>
+                                        <td class="purchase-customer-name-cell">${purchase.customer_name}</td>
+                                        <td><button class="view-purchase-button" purchase_id="${purchase.purchase_id}">View</button></td>
+                                      </tr>`
+        });
+        $("#purchase-info-table").append(new_purchase_div_html);
+
+
         customers = data["customers"];
         employees = data["employees"];
         products_low_in_stock = data["products_low_in_stock"];
@@ -117,6 +150,11 @@ function load_listeners() {
     $("#order-search-bar").on("input", function() {
         var search_text = $(this).val().trim();
         filterOrders(search_text);
+    })
+
+    $("#purchase-search-bar").on("input", function() {
+        var search_text = $(this).val().trim();
+        filterPurchases(search_text);
     })
 
     $(document).on("click", ".view-product-button", function() {
