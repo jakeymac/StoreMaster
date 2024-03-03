@@ -9,6 +9,11 @@
                 padding: 0;
                 background-color: #f9f9f9;
             }
+
+            #store-info-div {
+                text-align:center;
+                align-items: center;
+            }
             
             .search-section {
                 height:500px;
@@ -35,6 +40,7 @@
                 display: flex;
                 justify-content: center;
             }
+
             #product-search-top-label {
                 width:153px;
                 margin-left:105px;
@@ -43,6 +49,7 @@
             #no-products-text {
                 margin-left:105px;
             }
+
             #product-search-bar {
                 margin-bottom:15px;
                 margin-left:98.5px;
@@ -67,7 +74,7 @@
                 height:20px;
             }
 
-            #order-results-div {
+            #order-results-div, #purchase-results-div {
                 font-size:12px;
             }
 
@@ -94,18 +101,17 @@
                 margin-left:2%;
             }
 
-
-            #order-date-column-header, #order-customer-name-column-header {
+            #order-date-column-header,
+            #order-customer-name-column-header {
                 padding-right:12px;
             }
+
             .order-id-cell {
                 width:20%;
                 text-align: right;
                 padding-right:12px;
                 
             }
-
-            
             
             .order-row td {
                 padding-right:20px;
@@ -118,13 +124,117 @@
             .view-order-button {
                 height:20px;
             }
+
+            #purchase-search-top-label {
+                margin-left:100px;
+            }
+
+            #purchase-search-bar {
+                margin-bottom:15px;
+                margin-left:98.5px;
+            }
+
+            #purchase-info-table {
+                margin-left:20px;
+            }
+
+            .purchase-id-cell {
+                text-align:right;
+                padding-right:12px;
+            }
+
+            #purchase-customer-name-column-header {
+                padding-right:10px;
+            }
+
+            .purchase-date-cell, 
+            .purchase-customer-name-cell {
+                margin-right:20px;
+            }
+
+            .view-purchase-button {
+                margin-left:20px;
+            }
+
+            #low-stock-top-label {
+                width:153px;
+                margin-left:105px;
+            }
+
+            .out-of-stock-item {
+                color:rgb(186, 129, 22);
+            }
+
+            .low-stock-item {
+                color: rgb(190, 190, 52);
+            }
+
+            .individual-customer-div {
+                display: flex;
+                margin-bottom:5px;
+                margin-left: 65px;
+            }
+
+            .individual-employee-div {
+                display: flex;
+                margin-bottom:5px;
+                margin-left: 65px;
+            }
+            
+            .customer-name-p {
+                width: 60%;
+            }
+
+            .employee-name-p {
+                width: 60%;
+            }
+
+            #customer-search-top-label {
+                width:160px;
+                margin-left:98px;
+            }
+
+            #customer-search-bar {
+                margin-left:100px;
+                margin-bottom:15px;
+            }
+
+            .customer-name-p,
+            .view-customer-button {
+                margin-top:16px;
+            }
+
+            .view-customer-button {
+                height:20px;
+            }
+
+            #employee-search-top-label {
+                width:160px;
+                margin-left:98px;
+            }
+
+            #employee-search-bar {
+                margin-left:100px;
+                margin-bottom:15px;
+            }
+            .employee-name-p,
+            .view-employee-button {
+                margin-top:16px;
+            }
+
+            .view-employee-button {
+                height:20px;
+            }
             
         </style>
     </head>
     <body>
         {% csrf_token %}
-        <h1>{{store_name}}</h1>
-        <h2>Welcome {{username}}</h2>
+        <div id="store-info-div">
+            <h1>{{store_name}}</h1>
+            <h2>Welcome, {{username}}</h2>
+        </div>
+        
         <div id="main-div-container">
             <div class="row">
                 <div class="search-section">
@@ -141,7 +251,7 @@
                     <div class="search-results-section" id="order-results-div">
                         <p id="no-orders-text" style="display:none;">No orders found</p>
                         <table id="order-info-table">
-                            <tr class="order-row">
+                            <tr>
                                 <th>Order ID</th>
                                 <th id="order-date-column-header">Date</th>
                                 <th id="order-customer-name-column-header">Customer</th>
@@ -151,12 +261,12 @@
                 </div>
 
                 <div class="search-section">
-                    <h3>Purchase Search</h3>
+                    <h3 id="purchase-search-top-label">Purchase Search</h3>
                     <input type="text" id="purchase-search-bar" placeholder="Search">
                     <div class="search-results-section" id="purchase-results-div">
-                        <p id="no-purchases-text">No purchases found</p>
+                        <p id="no-purchases-text" style="display:none;">No purchases found</p>
                         <table id="purchase-info-table">
-                            <tr class="purchase-row">
+                            <tr>
                                 <th>Purchase ID</th>
                                 <th id="purchase-date-column-header">Date</th>
                                 <th id="purcahse-customer-name-column-header">Customer</th>
@@ -167,19 +277,25 @@
                 </div>
                 
                 <div class="search-section">
-                    <h3>Low Stock Items</h3>
+                    <h3 id="low-stock-top-label">Low Stock Items</h3>
+                    <p id="no-low-stock-text" style="display:none;">No items are low in stock</p>
+                    <div id="low-stock-items"></div>
                 </div>
             </div>
             <div class="row">
                 <!--THESE NEXT TWO DIVS SHOULD ONLY BE ACCESSIBLE TO ADMIN USERS-->
-                <div class="search-section" style="display: none;">
-                    <h3>Customer Search</h3>
+                <div class="search-section" id="customer-search-section" style="display: none;">
+                    <h3 id="customer-search-top-label">Customer Search</h3>
                     <input type="text" id="customer-search-bar" placeholder="Search">
+                    <p id="no-customers-text" style="display:none;">No customers found</p>
+                    <div class="search-results-section" id="customer-results-div"></div>
                 </div>
                 
-                <div class="search-section" style="display: none;">
-                    <h3>Employee Search</h3>
+                <div class="search-section" id="employee-search-section" style="display: none;">
+                    <h3 id="employee-search-top-label">Employee Search</h3>
                     <input type="text" id="employee-search-bar" placeholder="Search">
+                    <p id="no-employees-text" style="display:none;">No employees found</p>
+                    <div class="search-results-section" id="employee-results-div"></div>
                 </div>
             </div>
         </div>

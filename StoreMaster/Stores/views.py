@@ -712,6 +712,7 @@ def manage_store(request, store_id):
             purchase["customer_name"] = name
 
         response_data = {
+            "is_admin": request.user.userinfo.account_type  == "admin",
             "products": products,
             "orders": orders,
             "purchases": purchases,
