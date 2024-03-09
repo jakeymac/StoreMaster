@@ -232,6 +232,7 @@ function load_store_data() {
             // If the logged in user is an admin, show the customer and employee search divs
             $("#customer-search-section").show();
             $("#employee-search-section").show();
+            $("#return-to-admin-portal-button").show(); // Show the return to admin portal button
             customers = data["customers"];
 
 
@@ -317,28 +318,53 @@ function load_listeners() {
         var order_id = $(this).attr("order_id");
         // Open the view order page with the chosen order ID
         window.location.href = `/employee_view_order/${order_id}`
-    })
+    });
 
     // Event listener for view purchase buttons
     $(document).on("click", ".view-purchase-button", function() {
         var purchase_id = $(this).attr("purchase_id");
         // Open the view purchase page with the chosen purchase ID
         window.location.href = `/employee_view_purchase/${purchase_id}`;
-    })
+    });
 
     // Event listener for view customer buttons
     $(document).on("click", ".view-customer-button", function() {
         var customer_id = $(this).attr("customer_id");
         // Open the view customer page with the chosen customer ID
         window.location.href = `/employee_view_customer/${customer_id}`;
-    })
+    });
 
     // Event listener for view employee buttons
     $(document).on("click", ".view-employee-button", function() {
         var employee_id = $(this).attr("employee_id");
         // Open the view employee page with the chosen employee ID
         window.location.href = `/view_employee/${employee_id}`;
-    })
+    });
+
+    //Event listeners for manager/admin menu buttons
+    $(document).on("click", "#view-all-shipments-button", function() {
+        window.location.href = `/view_all_shipments/${store_id}`;
+    });
+
+    $(document).on("click", "#add-product-button", function() {
+        window.location.href = `/add_product/${store_id}`;
+    });
+
+    $(document).on("click", "#new-purchase-button", function() {
+        window.location.href = `/new_purchase/${store_id}`;
+    });
+
+    $(document).on("click", "#add-new-manager-button", function() {
+        window.location.href = `/register_employee`;
+    });
+    
+    $(document).on("click", "#return-to-admin-portal-button", function() {
+        window.location.href = `/admin_manage_stores`;
+    });
+
+    $(document).on("click", "#log-out-button", function() {
+        window.location.href = `/logout_employee`;
+    });
 }
 
 $(document).ready(function() {

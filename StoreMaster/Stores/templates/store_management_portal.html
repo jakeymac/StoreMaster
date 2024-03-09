@@ -62,11 +62,21 @@
             </div>
             <div class="row">
                 <!--THESE NEXT TWO DIVS SHOULD ONLY BE ACCESSIBLE TO ADMIN USERS-->
+                
                 <div class="search-section" id="customer-search-section" style="display: none;">
                     <h3 id="customer-search-top-label">Customer Search</h3>
                     <input type="text" id="customer-search-bar" placeholder="Search">
                     <p id="no-customers-text" style="display:none;">No customers found</p>
                     <div class="search-results-section" id="customer-results-div"></div>
+                </div>
+
+                <div class="search-section" id="button-section">
+                    <button class="manager-menu-button" id="view-all-shipments-button">View all shipments</button>    
+                    <button class="manager-menu-button" id="add-product-button">Add Product</button>
+                    <button class="manager-menu-button" id="new-purchase-button">New Purchase</button>
+                    <button class="manager-menu-button" id="add-new-manager-button">Add new manager or employee</button>
+                    <button class="manager-menu-button" id="return-to-admin-portal-button" style="display:none;">Back to admin portal</button>
+                    <button class="manager-menu-button" id="log-out-button">Log out</button>
                 </div>
                 
                 <div class="search-section" id="employee-search-section" style="display: none;">
@@ -77,7 +87,5 @@
                 </div>
             </div>
         </div>
-
-        
     </body>
 </html>

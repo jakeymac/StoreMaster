@@ -246,13 +246,9 @@
         <a href="{% url 'Stores:view_all_shipments' request.session.store_id %}"><button>View all shipments</button></a>
         
         <a href="{% url 'Products:add_product' store_id=request.session.store_id %}"><button class="extra-buttons">Add Product</button></a>
-
         <!-- New Purchase Button -->
         <a href="{% url 'Stores:new_purchase' request.session.store_id %}"><button class="extra-buttons">New Purchase</button></a>
-       
     </div>
-
-
         
     {% endif %}
 

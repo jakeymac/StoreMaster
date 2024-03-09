@@ -67,7 +67,7 @@
     </style>
 </head>
 <body>
-    <h1>Register New User</h1>
+    
 
     {% if error_message %}
         <p>{{ error_message }}</p>
@@ -75,6 +75,7 @@
     <form action="{% url 'Accounts:register_employee' %}" method="POST">
         {% csrf_token %}
     <div id="registration-container">
+        <h1>Register New User</h1>
         <div class="column">
                 {{ form.username.label_tag }} {{ form.username }}
                 {{ form.password.label_tag }} {{ form.password }}
@@ -106,6 +107,9 @@
             
         </div>
         <button type="submit">Submit</button>
+        <p>Already have an account? <a href="{% url 'Accounts:login_employee' %}">Login</a></p>
+        <p>Want to register a new store? <a href="{% url 'Stores:register_store' %}">Register a new store</a></p>
+
         </form>
         {% if form_errors %}
             <p>
@@ -114,7 +118,5 @@
         {% endif %}
     </div>
 
-    <p>Already have an account? <a href="{% url 'Accounts:login_employee' %}">Login</a></p>
-    <p>Want to register a new store? <a href="{% url 'Stores:register_store_page_1' %}">Register a new store</a></p>
-</body>
+    </body>
 </html>
