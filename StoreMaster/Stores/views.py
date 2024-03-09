@@ -48,7 +48,6 @@ def add_product_to_purchase(request,store_id,product_id,quantity):
     else:
         request.session["products_in_purchase"] = {product_id:(product.product_name,quantity)}
 
-    
     request.session.save()
 
     return redirect("Stores:new_purchase",store_id)
@@ -96,7 +95,7 @@ def confirm_new_order(request,customer_id):
             date = datetime.now()
             customer = CustomerInfo.objects.get(user_id=customer_id)
             store = Store.objects.get(store_id=customer.store_id)
-
+            
             new_order = Order(store=store,
                               customer_id=customer,
                               order_date=date,
