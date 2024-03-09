@@ -5,62 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-
-        #login-container {
-            width: 300px;
-            margin: 100px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        p {
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login_employee.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/login_employee_page.js' %}" defer></script>
 </head>
 <body>
-    
     {% if error_message %}
         <p>{{ error_message }}</p>
     {% endif %}
@@ -72,12 +21,9 @@
             <input id="username-entry" class="employee-login-fields" placeholder="Username" required>
             <input type="password" class="employee-login-fields" id="password-entry" placeholder="Password" required>
             <button id="employee-login-button" type="submit">Login</button>
+            <p>Forgot password? <a href="{% url 'Accounts:password_reset' %}">Reset</a></p>
         </form>
         
     </div>
-    <p>Forgot password? <a href="{% url 'Accounts:password_reset' %}">Reset</a></p>
-
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/login_employee_page.js' %}" defer></script>
 </body>
 </html>

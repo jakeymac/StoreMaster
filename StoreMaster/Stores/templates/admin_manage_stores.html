@@ -1,109 +1,49 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Management Portal</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-
-        #main-container {
-            width: 350px;
-            margin: 100px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            margin-top:25px;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        p {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        select {
-            width: 100%; /* Make the select element fill the width of its container */
-            padding: 10px; /* Add padding to the select element for spacing */
-        }
-
-    </style>
-</head>
-<body>
-    <div id="main-container">
-        <h1>Select Store</h1>
-        <form id="store_form" method="POST">
-            {% csrf_token %}
-            <select name="store_selector" required>
-                <option value="">Select a store</option>
-                {% for store in stores %}
-                    <option value="{{ store.0 }}">{{ store.1 }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Select Store</button>
-        </form>
-    
-        <h1>Select Employee</h1>
-        <form id="employee_form" method="POST">
-            {% csrf_token %}
-            <select name="employee_selector" required>
-                <option value="">Select an employee</option>
-                {% for employee in employees %}
-                    <option value="{{ employee.0 }}">{{ employee.1 }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Select Employee</button>
-        </form>
-        <h1>Select Customer</h1>
-        <form id="customer_form" method="POST">
-            {% csrf_token %}
-            <select name="customer_selector" required>
-                <option value="">Select a customer</option>
-                {% for customer in customers %}
-                    <option value="{{ customer.0 }}">{{ customer.1 }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Select Customer</button>
-        </form>
-        <a href="{% url 'Accounts:logout_employee' %}"><button>Logout</button></a>
-    </div>
-    
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Management Portal</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/admin_manage_stores.css' %}">
+    </head>
+    <body>
+        <div id="main-container">
+            <h1>Select Store</h1>
+            <form id="store_form" method="POST">
+                {% csrf_token %}
+                <select name="store_selector" required>
+                    <option value="">Select a store</option>
+                    {% for store in stores %}
+                        <option value="{{ store.0 }}">{{ store.1 }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Select Store</button>
+            </form>
+        
+            <h1>Select Employee</h1>
+            <form id="employee_form" method="POST">
+                {% csrf_token %}
+                <select name="employee_selector" required>
+                    <option value="">Select an employee</option>
+                    {% for employee in employees %}
+                        <option value="{{ employee.0 }}">{{ employee.1 }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Select Employee</button>
+            </form>
+            <h1>Select Customer</h1>
+            <form id="customer_form" method="POST">
+                {% csrf_token %}
+                <select name="customer_selector" required>
+                    <option value="">Select a customer</option>
+                    {% for customer in customers %}
+                        <option value="{{ customer.0 }}">{{ customer.1 }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Select Customer</button>
+            </form>
+            <a href="{% url 'Accounts:logout_employee' %}"><button>Logout</button></a>
+        </div>
+    </body>
 </html>
