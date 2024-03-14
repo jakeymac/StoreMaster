@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from Products.forms import EditProductForm, NewProductForm
 
 from Products.models import *
@@ -258,39 +258,70 @@ def build_graph(queryset):
     return image_base64
 
 
+
+#This view and when the api is created will need the store_id as well. 
 def employee_view_product(request,product_id):
-    product = Product.objects.get(product_id=product_id)
+    context = {"product_id": product_id}
+    if request.method == "POST":
+        print(request.POST)
+        product = Product.objects.get(product_id=product_id)
+        
+        product_history_data = load_product_history_data(product_id)
+        import pdb
+        pdb.set_trace()
+        
+        order_averages = {"daily": product_history_data.get("orders_daily_average"),
+                          "weekly": product_history_data.get("orders_weekly_average"),
+                          "monthly": product_history_data.get("orders_monthly_average")}
+        
+        purchase_averages = {"daily": product_history_data.get("purchases_daily_average"),
+                             "weekly": product_history_data.get("purchases_weekly_average"),
+                             "monthly": product_history_data.get("purchases_monthly_average")}
 
-    data = load_product_history_data(product_id)
+        overall_averages = {"daily": product_history_data.get("overall_daily_average"),
+                            "weekly": product_history_data.get("overall_weekly_average"),
+                            "monthly": product_history_data.get("overall_monthly_average")}
+
+        
+
+        return JsonResponse({"product":product.to_dict(),
+                             "order_averages": order_averages,
+                             "purchase_averages": purchase_averages,
+                             "overall_averages": overall_averages})
+    else:
+        return render(request,"employee_view_product.html",context=context)
+
+    # product = Product.objects.get(product_id=product_id)
+
+    # data = load_product_history_data(product_id)
     
-    context={"product":product,
-             "orders_averages":[data.get("orders_daily_average"),data.get("orders_weekly_average"),data.get("orders_monthly_average")],
-             "purchases_averages":[data.get("purchases_daily_average"),data.get("purchases_weekly_average"),data.get("purchases_monthly_average")],
-             "overall_averages":[data.get("overall_daily_average"),data.get("overall_weekly_average"),data.get("overall_monthly_average")]}
+    # context={"product":product,
+    #          "orders_averages":[data.get("orders_daily_average"),data.get("orders_weekly_average"),data.get("orders_monthly_average")],
+    #          "purchases_averages":[data.get("purchases_daily_average"),data.get("purchases_weekly_average"),data.get("purchases_monthly_average")],
+    #          "overall_averages":[data.get("overall_daily_average"),data.get("overall_weekly_average"),data.get("overall_monthly_average")]}
                 
-    graph_data_list = ["orders_daily_total_results","orders_weekly_total_results","orders_monthly_total_results",
-                       "purchases_daily_total_results","purchases_weekly_total_results","purchases_monthly_total_results",
-                       "overall_daily_total_results","overall_weekly_total_results","overall_monthly_total_results"]
+    # graph_data_list = ["orders_daily_total_results","orders_weekly_total_results","orders_monthly_total_results",
+    #                    "purchases_daily_total_results","purchases_weekly_total_results","purchases_monthly_total_results",
+    #                    "overall_daily_total_results","overall_weekly_total_results","overall_monthly_total_results"]
 
-    div_list = ["orders-daily-graph-div","orders-weekly-graph-div","orders-monthly-graph-div",
-                "purchases-daily-graph-div","purchases-weekly-graph-div","purchases-monthly-graph-div",
-                "overall-daily-graph-div","overall-weekly-graph-div","overall-monthly-graph-div"]
+    # div_list = ["orders-daily-graph-div","orders-weekly-graph-div","orders-monthly-graph-div",
+    #             "purchases-daily-graph-div","purchases-weekly-graph-div","purchases-monthly-graph-div",
+    #             "overall-daily-graph-div","overall-weekly-graph-div","overall-monthly-graph-div"]
     
-    title_list = ["Daily Order Totals", "Weekly Order Totals", "Monthly Order Totals",
-                  "Daily Purchase Totals", "Weekly Purchase Totals", "Monthly Purchase Totals",
-                  "Daily Overall Totals", "Weekly Overall Totals", "Monthly Overall Tools"]
+    # title_list = ["Daily Order Totals", "Weekly Order Totals", "Monthly Order Totals",
+    #               "Daily Purchase Totals", "Weekly Purchase Totals", "Monthly Purchase Totals",
+    #               "Daily Overall Totals", "Weekly Overall Totals", "Monthly Overall Tools"]
     
-    
-
-    graph_info_lists = []
-    for index in range(len(graph_data_list)):
-        queryset = data.get(graph_data_list[index])
-        if queryset:
-            new_list = [build_graph(data.get(graph_data_list[index])),div_list[index],title_list[index]]
-            graph_info_lists.append(new_list)
-
-    context["graph_information"] = graph_info_lists
-
     
 
-    return render(request,"employee_view_product.html",context=context)
+    # graph_info_lists = []
+    # for index in range(len(graph_data_list)):
+    #     queryset = data.get(graph_data_list[index])
+    #     if queryset:
+    #         new_list = [build_graph(data.get(graph_data_list[index])),div_list[index],title_list[index]]
+    #         graph_info_lists.append(new_list)
+
+    # context["graph_information"] = graph_info_lists
+
+    
+

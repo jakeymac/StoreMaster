@@ -238,3 +238,28 @@ body {
 .view-employee-button {
     height:20px;
 }
+
+#button-section {
+    display:inline-block;
+}
+
+.manager-menu-button {
+    font-size: 18px;
+    width:50%;
+    margin-left:25%;
+    margin-right:25%;
+    margin-top:10px;
+    height:30px;
+}
+
+#view-all-shipments-button {
+    margin-top:25%;
+}
+
+#add-new-manager-button {
+    height:70px;
+}
+
+#return-to-admin-portal-button {
+    height:70px;
+}

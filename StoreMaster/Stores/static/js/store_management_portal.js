@@ -368,7 +368,6 @@ function load_listeners() {
 }
 
 $(document).ready(function() {
-    console.log("Loaded up the script");
     load_store_data();
     load_listeners();
 });

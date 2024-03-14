@@ -1,154 +1,26 @@
-<!-- 
-<style>
-    .product-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 60%;
-        margin: auto;
-        padding: 15px;
-        border: 1px solid #ddd;
-    }
-
-    .product-details {
-        width: 45%;
-    }
-
-    #product-img {
-        width: 25px; /* Adjust the width as per your preference */
-        height: 25px; /* Adjust the height as per your preference */
-        margin-bottom: 10px;
-    }
-
-    #no-image {
-        width: 80px; /* Adjust the width as per your preference */
-        height: 80px; /* Adjust the height as per your preference */
-        margin-bottom: 10px;
-        border: 1px solid #2980b9;
-    }
-
-    button {
-        padding: 10px;
-        background-color: #3498db;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #2980b9;
-    }
-
-    label {
-        font-weight: bold;
-        margin-top: 30px;
-    }
-
-    #add-to-cart-div {
-        width: 100%;
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
-
-    #add-to-cart-form {
-        display: flex;
-        align-items: center;
-    }
-
-    #quantity-selector {
-        margin-right: 10px;
-    }
-
-    /* New styles for layout adjustments */
-    #right-side-content {
-        width: 50%;
-        margin-left: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #graph-and-table-div {
-        margin-top: 20px;
-    }
-
-    #image-and-buttons-div {
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    #buttons-div {
-        display: flex;
-    }
-
-    #edit-button,
-    #management-button {
-        margin-right: 10px;
-    }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-    <script>
-        // Make sure the DOM is ready before executing the script
-        var current;
-        var selector1Value;
-        var selector2Value;
-
-        $(document).ready(function () {
-            current = $('#orders-daily-graph-div');
-            current.show();
-            $(".graph-div").not(current).hide();
-            console.log("hi");
-
-            $("#view-graph-button").click(function () {
-                selector1Value = $("#source-selector").val();
-                selector2Value = $("#time-selector").val();
-                current = $("#" + selector1Value + "-" + selector2Value + "-graph-div");
-                current.show();
-                $(".graph-div").not(current).hide(); 
-            }) 
-        });
-    </script>
-    
-
-
-<div class="product-container">
-    <div class="product-details">
-        <h1>{{ product.product_name }}</h1>
-        <label>Price:</label> ${{ product.product_price }}<br>
-        <label>Description:</label> {{ product.product_description }}<br>
-        <label>In stock:</label> {{ product.product_stock }}<br>
-        <label>Location:</label> {{ product.product_location }}<br>
-        <div id="buttons-div">
-            {% if user.is_authenticated %}
-                {% if user.userinfo.account_type != "customer" %}
-                    <a href="{% url 'Products:product_edit_view' product.product_id %}"><button>Edit</button></a>
-                    <a href = "{% url 'Stores:manage_store' product.store_id %}"><button>Back to management portal</button></a>
-                {% endif %}
-            {% endif %}
-        </div>
-        
-        <div id="image-and-buttons-div">
-            <div class="product-image">
-                {% if product.product_image %} 
-                    <img class="product-image" src="{{ product.product_image.url }}" alt="No image available">
-                {% else %} 
-                    <div id="no-image"><p>No image available</p></div>
-                {% endif %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>View Product</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/employee_view_product.css' %}">
+        <script>var store_id = "{{store_id}}";</script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{% static 'js/employee_view_product.js' %}"></script>
+    </head>
+    <body>
+        {% csrf_token %}
+        <div id="main-div-container">
+            <div class="row" id="product-name-row">
+                <h1 id="product-name-header"></h1>
             </div>
-            
-        </div>
-    </div>
-    <div id="right-side-content">
-        <div id="graph-and-table-div">
-            
-            <div id="initial-graph-data-div">
+            <div class="row" id="main-product-info-row">
+                <label>Price: <p id="product-price-p" class="product-info-p"></p></label><br>
+                <label>Description: <p id="product-description-p" class="product-info-p"></p></label><br>
+                <label>In stock: <p id="product-in-stock-p" class="product-info-p"></p></label><br>
+                <label>Location: <p id="product-location-p" class="product-info-p"></p></label><br>
+            </div>
+            <div class="row" id="product-info-table-div">
                 <table>
                     <thead>
                         <tr>
@@ -164,373 +36,40 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            {% for average in orders_averages %}
-                                <td>{{average}}</td>
-                            {% endfor %}
-                            {% for average in purchases_averages %}
-                                <td>{{average}}</td>
-                            {% endfor %}
-                            {% for average in overall_averages %}
-                                <td>{{average}}</td>
-                            {% endfor %}
+                        <tr id="table-info-row">
+
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div id="change-graph-div"></div>
-            <select id="source-selector">
-                <option value="">Select a source</option>
-                <option value="orders">Orders</option>
-                <option value="purchases">Purchases</option>
-                <option value="overall">Overall</option>
-            </select>
-            <select id="time-selector" required>
-                <option value="">Select a time group</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-            </select>
-            <button id="view-graph-button">View Graph</button>
-        
-            {% for graph_info_list in graph_information%}
-            <div id="{{graph_info_list.1}}" class="graph-div">
-                <h3>{{graph_info_list.2}}</h3>
-                <img src="data:image/png;base64,{{graph_info_list.0}}" alt="Issue loading graph">
-
-            </div>
-        {% endfor %}
-        </div>
-    </div>
-</div>
-
-
-
-
-
-<div class="product-container">
-    <div class="product-details">
-        <h1>{{ product.product_name }}</h1>
-        <label>Price:</label> ${{ product.product_price }}<br>
-        <label>Description:</label> {{ product.product_description }}<br>
-        <label>In stock:</label> {{ product.product_stock }}<br>
-        <label>Location:</label> {{ product.product_location }}<br>
-        
-        {% if user.is_authenticated %}
-            {% if user.userinfo.account_type != "customer" %}
-                <a href="{% url 'Products:product_edit_view' product.product_id %}">
-                    <button>Edit</button>
-                </a>
-                <a href = "{% url 'Stores:manage_store' product.store_id %}"><button>Back to management portal</button></a>
-            {% endif %}
-        {% endif %}
-    </div>
-
-    <div class="product-image">
-        {% if product.product_image %} 
-            <img src="{{ product.product_image.url }}" alt="No image available">
-        {% else %} 
-            <div id="no-image"><p>No image available</p></div>
-            
-        {% endif %}
-    </div>
-
-    <div id="initial-graph-data-div">
-        <table>
-            <thead>
-                <tr>
-                    <th>Order Daily Average</th>
-                    <th>Order Weekly Average</th>
-                    <th>Order Monthly Average</th>
-                    <th>Purchase Daily Average</th>
-                    <th>Purchase Weekly Average</th>
-                    <th>Purchase Monthly Average</th>
-                    <th>Total Daily Average</th>
-                    <th>Total Weekly Average</th>
-                    <th>Total Monthly Average</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    {% for average in orders_averages %}
-                        <td>{{average}}</td>
-                    {% endfor %}
-                    {% for average in purchases_averages %}
-                        <td>{{average}}</td>
-                    {% endfor %}
-                    {% for average in overall_averages %}
-                        <td>{{average}}</td>
-                    {% endfor %}
-                </tr>
-            </tbody>
-        </table>
-    </div>
-   <div id="change-graph-div"></div>
-        <select id="source-selector">
-            <option value="">Select a source</option>
-            <option value="orders">Orders</option>
-            <option value="purchases">Purchases</option>
-            <option value="overall">Overall</option>
-        </select>
-        <select id="time-selector" required>
-            <option value="">Select a time group</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-        </select>
-        <button id="view-graph-button">View Graph</button>
-    {% for graph_info_list in graph_information%}
-        <div id="{{graph_info_list.1}}" class="graph-div">
-            <h3>{{graph_info_list.2}}</h3>
-            <img src="data:image/png;base64,{{graph_info_list.0}}" alt="Issue loading graph">
-
-        </div>
-    {% endfor %}
-</div> -->
-
-<style>
-    table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    .product-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 70%;
-        margin: auto;
-        padding: 15px;
-        border: 1px solid #ddd;
-    }
-
-    .product-details {
-        width: 45%;
-    }
-
-    #product-img {
-        width: 100px;
-        height: 100px;
-        margin-bottom: 10px;
-    }
-
-    #no-image {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 10px;
-        border: 1px solid #2980b9;
-    }
-
-    button {
-        padding: 10px;
-        background-color: #3498db;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #2980b9;
-    }
-
-    label {
-        font-weight: bold;
-        margin-top: 30px;
-    }
-
-    #add-to-cart-div {
-        width: 100%;
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
-
-    #add-to-cart-form {
-        display: flex;
-        align-items: center;
-    }
-
-    #quantity-selector {
-        margin-right: 10px;
-    }
-
-    /* New styles for layout adjustments */
-    #right-side-content {
-        width: 50%;
-        margin-left: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #information-and-table {
-        display: flex;
-        flex-direction: column;
-        margin-top: 20px;
-    }
-
-    #product-information,
-    #initial-graph-data-div {
-        width: 100%;
-    }
-
-    #image-and-buttons-div {
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    #buttons-div {
-        display: flex;
-    }
-
-    #edit-button,
-    #management-button {
-        margin-right: 10px;
-    }
-
-    #graph-top-label {
-        margin-left:1px;
-    }
-</style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
-
-    <script>
-        // Make sure the DOM is ready before executing the script
-        var current;
-        var selector1Value;
-        var selector2Value;
-
-        $(document).ready(function () {
-            current = $('#orders-daily-graph-div');
-            current.show();
-            $(".graph-div").not(current).hide();
-            console.log("hi");
-
-            $("#view-graph-button").click(function () {
-                selector1Value = $("#source-selector").val();
-                selector2Value = $("#time-selector").val();
-                current = $("#" + selector1Value + "-" + selector2Value + "-graph-div");
-                current.show();
-                $(".graph-div").not(current).hide(); 
-            }) 
-        });
-    </script>
-    
-
-<div class="product-container">
-    <div class="product-details">
-        <!-- Product information and table -->
-        <div id="information-and-table">
-            <div id="product-information">
-                <h1>{{ product.product_name }}</h1>
-                <label>Price:</label> ${{ product.product_price }}<br>
-                <label>Description:</label> {{ product.product_description }}<br>
-                <label>In stock:</label> {{ product.product_stock }}<br>
-                <label>Location:</label> {{ product.product_location }}<br>
-                
-            
-            </div>
-            
-            <div id="initial-graph-data-div">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order Daily Average</th>
-                            <th>Order Weekly Average</th>
-                            <th>Order Monthly Average</th>
-                            <th>Purchase Daily Average</th>
-                            <th>Purchase Weekly Average</th>
-                            <th>Purchase Monthly Average</th>
-                            <th>Total Daily Average</th>
-                            <th>Total Weekly Average</th>
-                            <th>Total Monthly Average</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            {% for average in orders_averages %}
-                                <td>{{average}}</td>
-                            {% endfor %}
-                            {% for average in purchases_averages %}
-                                <td>{{average}}</td>
-                            {% endfor %}
-                            {% for average in overall_averages %}
-                                <td>{{average}}</td>
-                            {% endfor %}
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Product image -->
-        <div class="product-image">
-            {% if product.product_image %} 
-                <img src="{{ product.product_image.url }}" id="product-img" alt="No image available">
-            {% else %} 
-                <div id="no-image"><p>No image available</p></div>
-            {% endif %}
-        </div>
-
-        <!-- Edit and Back to Management buttons -->
-        {% if user.is_authenticated %}
-        {% if user.userinfo.account_type != "customer" %}
-        <div id="image-and-buttons-div">
-            <div id="buttons-div">
-                <a href="{% url 'Products:product_edit_view' product.product_id %}">
-                    <button id="edit-button">Edit</button>
-                </a>
-                <a href="{% url 'Products:delete_product' product.product_id %}"><button id="delete-product-button">Delete</button></a>
-                <a href="{% url 'Stores:manage_store' product.store_id %}">
-                    <button id="management-button">Back to management portal</button>
-                </a>
-            </div>
-        </div>
-        {%endif%}
-        {%endif%}
-    </div>
-
-    <div id="right-side-content">
-        <div id="graph-and-table-div">
-            
-            <!-- Graphs -->
-            {% for graph_info_list in graph_information %}
-                <div id="{{graph_info_list.1}}" class="graph-div">
-                    <h3 id="graph-top-label">{{graph_info_list.2}}</h3>
-                <img src="data:image/png;base64,{{graph_info_list.0}}" alt="Issue loading graph">
+            <!-- Needs authentication for just admins and managers and employees, no customers-->
+            <div class="row" id="image-buttons-div">
+                <div id="image-div">
+                    <img id="product-image" style="display:none;" alt="No image available">
+                    <div id="no-image-div" style="display:none;"><p>No image available</p></div>
                 </div>
-            {% endfor %}
-
-        <!-- Graph selection form and graphs -->
-        <select id="source-selector">
-            <option value="">Select a source</option>
-            <option value="orders">Orders</option>
-            <option value="purchases">Purchases</option>
-            <option value="overall">Overall</option>
-        </select>
-        <select id="time-selector" required>
-            <option value="">Select a time group</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-        </select>
-        <button id="view-graph-button">View Graph</button>
+                <div id="buttons-div">
+                    <button id="edit-product-button">Edit</button>
+                    <button id="delete-product-button">Delete</button>
+                    <button id="return-to-portal-button">Back to management portal</button>
+                </div>
+            </div>
+            <div class="row" id="graph-div">
+                <select id="source-selector">
+                    <option value="">Select a source</option>
+                    <option value="orders">Orders</option>
+                    <option value="purchases">Purchases</option>
+                    <option value="overall">Overall</option>
+                </select>
+                <select id="time-selector">
+                    <option value="">Select a time group</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+                <!-- Could throw a loading gif here as well for when graphs are being loaded -->
+                <button id="view-graph-button">View Graph</button>
+            </div>
         </div>
-    </div>
-</div>
+    </body>
+</html>

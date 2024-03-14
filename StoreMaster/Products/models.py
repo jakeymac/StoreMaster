@@ -25,6 +25,19 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+
+    def to_dict(self):
+        return {
+            "product_id": self.product_id,
+            "store_id": self.store.store_id, 
+            "product_stock": self.product_stock,
+            "product_image": self.product_image.url if self.product_image else None,
+            "product_name": self.product_name,
+            "product_description": self.product_description,
+            "product_price": self.product_price,
+            "product_location": self.product_location,
+            "low_stock_quantity": self.low_stock_quantity,
+        }
     
     def get_name(self):
         return self.product_name

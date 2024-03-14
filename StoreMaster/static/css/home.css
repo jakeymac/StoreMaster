@@ -21,7 +21,7 @@ h1 {
     margin-top:35px;
 }
 
-#search-bar {
+#home-store-search-bar {
     flex: 1;
     padding: 10px;
     border: 1px solid #ccc;
@@ -30,7 +30,7 @@ h1 {
     width: 250px;
 }
 
-#search-button,
+#home-store-search-button,
 #manage-store-button,
 #register-store-button,
 .open-store-button {
@@ -40,12 +40,12 @@ h1 {
     cursor: pointer;
 }
 
-#search-button {
+#home-store-search-button {
     background-color: #3498db;
     color: #fff;
 }
 
-#search-button:hover {
+#home-store-search-button:hover {
     background-color: #2980b9;
 }
 
