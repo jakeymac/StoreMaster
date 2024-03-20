@@ -6,6 +6,7 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/employee_view_product.css' %}">
         <script>var store_id = "{{store_id}}";</script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script src="{% static 'js/employee_view_product.js' %}"></script>
     </head>
     <body>
@@ -20,41 +21,62 @@
                 <label>In stock: <p id="product-in-stock-p" class="product-info-p"></p></label><br>
                 <label>Location: <p id="product-location-p" class="product-info-p"></p></label><br>
             </div>
-            <div class="row" id="product-info-table-div">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order Daily Average</th>
-                            <th>Order Weekly Average</th>
-                            <th>Order Monthly Average</th>
-                            <th>Purchase Daily Average</th>
-                            <th>Purchase Weekly Average</th>
-                            <th>Purchase Monthly Average</th>
-                            <th>Total Daily Average</th>
-                            <th>Total Weekly Average</th>
-                            <th>Total Monthly Average</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="table-info-row">
-
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- Needs authentication for just admins and managers and employees, no customers-->
-            <div class="row" id="image-buttons-div">
+            <div class="row" id="product-info-table-image-div">
+                <div id="table-div">
+                    <table id="order-info-table" class="info-table">
+                        <thead>
+                            <tr>
+                                <th>Order Daily Average</th>
+                                <th>Order Weekly Average</th>
+                                <th>Order Monthly Average</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="orders-info-row"></tr>
+                        </tbody>
+                    </table>
+                    <table id="purchase-info-table" class="info-table">
+                        <thead>
+                            <tr>
+                                <th>Purchase Daily Average</th>
+                                <th>Purchase Weekly Average</th>
+                                <th>Purchase Monthly Average</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="purchases-info-row"></tr>
+                        </tbody>
+                    </table>
+                    <table id="overall-info-table" class="info-table">
+                        <thead>
+                            <tr>
+                                <th>Total Daily Average</th>
+                                <th>Total Weekly Average</th>
+                                <th>Total Monthly Average</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="overall-info-row"></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
                 <div id="image-div">
                     <img id="product-image" style="display:none;" alt="No image available">
                     <div id="no-image-div" style="display:none;"><p>No image available</p></div>
                 </div>
+            </div>
+            <!-- Needs authentication for just admins and managers and employees, no customers-->
+            <div class="row" id="buttons-div">
+                
                 <div id="buttons-div">
                     <button id="edit-product-button">Edit</button>
                     <button id="delete-product-button">Delete</button>
                     <button id="return-to-portal-button">Back to management portal</button>
                 </div>
             </div>
-            <div class="row" id="graph-div">
+            <div class="row" id="graph-div"> </div>
+            <div class="row" id="graph-buttons-div">
                 <select id="source-selector">
                     <option value="">Select a source</option>
                     <option value="orders">Orders</option>

@@ -75,6 +75,24 @@ label {
     align-items: center;
 }
 
+#product-info-table-image-div {
+    width:80%;
+    display: flex;
+    margin-left:10%;
+}
+
+.info-table{
+    width:70%;
+}
+
+#image-div {
+    margin-top:5%;
+    width:30%;
+}
+#product-image {
+    width:75%;
+}
+
 #quantity-selector {
     margin-right: 10px;
 }
@@ -98,7 +116,7 @@ label {
     width: 100%;
 }
 
-#image-and-buttons-div {
+#buttons-div {
     margin-top: 20px;
     display: flex;
     align-items: center;
@@ -116,4 +134,16 @@ label {
 
 #graph-top-label {
     margin-left:1px;
+}
+
+#graph-div {
+    overflow-x: auto;
+    overflow-y: auto;
+    width:90%;
+    margin-left:5%;
+}
+
+#graph-buttons-div {
+    margin-left:40%;
+    margin-top:25px;
 }

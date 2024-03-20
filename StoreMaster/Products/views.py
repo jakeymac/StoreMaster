@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404, JsonResponse
+from django.core.serializers import serialize
 from Products.forms import EditProductForm, NewProductForm
 
 from Products.models import *
@@ -11,14 +12,11 @@ from datetime import datetime, timedelta
 import math
 
 from collections import defaultdict
-import matplotlib
-matplotlib.use('agg')
-import matplotlib.pyplot as plt
 
 from io import BytesIO
 import base64
 
-
+import json
 
 # Create your views here.
 def index(request):
@@ -127,80 +125,148 @@ def load_product_history_data(product_id):
     except ProductInPurchase.DoesNotExist:
         purchases = False
 
+   
+    # daily_order_results = list(orders_in_range.annotate(date=TruncDate('order_info_object__order_date')).values('date').annotate(total_quantity=Sum('quantity')).distinct())
+    # daily_purchase_results = list(purchases_in_range.annotate(date=TruncDate('purchase_info_object__purchase_date')).values('date').annotate(total_quantity=Sum('quantity')))
 
-    order_daily_total_results = orders_in_range.annotate(date_group=TruncDate('order_info_object__order_date')).values('date_group').annotate(total_quantity=Sum('quantity'))
-    purchase_daily_total_results = purchases_in_range.annotate(date_group=TruncDate('purchase_info_object__purchase_date')).values('date_group').annotate(total_quantity=Sum('quantity'))
+    # weekly_order_results = list(orders_in_range.annotate(week=TruncWeek('order_info_object__order_date')).values('week').annotate(total_quantity=Sum('quantity')))
+    # weekly_purchase_results = list(purchases_in_range.annotate(week=TruncWeek('purchase_info_object__purchase_date')).values('week').annotate(total_quantity=Sum('quantity')))
 
-    order_weekly_total_results = orders_in_range.annotate(week_group=TruncWeek('order_info_object__order_date')).values('week_group').annotate(total_quantity=Sum('quantity'))
-    purchase_weekly_total_results = purchases_in_range.annotate(week_group=TruncWeek('purchase_info_object__purchase_date')).values('week_group').annotate(total_quantity=Sum('quantity'))
+    # monthly_order_results = list(orders_in_range.annotate(month=TruncMonth('order_info_object__order_date')).values('month').annotate(total_quantity=Sum('quantity')))
+    # monthly_purchase_results = list(purchases_in_range.annotate(month=TruncMonth('purchase_info_object__purchase_date')).values('month').annotate(total_quantity=Sum('quantity')))
 
-    order_monthly_total_results = orders_in_range.annotate(month_group=TruncMonth('order_info_object__order_date')).values('month_group').annotate(total_quantity=Sum('quantity'))
-    purchase_monthly_total_results = purchases_in_range.annotate(month_group=TruncMonth('purchase_info_object__purchase_date')).values('month_group').annotate(total_quantity=Sum('quantity'))
+    daily_orders_data = orders_in_range.annotate(date=TruncDate('order_info_object__order_date')).values('date', 'quantity')
+    daily_order_results = {}
 
-    order_totals_dict = {entry['date_group']: {'total_quantity_orders': entry['total_quantity']} for entry in order_daily_total_results}    
-    purchase_totals_dict = {entry['date_group']: {'total_quantity_purchases': entry['total_quantity']} for entry in purchase_daily_total_results} 
+    for order in daily_orders_data:
+        date = order['date'].strftime('%m-%d-%Y')
+        quantity = order['quantity']
+        if date in daily_order_results.keys():
+            daily_order_results[date] += quantity
+        else:
+            daily_order_results[date] = quantity
+
+    daily_purchases_data = purchases_in_range.annotate(date=TruncDate('purchase_info_object__purchase_date')).values('date','quantity')
+    daily_purchase_results = {}
+
+    for purchase in daily_purchases_data:
+        date = purchase['date'].strftime('%m-%d-%Y')
+        quantity = purchase['quantity']
+        if date in daily_purchase_results.keys():
+            daily_purchase_results[date] += quantity
+        else:
+            daily_purchase_results[date] = quantity
+
+
+    weekly_orders_data = orders_in_range.annotate(week=TruncWeek('order_info_object__order_date')).values('week', 'quantity')
+    weekly_order_results = {}
+
+    for order in weekly_orders_data:
+        week_start = order['week']
+        week_end = week_start + timedelta(days=6)
+        week = f"{week_start.strftime('%m-%d-%Y')} - {week_end.strftime('%m-%d-%Y')}"
+        quantity = order['quantity']
+        if week in weekly_order_results.keys():
+            weekly_order_results[week] += quantity
+        else:
+            weekly_order_results[week] = quantity
+
+    weekly_purchases_data = purchases_in_range.annotate(week=TruncWeek('purchase_info_object__purchase_date')).values('week','quantity')
+    weekly_purchase_results = {}
+
+    for purchase in weekly_purchases_data:
+        week_start = purchase['week']
+        week_end = week_start + timedelta(days=6)
+        week = f"{week_start.strftime('%m-%d-%Y')} - {week_end.strftime('%m-%d-%Y')}"
+        quantity = purchase['quantity']
+        if week in weekly_purchase_results.keys():
+            weekly_purchase_results[week] += quantity
+        else:
+            weekly_purchase_results[week] = quantity
     
-    overall_daily_total_results = []
-    all_dates = set(order_totals_dict.keys()) | set(purchase_totals_dict.keys())
+
+    monthly_orders_data = orders_in_range.annotate(month=TruncMonth('order_info_object__order_date')).values('month', 'quantity')
+    monthly_order_results = {}
+
+    for order in monthly_orders_data:
+        month = order['month'].strftime('%m-%Y')
+        quantity = order['quantity']
+        if month in monthly_order_results.keys():
+            monthly_order_results[month] += quantity
+        else:
+            monthly_order_results[month] = quantity
+
+    monthly_purchases_data = purchases_in_range.annotate(month=TruncMonth('purchase_info_object__purchase_date')).values('month','quantity')
+    monthly_purchase_results = {}
+
+    for purchase in monthly_purchases_data:
+        month = purchase['month'].strftime('%m-%Y')
+        quantity = purchase['quantity']
+        if month in monthly_purchase_results.keys():
+            monthly_purchase_results[month] += quantity
+        else:
+            monthly_purchase_results[month] = quantity
+
+
+    
+    
+    
+
+
+    overall_daily_total_results = {}
+    all_dates = set(daily_order_results.keys()) | set(daily_purchase_results.keys())
     all_dates = sorted(all_dates)
+
     for date in all_dates:
-        overall_daily_total_results.append({
-            'date_group':date,
-            **order_totals_dict.get(date, {'total_quantity_orders':0}),
-            **purchase_totals_dict.get(date, {'total_quantity_purchases':0}),
-            'total_quantity': order_totals_dict.get(date, {'total_quantity_orders': 0})['total_quantity_orders'] + 
-                                       purchase_totals_dict.get(date, {'total_quantity_purchases': 0})['total_quantity_purchases'],
-        })
+        total_order_quantity = daily_order_results.get(date,0)
+        total_purchase_quantity = daily_purchase_results.get(date,0)
+        total_quantity = total_order_quantity + total_purchase_quantity
 
-    order_totals_dict = {entry['week_group']: {'total_quantity_orders': entry['total_quantity']} for entry in order_weekly_total_results}    
-    purchase_totals_dict = {entry['week_group']: {'total_quantity_purchases': entry['total_quantity']} for entry in purchase_weekly_total_results}
-    
-    overall_weekly_total_results = []
-    all_weeks = set(order_totals_dict.keys()) | set(purchase_totals_dict.keys())
+        overall_daily_total_results[date] = total_quantity
+
+
+
+
+    overall_weekly_total_results = {}
+    all_weeks = set(weekly_order_results.keys()) | set(weekly_purchase_results.keys())
     all_weeks = sorted(all_weeks)
+
     for week in all_weeks:
-        overall_weekly_total_results.append({
-            'week_group':week,
-            **order_totals_dict.get(week, {'total_quantity_orders':0}),
-            **purchase_totals_dict.get(week, {'total_quantity_purchases':0}),
-            'total_quantity': order_totals_dict.get(week, {'total_quantity_orders': 0})['total_quantity_orders'] + 
-                                       purchase_totals_dict.get(week, {'total_quantity_purchases': 0})['total_quantity_purchases'],
-        })
+        total_order_quantity = weekly_order_results.get(week,0)
+        total_purchase_quantity = weekly_purchase_results.get(week,0)
+        total_quantity = total_order_quantity + total_purchase_quantity
+
+        overall_weekly_total_results[week] = total_quantity
 
 
-    order_totals_dict = {entry['month_group']: {'total_quantity_orders': entry['total_quantity']} for entry in order_monthly_total_results}    
-    purchase_totals_dict = {entry['month_group']: {'total_quantity_purchases': entry['total_quantity']} for entry in purchase_monthly_total_results} 
-    
-    overall_monthly_total_results = []
-    all_months = set(order_totals_dict.keys()) | set(purchase_totals_dict.keys())
+
+    overall_monthly_total_results = {}
+    all_months = set(monthly_order_results.keys()) | set(monthly_purchase_results.keys())
     all_months = sorted(all_months)
+
     for month in all_months:
-        overall_monthly_total_results.append({
-            'month_group':month,
-            **order_totals_dict.get(month, {'total_quantity_orders':0}),
-            **purchase_totals_dict.get(month, {'total_quantity_purchases':0}),
-            'total_quantity': order_totals_dict.get(month, {'total_quantity_orders': 0})['total_quantity_orders'] + 
-                                       purchase_totals_dict.get(month, {'total_quantity_purchases': 0})['total_quantity_purchases'],
-        })
+        total_order_quantity = monthly_order_results.get(month,0)
+        total_purchase_quantity = monthly_purchase_results.get(month,0)
+        total_quantity = total_order_quantity + total_purchase_quantity
+
+        overall_monthly_total_results[month] = total_quantity
 
 
     num_days = 180
     num_weeks = 24  #TODO needs fixing this to find the true amount of weeks
     num_months = 6
 
-    
+    orders_daily_average = round(sum(daily_order_results.values()) / num_days,2)
+    orders_weekly_average = round(sum(weekly_order_results.values()) / num_weeks,2)
+    orders_monthly_average = round(sum(monthly_order_results.values()) / num_months,2)
 
-    orders_daily_average = round(sum(entry['total_quantity'] for entry in order_daily_total_results) / num_days,2)
-    orders_weekly_average = round(sum(entry['total_quantity'] for entry in order_weekly_total_results) / num_weeks,2)
-    orders_monthly_average = round(sum(entry['total_quantity'] for entry in order_monthly_total_results) / num_months,2)
+    purchases_daily_average = round(sum(daily_purchase_results.values()) / num_days,2)
+    purchases_weekly_average = round(sum(weekly_purchase_results.values()) / num_weeks,2)
+    purchases_monthly_average = round(sum(monthly_purchase_results.values()) / num_months,2)
 
-    purchases_daily_average = round(sum(entry['total_quantity'] for entry in purchase_daily_total_results) / num_days,2)
-    purchases_weekly_average = round(sum(entry['total_quantity'] for entry in purchase_weekly_total_results) / num_weeks,2)
-    purchases_monthly_average = round(sum(entry['total_quantity'] for entry in purchase_monthly_total_results) / num_months,2)
-
-    overall_daily_average = round(sum(entry['total_quantity'] for entry in overall_daily_total_results) / num_days,2)
-    overall_weekly_average = round(sum(entry['total_quantity'] for entry in overall_weekly_total_results) / num_weeks,2)
-    overall_monthly_average = round(sum(entry['total_quantity'] for entry in overall_monthly_total_results) / num_months,2)
+    overall_daily_average = round(sum(overall_daily_total_results.values()) / num_days,2)
+    overall_weekly_average = round(sum(overall_weekly_total_results.values()) / num_weeks,2)
+    overall_monthly_average = round(sum(overall_monthly_total_results.values()) / num_months,2)
 
     return_dict = {"orders_daily_average":orders_daily_average,
                    "orders_weekly_average":orders_weekly_average,
@@ -211,64 +277,28 @@ def load_product_history_data(product_id):
                    "overall_daily_average":overall_daily_average,
                    "overall_weekly_average":overall_weekly_average,
                    "overall_monthly_average":overall_monthly_average,
-                   "orders_daily_total_results":order_daily_total_results,
-                   "orders_weekly_total_results":order_weekly_total_results,
-                   "orders_monthly_total_results":order_monthly_total_results,
-                   "purchases_daily_total_results":purchase_daily_total_results,
-                   "purchases_weekly_total_results":purchase_weekly_total_results,
-                   "purchases_monthly_total_results":purchase_monthly_total_results,
+                   "orders_daily_total_results":daily_order_results,
+                   "orders_weekly_total_results":weekly_order_results,
+                   "orders_monthly_total_results":monthly_order_results,
+                   "purchases_daily_total_results":daily_purchase_results,
+                   "purchases_weekly_total_results":weekly_purchase_results,
+                   "purchases_monthly_total_results":monthly_purchase_results,
                    "overall_daily_total_results":overall_daily_total_results,
                    "overall_weekly_total_results":overall_weekly_total_results,
-                   "overall_monthly_total_results":overall_monthly_total_results 
+                   "overall_monthly_total_results":overall_monthly_total_results
     }
 
     return return_dict
 
-def build_graph(queryset):
-    group_name = list(queryset[0].keys())[0]
-
-    title_conversion_dict = {"date":"Day",
-                             "week":"Week",
-                             "month":"Month"}
-    
-    
-    time_title = title_conversion_dict.get(group_name.split("_")[0])
-    
-    if time_title == "Week":
-        times = [f"Week {time_group[group_name].strftime('%U')} ({time_group[group_name].strftime('%B %dth, %Y')})"
-                for time_group in queryset]
-    elif time_title == "Month":
-        times = [time_group[group_name].strftime('%B %dth, %Y') for time_group in queryset]
-    else:
-        times = [time_group[group_name].strftime('%B %dth, %Y') for time_group in queryset]
-
-    values = [entry["total_quantity"] for entry in queryset]
-    
-    data = {time_title:times,"Values":values}
-
-    fig, ax = plt.subplots(figsize=(7,4))
-
-    ax.plot(data[time_title],data["Values"])
-                            
-    image_stream = BytesIO()
-    plt.savefig(image_stream,format='png')
-    image_stream.seek(0)
-    image_base64 = base64.b64encode(image_stream.read()).decode('utf-8')
-    plt.close()
-    return image_base64
-
-
-
 #This view and when the api is created will need the store_id as well. 
 def employee_view_product(request,product_id):
+    
+
     context = {"product_id": product_id}
     if request.method == "POST":
-        print(request.POST)
         product = Product.objects.get(product_id=product_id)
         
         product_history_data = load_product_history_data(product_id)
-        import pdb
-        pdb.set_trace()
         
         order_averages = {"daily": product_history_data.get("orders_daily_average"),
                           "weekly": product_history_data.get("orders_weekly_average"),
@@ -283,11 +313,11 @@ def employee_view_product(request,product_id):
                             "monthly": product_history_data.get("overall_monthly_average")}
 
         
-
         return JsonResponse({"product":product.to_dict(),
                              "order_averages": order_averages,
                              "purchase_averages": purchase_averages,
-                             "overall_averages": overall_averages})
+                             "overall_averages": overall_averages,
+                             "graph_data": product_history_data})
     else:
         return render(request,"employee_view_product.html",context=context)
 
