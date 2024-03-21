@@ -743,15 +743,6 @@ def manage_store(request, store_id):
 
 def admin_manage_stores(request):
     if request.method == 'POST':
-        print(dict(request.POST))
-        if 'store_selector' in request.POST:
-            return redirect("Stores:manage_store",store_id=request.POST.get('store_selector'))
-        elif 'employee_selector' in request.POST:
-            return redirect('Accounts:view_employee',employee_id=request.POST.get('employee_selector'),original_page="admin portal")
-        elif 'customer_selector' in request.POST:
-            return redirect('Accounts:employee_view_customer',customer_id=request.POST.get('customer_selector'),original_page="admin portal")
-    
-    else:
         stores = []
         for store in Store.objects.all():
             stores.append((store.store_id,str(store)))
@@ -771,13 +762,19 @@ def admin_manage_stores(request):
         for customer in CustomerInfo.objects.all():
             customers.append((customer.user_id,str(customer)))
 
-        context = {"stores":stores,
-                "employees":employees,
-                "customers":customers}
+        return JsonResponse({"stores":stores,
+                             "employees":employees,
+                             "customers":customers})
+        # if 'store_selector' in request.POST:
+        #     return redirect("Stores:manage_store",store_id=request.POST.get('store_selector'))
+        # elif 'employee_selector' in request.POST:
+        #     return redirect('Accounts:view_employee',employee_id=request.POST.get('employee_selector'),original_page="admin portal")
+        # elif 'customer_selector' in request.POST:
+        #     return redirect('Accounts:employee_view_customer',customer_id=request.POST.get('customer_selector'),original_page="admin portal")
+    
+    else:                                                                          
+        return render(request, "admin_manage_stores.html",{})
         
-                                                                                        
-        return render(request, "admin_manage_stores.html",context)
-        return HttpResponse("admin timeeee")
 
 def product_view(request):
     pass
