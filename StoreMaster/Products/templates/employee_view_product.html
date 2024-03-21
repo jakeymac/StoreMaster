@@ -12,15 +12,16 @@
     <body>
         {% csrf_token %}
         <div id="main-div-container">
-            <div class="row" id="product-name-row">
+            <div class="row" id="main-product-info-div">
                 <h1 id="product-name-header"></h1>
+                <div id="main-product-info-row">
+                    <label>Price: <p id="product-price-p" class="product-info-p"></p></label><br>
+                    <label>Description: <p id="product-description-p" class="product-info-p"></p></label><br>
+                    <label>In stock: <p id="product-in-stock-p" class="product-info-p"></p></label><br>
+                    <label>Location: <p id="product-location-p" class="product-info-p"></p></label><br>
+                </div>
             </div>
-            <div class="row" id="main-product-info-row">
-                <label>Price: <p id="product-price-p" class="product-info-p"></p></label><br>
-                <label>Description: <p id="product-description-p" class="product-info-p"></p></label><br>
-                <label>In stock: <p id="product-in-stock-p" class="product-info-p"></p></label><br>
-                <label>Location: <p id="product-location-p" class="product-info-p"></p></label><br>
-            </div>
+            
             <div class="row" id="product-info-table-image-div">
                 <div id="table-div">
                     <table id="order-info-table" class="info-table">

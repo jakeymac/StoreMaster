@@ -1,3 +1,13 @@
+body {
+    background-color: #f9f9f9;
+}
+#main-div-container {
+    background-color:#fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin:50px;
+    padding:2%;
+
+}
 table {
     width: 100%;
     border-collapse: collapse;
@@ -14,14 +24,12 @@ th {
     background-color: #f2f2f2;
 }
 
-.product-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 70%;
-    margin: auto;
-    padding: 15px;
-    border: 1px solid #ddd;
+#main-product-info-div {
+    margin-left:12%;
+}
+
+#product-name-header {
+    margin-top: 2%;
 }
 
 .product-details {
@@ -77,6 +85,7 @@ label {
 
 #product-info-table-image-div {
     width:80%;
+    height:200%;
     display: flex;
     margin-left:10%;
 }
@@ -86,10 +95,10 @@ label {
 }
 
 #image-div {
-    margin-top:5%;
     width:30%;
 }
 #product-image {
+    margin:12.5%;
     width:75%;
 }
 
@@ -97,13 +106,7 @@ label {
     margin-right: 10px;
 }
 
-/* New styles for layout adjustments */
-#right-side-content {
-    width: 50%;
-    margin-left: 20px;
-    display: flex;
-    flex-direction: column;
-}
+
 
 #information-and-table {
     display: flex;
@@ -121,14 +124,11 @@ label {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-left: 7.5%;
 }
 
-#buttons-div {
-    display: flex;
-}
-
-#edit-button,
-#management-button {
+#edit-product-button,
+#delete-product-button {
     margin-right: 10px;
 }
 
@@ -141,9 +141,24 @@ label {
     overflow-y: auto;
     width:90%;
     margin-left:5%;
+    margin-top:10px;
+    background-color:#3498db;
+    padding:40px;
+    border-radius: 10%;
 }
 
 #graph-buttons-div {
     margin-left:40%;
     margin-top:25px;
+}
+
+#source-selector, #time-selector {
+    background-color:rgba(224, 120, 120, 0.932);
+    color: white;
+    height:30px;
+
+}
+
+select::-ms-expand {
+    display: none;
 }

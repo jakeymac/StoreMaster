@@ -85,6 +85,11 @@ function load_graph() {
             x_title = "Month";
         }
 
+        if (source == "overall") {
+            source_text = "Orders/Purchases"
+            
+        } 
+
         var data  = [
             {
                 x: times,
