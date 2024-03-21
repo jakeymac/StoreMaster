@@ -2,9 +2,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>View Product</title>
+        <title>View Product - {{store_id}}</title>
         <link rel="stylesheet" type="text/css" href="{% static 'css/employee_view_product.css' %}">
-        <script>var store_id = "{{store_id}}";</script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script src="{% static 'js/employee_view_product.js' %}"></script>
@@ -69,7 +68,6 @@
             </div>
             <!-- Needs authentication for just admins and managers and employees, no customers-->
             <div class="row" id="buttons-div">
-                
                 <div id="buttons-div">
                     <button id="edit-product-button">Edit</button>
                     <button id="delete-product-button">Delete</button>

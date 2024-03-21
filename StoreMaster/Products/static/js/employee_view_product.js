@@ -1,8 +1,9 @@
 let graph_data;
+var product_data;
 function load_product_data() {
     console.log("Loading product data");
     let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
-    fetch(store_id, {
+    fetch(window.location.href, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -23,6 +24,7 @@ function load_product_data() {
         var overall_averages = data.overall_averages;
 
         graph_data = data.graph_data;
+        product_data = product;
 
         $("#product-name-header").text(product.product_name);
         $("#product-price-p").text(`$${product.product_price}`);
@@ -57,6 +59,23 @@ function load_listeners() {
     $("#view-graph-button").on("click", function() {
         load_graph();
     });
+
+    $("#edit-product-button").on("click", function() {
+        console.log("Edit product button");
+        window.location.href = `/product_edit_view/${product_data.product_id}`;
+    });
+
+    $("#delete-product-button").on("click", function() {
+        console.log("Delete product button");
+        window.location.href = `/delete_product/${product_data.product_id}`;
+    });
+
+    $("#return-to-portal-button").on("click", function() {
+        console.log("Return to portal");
+        window.location.href = `/manage_store/${product_data.store_id}`;
+
+    });
+    
 }
 
 function load_graph() {

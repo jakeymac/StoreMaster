@@ -120,7 +120,8 @@ label {
 }
 
 #buttons-div {
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom:30px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -144,7 +145,7 @@ label {
     margin-top:10px;
     background-color:#3498db;
     padding:40px;
-    border-radius: 10%;
+    border-radius: 5%;
 }
 
 #graph-buttons-div {
