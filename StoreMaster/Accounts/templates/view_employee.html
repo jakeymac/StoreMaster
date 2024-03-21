@@ -1,73 +1,46 @@
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Employee</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/view_employee.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/view_employee.js' %}"></script>
 
-#main-info-container {
-    width: 300px;
-    margin: 35px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h3 {
-    text-align: center;
-    color: #333;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    margin-bottom:10px;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-p {
-    margin-top: 20px;
-    text-align: center;
-}
-</style>
-<div id="main-info-container">
-    <h3>{{employee.first_name}} {{employee.last_name}}</h3>
-    <p>Address:{{employee.address}} {{employee.line_two}} </p>
-    <p>City: {{employee.city}}</p>
-    <p>State: {{employee.state}}</p>
-    <p>Zip: {{employee.zip}}</p>
-    <p>Email Address: {{employee.email_address}}</p>
-    <p>Other Information: {{employee.other_information}}</p>
-    <p>Birthday: {{employee.birthday}}</p>
-    <p>Account type: {{employee.account_type}}</p>
-    <a href="{% url 'Accounts:edit_employee' employee_id=employee.user_id employee_type=account_type %}"><button>Edit Information</button></a>
-
-    {% if original_page == "admin portal" %}
-        <a href="{% url 'Stores:admin_manage_stores' %}"><button>Back to admin portal</button></a>
-    {% else %}
-        <a href="{% url 'Stores:manage_store' employee.store.store_id %}"><button>Back to management portal</button></a>
-    {% endif %}
-
-
-</div>
+</head>
+<body>
+    {% csrf_token %}
+    <div id="main-info-container">
+        <h3 id="name-header"></h3>
+        <p id="address-p"></p>
+        <p id="city-p"></p>
+        <p id="state-p"></p>
+        <p id="zip-p"></p>
+        <p id="email-p"></p>
+        <p id="other-info-p"></p>
+        <p id="birthday-p"></p>
+        <p id="account-type-p"></p>
+        <button id="edit-information-button">Edit Information</button>
+        <button id="back-to-portal-button">Back to management portal</button>
+        <!-- <h3>{{employee.first_name}} {{employee.last_name}}</h3>
+        <p>Address:{{employee.address}} {{employee.line_two}} </p>
+        <p>City: {{employee.city}}</p>
+        <p>State: {{employee.state}}</p>
+        <p>Zip: {{employee.zip}}</p>
+        <p>Email Address: {{employee.email_address}}</p>
+        <p>Other Information: {{employee.other_information}}</p>
+        <p>Birthday: {{employee.birthday}}</p>
+        <p>Account type: {{employee.account_type}}</p>
+        
+    
+        {% if original_page == "admin portal" %}
+            <button>Back to admin portal</button>
+        {% else %}
+            <button>Back to management portal</button>
+        {% endif %} -->
+    
+    
+    </div>
+</body>
+</html>
