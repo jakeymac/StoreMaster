@@ -21,7 +21,7 @@ class CustomDateField(serializers.DateField):
 class BaseAccountInfoSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     store = StoreSerializer()
-    email = serializers.CharField(required=False)
+    email_address = serializers.CharField(required=False)
     address = serializers.CharField(required=False)
     line_two = serializers.CharField(required=False)
     city = serializers.CharField(required=False)

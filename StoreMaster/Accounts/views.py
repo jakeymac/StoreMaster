@@ -143,21 +143,21 @@ def edit_employee(request,employee_id,employee_type="manager",original_page="man
 #TODO needs to make sure permissions are correct for user trying to edit. 
 @login_required(login_url='/login_employee')
 def edit_employee_view(request, employee_id):
-    if request.method == "POST":
-        print(request.POST)
-        user = User.objects.get(id = employee_id)
-        user_information = ManagerInfo.objects.get(user=user).to_dict()
-        stores = Store.objects.all()
+    # if request.method == "POST":
+    #     print(request.POST)
+    #     user = User.objects.get(id = employee_id)
+    #     user_information = ManagerInfo.objects.get(user=user).to_dict()
+    #     stores = Store.objects.all()
 
 
-    
-        all_stores = [{"id": store.store_id, "name": store.store_name} for store in stores]
+
+    #     all_stores = [{"id": store.store_id, "name": store.store_name} for store in stores]
 
 
-        return JsonResponse({"employee_info": user_information,
-                             "all_stores": all_stores})
-    else:
-        return render(request,"edit_employee.html")
+    #     return JsonResponse({"employee_info": user_information,
+    #                          "all_stores": all_stores})
+    # else:
+    return render(request,"edit_employee.html", context={"employee_id": employee_id})
 
 def view_user(request, user_id):
     template_start = ""

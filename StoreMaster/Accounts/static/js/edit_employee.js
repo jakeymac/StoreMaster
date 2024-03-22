@@ -1,8 +1,8 @@
 var employee_id;
 function load_data() {
     let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
-    fetch(window.location.href, {
-        method: "POST",
+    fetch(`/api/account/${employee_id}`, {
+        method: 'GET',
         headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csrftoken
@@ -14,47 +14,71 @@ function load_data() {
         }
         return response.json();
     })
-    .then(data => {
+    .then(data => { 
         console.log(data);
-        var employee_info = data.employee_info;
-        employee_id = employee_info.id;
-
-        $("#first-name-input").val(employee_info.first_name);
-        $("#last-name-input").val(employee_info.last_name);
-        $("#email-address-input").val(employee_info.email);
-        $("#address-input").val(employee_info.address);
-        $("#line-two-input").val(employee_info.line_two);
-        $("#city-input").val(employee_info.city);
-        $("#state-input").val(employee_info.state);
-        $("#zip-input").val(employee_info.zip);
-        $("#username-input").val(employee_info.username);
-        $("#password-input").val(employee_info.password);
-
-        for (var store in data.all_stores) {
-            var option = $('<option>', {
-                value: data.all_stores[store].id,
-                text: data.all_stores[store].name
-            });
-
-            if(data.all_stores[store].id == employee_info.store_id) {
-                option.prop('selected', true);
+        
+        var employee_data = data.account_data;
+        if(employee_data.account_type == "customer") {
+            window.location.href = `/view_customer/${employee_data.user.id}`;
+        } else {
+            employee_id = employee_data.user.id;
+            $("#first-name-input").val(employee_data.first_name);
+            $("#last-name-input").val(employee_data.last_name);
+            $("#email-address-input").val(employee_data.email_address);
+            $("#address-input").val(employee_data.address);
+            $("#line-two-input").val(employee_data.line_two);
+            $("#city-input").val(employee_data.city);
+            $("#state-input").val(employee_data.state);
+            $("#zip-input").val(employee_data.zip);
+            $("#username-input").val(employee_data.username);
+            $("#password-input").val(employee_data.password);
+            $("#other-information-input").val(employee_data.other_information);
+            if(employee_data.birthday) {
+                var parts_of_birthday = employee_data.birthday.split("-");
+                var month = parts_of_birthday[0];
+                var day = parts_of_birthday[1];
+                var year = parts_of_birthday[2];
+                var reformatted_birthday = `${year}-${month}-${day}`;
+                $("#birthday-input").val(reformatted_birthday);
             }
-
-            $("#store-selector-input").append(option);
-        }
-
-        $("#other-information-input").val(employee_info.other_information);
-        $("#birthday-input").val(employee_info.birthday);
-        $("#account-type-selector").val(employee_info.account_type);
+            $("#account-type-selector").val(employee_data.account_type);
+            
+            if (employee_data.account_type == "manager") {
+                $("#stock-notifications-div").show();
+                $("#stock-notifications-checkbox").prop("checked", employee_data.stock_notifications);
+            }
+            fetch(`/api/store`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => { 
+                console.log(data);
+                var all_stores = data.stores;
+                for (var store in all_stores) {
+                    var option = $('<option>', {
+                        value: all_stores[store].store_id,
+                        text: all_stores[store].store_name
+                    });
+                    if(all_stores[store].store_id == employee_data.store.store_id) {
+                        option.prop('selected', true);
+                    }
         
-        if (employee_info.account_type == "manager") {
-            $("#stock-notifications-div").show();
-            $("#stock-notifications-checkbox").prop("checked", employee_info.stock_notifications);
+                    $("#store-selector-input").append(option);
+                }
+            });
         }
-
-       
+    });
         
-    })
+    
 }
 
 function load_listeners() {
@@ -75,10 +99,15 @@ function load_listeners() {
         var account_type = $("#account-type-selector").val();
         var stock_notifications = $("#stock-notifications-checkbox").prop("checked");
 
+        var user_data = {"id": employee_id,
+                         "username": username,
+                         "password": password,
+                         "email": email_address}
+
         var employee_data = {"employee_id": employee_id,
                             "first_name": first_name,
                             "last_name": last_name,
-                            "email": email_address,
+                            "email_address": email_address,
                             "address": address,
                             "line_two": line_two,
                             "city": city,
@@ -93,7 +122,7 @@ function load_listeners() {
                             "stock_notifications": stock_notifications}
 
         let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
-        fetch('/api/edit_employee', {
+        fetch('/api/account', {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
