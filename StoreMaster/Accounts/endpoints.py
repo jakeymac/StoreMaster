@@ -15,6 +15,19 @@ model_dict = {"manager":ManagerInfo,
 def get_employee_info_endpoint(request):
     if request.user.is_authenticated:
         if request.method == "GET":
+            user_info = UserInfo.objects.get(user_id=employee_id)
+            user = User.objects.get(userinfo=user_info)
+            account_type = user.userinfo.account_type 
+            account = model_dict.get(account_type).objects.get(user=user).to_dict()
+            return JsonResponse({"employee":account, "account_type":account_type})
+    
+    #GOING TO WANT THIS FOR THE API 
+    #context["original_page"] = original_page
+
+
+def get_all_employees_endpoint(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
             pass
 
 def edit_employee_endpoint(request):

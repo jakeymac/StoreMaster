@@ -90,15 +90,8 @@ def employee_edit_customer(request,customer_id):
     return render(request,"employee_edit_customer.html",context=context)
 
 def view_employee(request,employee_id,original_page="manage store"):
-    if request.method == "POST":
-        user_info = UserInfo.objects.get(user_id=employee_id)
-        user = User.objects.get(userinfo=user_info)
-        account_type = user.userinfo.account_type 
-        account = model_dict.get(account_type).objects.get(user=user).to_dict()
-        return JsonResponse({"employee":account, "account_type":account_type})
-
-        #GOING TO WANT THIS FOR THE API 
-        #context["original_page"] = original_page
+        
+        
 
     return render(request,"view_employee.html")
     
