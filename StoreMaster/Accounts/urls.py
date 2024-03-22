@@ -32,5 +32,6 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('accounts/login/',views.login_employee,name='login'), # could be updated
 
-    path('api/edit_employee', endpoints.edit_employee_endpoint, name='edit_employee_endpoint')
+    path('api/account', endpoints.account_endpoint),
+    path('api/account/<int:account_id>', endpoints.account_endpoint)
  ] 

@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Employee</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/view_employee.css' %}">
+    <script>var employee_id = "{{employee_id}}";</script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/view_employee.js' %}"></script>
 </head>
 <body>
+    {{employee_id}}
     {% csrf_token %}
     <div id="main-info-container">
         <h3 id="name-header"></h3>

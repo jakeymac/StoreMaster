@@ -90,10 +90,8 @@ def employee_edit_customer(request,customer_id):
     return render(request,"employee_edit_customer.html",context=context)
 
 def view_employee(request,employee_id,original_page="manage store"):
-        
-        
-
-    return render(request,"view_employee.html")
+    context = {"employee_id": employee_id}
+    return render(request,"view_employee.html", context=context)
     
 def edit_employee(request,employee_id,employee_type="manager",original_page="manage store"):
     print("Starting edit")

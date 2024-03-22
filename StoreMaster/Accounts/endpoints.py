@@ -2,8 +2,13 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
 from django.contrib.auth.models import User
 from .models import *
+from .serializers import *
 
 import json
 
@@ -12,23 +17,57 @@ model_dict = {"manager":ManagerInfo,
               "employee":EmployeeInfo,
               "customer":CustomerInfo}
 
-def get_employee_info_endpoint(request):
-    if request.user.is_authenticated:
-        if request.method == "GET":
-            user_info = UserInfo.objects.get(user_id=employee_id)
-            user = User.objects.get(userinfo=user_info)
-            account_type = user.userinfo.account_type 
-            account = model_dict.get(account_type).objects.get(user=user).to_dict()
-            return JsonResponse({"employee":account, "account_type":account_type})
-    
-    #GOING TO WANT THIS FOR THE API 
-    #context["original_page"] = original_page
 
-
-def get_all_employees_endpoint(request):
+@api_view(['GET','POST','PUT','DELETE'])
+def account_endpoint(request,account_id=None):
     if request.user.is_authenticated:
-        if request.method == "GET":
+        if request.method == 'GET':
+            if account_id is None:
+                customers = CustomerInfo.objects.all()
+                employees = EmployeeInfo.objects.all()
+                managers = ManagerInfo.objects.all()
+                admins = AdminInfo.objects.all()
+
+                customer_serializer = CustomerInfoSerializer(customers, many=True)
+                employee_serializer = EmployeeInfoSerializer(employees, many=True)
+                manager_serializer = ManagerInfoSerializer(managers, many=True)
+                #TODO make this more secure and add a checker to see if the user requesting is an admin
+                admin_serializer = AdminInfoSerializer(admins, many=True)
+
+                return Response({"customers": customer_serializer.data, 
+                                 "employees": employee_serializer.data,
+                                 "managers": manager_serializer.data,
+                                 "admins": admin_serializer.data})
+
+            else:
+                user = User.objects.get(id=account_id)
+                if CustomerInfo.objects.filter(user=user).exists():
+                    customer = CustomerInfo.objects.get(user=user)
+                    customer_serializer = CustomerInfoSerializer(customer)
+                    return Response({"account_data": customer_serializer.data}, status.HTTP_200_OK)
+                elif EmployeeInfo.objects.filter(user=user).exists():
+                    employee = EmployeeInfo.objects.get(user=user)
+                    employee_serializer = EmployeeInfoSerializer(employee)
+                    return Response({"account_data": employee_serializer.data}, status.HTTP_200_OK)
+                elif ManagerInfo.objects.filter(user=user).exists():
+                    manager = ManagerInfo.objects.get(user=user)
+                    manager_serializer = ManagerInfoSerializer(manager)
+                    return Response({"account_data": manager_serializer.data}, status.HTTP_200_OK)
+                elif AdminInfo.objects.filter(user=user).exists():
+                    admin = AdminInfo.objects.get(user=user)
+                    admin_serializer = AdminInfoSerializer(admin)
+                    return Response({"account_data": admin_serializer.data}, status.HTTP_200_OK)
+                else:
+                    return Response(status=status.HTTP_404_NOT_FOUND)
+
+        elif request.method == 'POST':
             pass
+        elif request.method == 'PUT':
+            pass
+        elif request.method == 'DELETE':
+            pass
+    else:
+        pass
 
 def edit_employee_endpoint(request):
     if request.user.is_authenticated:
