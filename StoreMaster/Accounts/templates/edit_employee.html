@@ -1,103 +1,82 @@
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f9f9f9;
-    }
-    
-    #edit-information-container {
-        width: 600px;
-        margin: 100px auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-    
-    h1 {
-        text-align: center;
-        color: #333;
-        grid-column: span 2; /* span both columns */
-    }
-    
-    .column {
-        grid-column: span 1; /* span one column */
-    }
-    
-    label {
-        display: block;
-        margin-bottom: 8px;
-        color: #333;
-    }
-    
-    input, select {
-        width: 100%;
-        padding: 2px;
-        margin-bottom: 20px;
-        box-sizing: border-box;
-    }
-    
-    #edit_customer_form {
-        grid-column: span 2; /* span both columns */
-    }
-    
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-    }
-    
-    #back-button {
-        width:12%; 
-        margin-left:1100px;
-    }
-    
-    button:hover {
-        background-color: #2980b9;
-    }
-    
-    p {
-        margin-top: 20px;
-        text-align: center;
-    }
-</style>
-
-{% for error in errors %}
- <p>{{error}}</p>
-{% endfor %}
-
-<form id="edit_employee_form" method="POST">
-    <div id="edit-information-container">
-        <h1>Edit Account Information</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Edit Employee Information</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/edit_employee.css' %}">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{% static 'js/edit_employee.js' %}"></script>
+    </head>
+    <body>
         {% csrf_token %}
-        <div class="column">
-            {{ form.first_name.label_tag }} {{form.first_name}}
-            {{ form.last_name.label_tag }} {{form.last_name}}
-            {{ form.email_address.label_tag }} {{form.email_address}}
-            {{ form.address.label_tag }} {{ form.address }}
-            {{ form.line_two.label_tag }} {{form.line_two }}
-            {{ form.city.label_tag }} {{ form.city}}
-            {{ form.state.label_tag }} {{ form.state}}
-            {{ form.zip.label_tag}} {{ form.zip }}
-        </div>
-        <div class="column">
-            {{ form.username.label_tag}} {{form.username}}
-            {{ form.password.label_tag}} {{form.password}}
-            {{ form.store.labeL_tag}} {{ form.store}}
-            {{ form.other_information.label_tag}} {{form.other_information}}
-            {{form.birthday.label_tag}} {{form.birthday}}
-            {{form.account_type.label_tag}} {{form.account_type}}
-        </div>
-        <button type="submit">Save</button>
-    </div>
-    
-</form>
+        <div id="edit-information-container">
+            <h1>Edit Account Information</h1>
+            
+            <div class="column">
+                <label for="first-name-input">First Name:</label>
+                <input type="text" id="first-name-input">
+            
+                <label for="last-name-input">Last Name:</label>
+                <input type="text" id="last-name-input">
+            
+                <label for="email-address-input">Email Address:</label>
+                <input type="email" id="email-address-input">
+            
+                <label for="address-input">Address:</label>
+                <input type="text" id="address-input">
+            
+                <label for="line-two-input">Line Two:</label>
+                <input type="text" id="line-two-input">
+            
+                <label for="city-input">City:</label>
+                <input type="text" id="city-input">
+            
+                <label for="state-input">State:</label>
+                <input type="text" id="state-input">
+            
+                <label for="zip-input">Zip:</label>
+                <input type="number" id="zip-input">
+            </div>
+            <div class="column">
+                <label for="username-input">Username:</label>
+                <input type="text" id="username-input">
+            
+                <label for="password-input">Password:</label>
+                <input type="password" id="password-input">
+            
+                <label for="store-selector-input">Store:</label>
+                <select id="store-selector-input"></select>
+                <label for="other-information-input">Other Information:</label>
+                <input type="text" id="other-information-input">
+        
+                <label for="birthday-input">Birthday:</label>
+                <input type="date" id="birthday-input">
 
-<a href="{% url 'Accounts:view_employee' employee_id %}"><button id="back-button">Back</button></a>
+                <label for="account-type-selector">Account Type:</label>
+                <select id="account-type-selector">
+                    <option value="customer">Customer</option>
+                    <option value="employee">Employee</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <div id="stock-notifications-div" style="display:none;">
+                    <label for="stock-notifications-checkbox">Stock Notifications:</label>
+                    <input type="checkbox" name="stock_notifications" id="stock-notifications-checkbox">
+                </div>
+
+                <div id="buttons-div">
+                    <button id="save-changes-button">Save</button>
+                    <button id="back-button">Back</button>
+                </div>
+            </div>
+
+                
+                
+        </div>
+            
+            
+        </div>
+    </body>
+</html>

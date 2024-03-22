@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#edit-information-container {
+    width: 40%;
+    margin: 100px auto;
+    padding:2.5%;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(2, 47.5%);
+    column-gap: 5%;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    grid-column: span 2; /* span both columns */
+}
+
+.column {
+    grid-column: span 1; /* span one column */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+#edit_customer_form {
+    grid-column: span 2; /* span both columns */
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}

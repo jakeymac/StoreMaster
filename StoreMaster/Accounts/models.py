@@ -58,22 +58,26 @@ class UserInfo(models.Model):
         return new_instance
 
     def to_dict(self):
-        return {"id":self.user.id,
-                "username": self.username,
-                "password": self.password,
-                "first_name": self.first_name,
-                "last_name": self.last_name,
-                "email": self.email_address,
-                "address": self.address,
-                "line_two": self.line_two,
-                "city": self.city,
-                "state": self.state,
-                "zip": self.zip,
-                "store_id":self.store.store_id,
-                "other_information": self.other_information,
-                "birthday": self.birthday,
-                "account_type": self.account_type
-                }
+        return_dict = {"id":self.user.id,
+                       "username": self.username,
+                       "password": self.password,
+                       "first_name": self.first_name,
+                       "last_name": self.last_name,
+                       "email": self.email_address,
+                       "address": self.address,
+                       "line_two": self.line_two,
+                       "city": self.city,
+                       "state": self.state,
+                       "zip": self.zip,
+                       "store_id":self.store.store_id,
+                       "other_information": self.other_information,
+                       "birthday": self.birthday,
+                       "account_type": self.account_type
+                       }
+        if self.account_type == "manager":
+            return_dict["stock_notifications"] = self.stock_notifications
+
+        return return_dict        
     
 
     def get_full_address(self):

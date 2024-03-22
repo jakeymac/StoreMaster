@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#edit-information-container {
+    width: 40%;
+    margin: 100px auto;
+    padding:2.5%;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(2, 47.5%);
+    column-gap: 5%;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    grid-column: span 2; /* span both columns */
+}
+
+.column {
+    grid-column: span 1; /* span one column */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+#buttons-div {
+    display:flex;
+}
+
+#save-changes-button {
+    grid-column: span 1;
+}
+
+#back-button {
+    grid-column: span 1;
+}
+
+button {
+    width: 45%;
+    margin-left: 1.25%;
+    margin-right: 1.25%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    grid-column: span 1;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+p {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#stock-notifications-div {
+    display: flex;
+}
+
+#stock-notifications-checkbox {
+    width:20px;
+}

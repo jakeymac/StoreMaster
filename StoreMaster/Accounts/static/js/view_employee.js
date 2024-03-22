@@ -31,7 +31,7 @@ function load_data() {
 
 function load_listeners() {
     $("#edit-information-button").on("click", function() {
-        window.location.href = `/edit_employee/${employee_data.id}/${employee_data.account_type}`; //Change this later when updating the views page I dont' want this ot need the employee type
+        window.location.href = `/edit_employee/${employee_data.id}`; //Change this later when updating the views page I dont' want this ot need the employee type
     });
 
     $("#back-to-portal-button").on("click", function() {

@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from . import endpoints
 from .views import ResetPasswordView
 from django.contrib.auth import views as auth_views
 app_name = "Accounts"
@@ -24,10 +25,12 @@ urlpatterns = [
     path('employee_view_customer/<int:customer_id>/<str:original_page>',views.employee_view_customer,name='employee_view_customer'),
     path('view_employee/<int:employee_id>/',views.view_employee,name='view_employee'),
     path('view_employee/<int:employee_id>/<str:original_page>',views.view_employee,name='view_employee'),
-    path('edit_employee/<int:employee_id>/<str:employee_type>',views.edit_employee,name='edit_employee'),
+    path('edit_employee/<int:employee_id>', views.edit_employee_view, name='edit_employee'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    path('accounts/login/',views.login_employee,name='login') # could be updated
+    path('accounts/login/',views.login_employee,name='login'), # could be updated
+
+    path('api/edit_employee', endpoints.edit_employee_endpoint, name='edit_employee_endpoint')
  ] 

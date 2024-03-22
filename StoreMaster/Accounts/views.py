@@ -11,6 +11,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from .forms import CustomerRegistrationForm,EmployeeRegistrationForm,UserSelectorForm,EditManagerForm,EditAdminForm, EditCustomerForm, EditEmployeeForm
 
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django import forms
 from .models import *
 
@@ -101,7 +102,7 @@ def view_employee(request,employee_id,original_page="manage store"):
 
     return render(request,"view_employee.html")
     
-def edit_employee(request,employee_id,employee_type,original_page="manage store"):
+def edit_employee(request,employee_id,employee_type="manager",original_page="manage store"):
     print("Starting edit")
     employee = model_dict.get(employee_type).objects.get(user_id=employee_id)
     new_form = form_dict.get(employee_type)(instance=employee)
@@ -147,9 +148,25 @@ def edit_employee(request,employee_id,employee_type,original_page="manage store"
     context["original_page"] = original_page
 
     return render(request,"edit_employee.html",context=context)
-   
+
+#TODO needs to make sure permissions are correct for user trying to edit. 
+@login_required(login_url='/login_employee')
+def edit_employee_view(request, employee_id):
+    if request.method == "POST":
+        print(request.POST)
+        user = User.objects.get(id = employee_id)
+        user_information = ManagerInfo.objects.get(user=user).to_dict()
+        stores = Store.objects.all()
 
 
+    
+        all_stores = [{"id": store.store_id, "name": store.store_name} for store in stores]
+
+
+        return JsonResponse({"employee_info": user_information,
+                             "all_stores": all_stores})
+    else:
+        return render(request,"edit_employee.html")
 
 def view_user(request, user_id):
     template_start = ""
