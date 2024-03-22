@@ -1,3 +1,4 @@
+var employee_data;
 function load_data() {
     let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
     fetch(window.location.href, {
@@ -15,6 +16,7 @@ function load_data() {
     })
     .then(data => {
         console.log(data);
+        employee_data = data.employee;
         $("#name-header").text(data.employee.first_name + " " + data.employee.last_name);
         $("#address-p").html(`<strong>Address:</strong> ${data.employee.address}`);
         $("#city-p").html(`<strong>City:</strong> ${data.employee.city}`);
@@ -28,7 +30,13 @@ function load_data() {
 }
 
 function load_listeners() {
+    $("#edit-information-button").on("click", function() {
+        window.location.href = `/edit_employee/${employee_data.id}/${employee_data.account_type}`; //Change this later when updating the views page I dont' want this ot need the employee type
+    });
 
+    $("#back-to-portal-button").on("click", function() {
+        window.location.href = `/manage_store/${employee_data.store_id}`;
+    });
 }
 
 $(document).ready(function() {
