@@ -32,5 +32,14 @@ class Store(models.Model):
     def set_address(self, address):
         self.address = address
 
+    def to_dict(self):
+        return {"store_id": self.store_id,
+                "store_name": self.store_name,
+                "address": self.address,
+                "line_two": self.line_two,
+                "city": self.city,
+                "state": self.state,
+                "zip": self.zip}
+
 def product_image_path(instance, filename):
     return f'stores/{instance.store.store_id}/products/{instance.product.product_id}/{filename}'

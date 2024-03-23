@@ -2,6 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 
+from django.db import transaction
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,6 +11,7 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from .models import *
 from .serializers import *
+from Stores.serializers import *
 
 import json
 
@@ -16,6 +19,11 @@ model_dict = {"manager":ManagerInfo,
               "admin":AdminInfo,
               "employee":EmployeeInfo,
               "customer":CustomerInfo}
+
+serializer_dict = {"manager":ManagerInfoSerializer,
+                    "admin":AdminInfoSerializer,
+                    "employee":EmployeeInfoSerializer,
+                    "customer":CustomerInfoSerializer}
 
 
 @api_view(['GET','POST','PUT','DELETE'])
@@ -63,7 +71,58 @@ def account_endpoint(request,account_id=None):
         elif request.method == 'POST':
             pass
         elif request.method == 'PUT':
-            pass
+            data = json.loads(request.body)
+            user_data = data["user"]
+            account_data = data["account_data"]
+            messages = []
+            success = True
+            try:
+                with transaction.atomic():  
+                    import pdb
+                    pdb.set_trace()
+                    user = User.objects.get(pk=user_data["id"])
+                    user_serializer = UserSerializer(user, data=user_data)
+                    if user_serializer.is_valid():
+                        user_serializer.save()
+
+                        store = Store.objects.get(store_id=account_data["store_id"])
+                        account_data["store"] = store
+                        account_data["user"] = user
+
+                        account_type = account_data["account_type"]
+                        account_instance = model_dict.get(account_type).objects.get(user=user)
+                        account_serializer = serializer_dict.get(account_type)(account_instance, data=account_data)
+                        if account_serializer.is_valid():
+                            account_serializer.save()
+                            messages.append("Successfully saved changes")
+                            return_status = status.HTTP_200_OK
+                        else:
+                            print("Error here: ")
+                            messages.append(account_serializer.errors)
+                            return_status = status.status.HTTP_400_BAD_REQUEST
+                    else:
+                        print("Error here in user stuff")
+                        print(user_serializer.errors)
+                        if isinstance(error_messages, dict):
+                            print("It is a dictionary")
+                        else:
+                            print("It's not a dictionary")
+                        messages.append(user_serializer.errors)
+                        return_status = status.HTTP_400_BAD_REQUEST
+
+            except Exception as e:
+                # Handle any unexpected exceptions
+                messages.append("An error occurred: " + str(e))
+                return_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+            # Print or log messages for debugging
+            print("Messages: ")
+            for message in messages:
+                print(message)
+
+            return Response({"messages": messages}, status=return_status)
+
+
         elif request.method == 'DELETE':
             pass
     else:

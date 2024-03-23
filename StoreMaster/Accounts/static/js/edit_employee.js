@@ -1,4 +1,3 @@
-var employee_id;
 function load_data() {
     let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
     fetch(`/api/account/${employee_id}`, {
@@ -21,7 +20,6 @@ function load_data() {
         if(employee_data.account_type == "customer") {
             window.location.href = `/view_customer/${employee_data.user.id}`;
         } else {
-            employee_id = employee_data.user.id;
             $("#first-name-input").val(employee_data.first_name);
             $("#last-name-input").val(employee_data.last_name);
             $("#email-address-input").val(employee_data.email_address);
@@ -90,7 +88,11 @@ function load_listeners() {
         var line_two = $("#line-two-input").val();
         var city = $("#city-input").val();
         var state = $("#state-input").val();
-        var zip = $("#zip-input").val();
+        if ($("#zip-input").val()) {
+            var zip = $("#zip-input").val();
+        } else {
+            var zip = null;
+        }
         var username = $("#username-input").val();
         var password = $("#password-input").val();
         var store_id = $("#store-selector-input").val();
@@ -128,9 +130,11 @@ function load_listeners() {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrftoken
             },
-            body: JSON.stringify(employee_data)        
+            body: JSON.stringify({user: user_data,
+                                  account_data: employee_data})        
         })
         .then(response => {
+            console.log(response);
             if (!response.ok) {
                 throw new Error('Failed to update employee');
             }

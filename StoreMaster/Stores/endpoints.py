@@ -19,11 +19,13 @@ def store_endpoint(request,store_id=None):
                 store_serializer = StoreSerializer(stores, many=True)
                 return Response({"stores": store_serializer.data}, status=status.HTTP_200_OK)
             else:
+
                 pass
-            
+
         elif request.method == 'POST':
             pass
         elif request.method == 'PUT':
+            print("Ok let's go")
             pass
         elif request.method == 'DELETE':
             pass
