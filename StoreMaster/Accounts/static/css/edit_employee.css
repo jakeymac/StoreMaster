@@ -23,6 +23,8 @@ h1 {
     grid-column: span 2; /* span both columns */
 }
 
+
+
 .column {
     grid-column: span 1; /* span one column */
 }
@@ -72,10 +74,21 @@ p {
     text-align: center;
 }
 
+#messages-p {
+    margin-top:0px;
+    text-align:center;
+    grid-column: span 2;
+    color:#d55527
+}
+
 #stock-notifications-div {
     display: flex;
 }
 
 #stock-notifications-checkbox {
     width:20px;
+}
+
+.saved-successfully-alert {
+    width:200px;
 }

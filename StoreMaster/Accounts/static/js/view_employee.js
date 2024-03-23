@@ -30,7 +30,7 @@ function load_data() {
             $("#other-info-p").html(`<strong>Other Information:</strong> ${employee_data.other_information}`);
        }
         $("#birthday-p").html(`<strong>Birthday:</strong> ${employee_data.birthday}`);
-        $("#account-type-p").html(`<strong>Account Type:</strong> ${employee.account_type}`);
+        $("#account-type-p").html(`<strong>Account Type:</strong> ${employee_data.account_type}`);
     })
 }
 

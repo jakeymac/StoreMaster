@@ -18,7 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'password','email']
 
     def run_validation(self, attrs):
-        print("Running validationg for user serializer")
         user_id = attrs.get('id')
         new_username = attrs.get('username')
         new_email = attrs.get('email')
@@ -35,11 +34,11 @@ class UserSerializer(serializers.ModelSerializer):
         if new_errors:
             if len(new_errors) == 1:
                 if new_errors[0] == "username already exists":
-                    raise serializers.ValidationError("Username is already taken")
+                    raise serializers.ValidationError({"username": "Sorry, that username is already taken"})
                 elif new_errors[0] == "email already exists": 
-                    raise serializers.ValidationError("Email is already taken")
+                    raise serializers.ValidationError({"email":"Sorry, that email is already taken"})
             else:
-                raise serializers.ValidationError("Username and email are already taken")
+                raise serializers.ValidationError({"various": "Sorry, that username and email are already taken"})
             
         return attrs
 

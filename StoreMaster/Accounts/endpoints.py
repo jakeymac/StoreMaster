@@ -78,8 +78,6 @@ def account_endpoint(request,account_id=None):
             success = True
             try:
                 with transaction.atomic():  
-                    import pdb
-                    pdb.set_trace()
                     user = User.objects.get(pk=user_data["id"])
                     user_serializer = UserSerializer(user, data=user_data)
                     if user_serializer.is_valid():
@@ -98,27 +96,19 @@ def account_endpoint(request,account_id=None):
                             return_status = status.HTTP_200_OK
                         else:
                             print("Error here: ")
+                            for error in account_serializer.errors.items():
+                                print(error)
                             messages.append(account_serializer.errors)
                             return_status = status.status.HTTP_400_BAD_REQUEST
                     else:
-                        print("Error here in user stuff")
-                        print(user_serializer.errors)
-                        if isinstance(error_messages, dict):
-                            print("It is a dictionary")
-                        else:
-                            print("It's not a dictionary")
-                        messages.append(user_serializer.errors)
+                        for error in user_serializer.errors.items():
+                            messages.append(str(error[1]))
                         return_status = status.HTTP_400_BAD_REQUEST
 
             except Exception as e:
                 # Handle any unexpected exceptions
                 messages.append("An error occurred: " + str(e))
                 return_status = status.HTTP_500_INTERNAL_SERVER_ERROR
-
-            # Print or log messages for debugging
-            print("Messages: ")
-            for message in messages:
-                print(message)
 
             return Response({"messages": messages}, status=return_status)
 

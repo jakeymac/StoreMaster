@@ -135,13 +135,37 @@ function load_listeners() {
         })
         .then(response => {
             console.log(response);
-            if (!response.ok) {
-                throw new Error('Failed to update employee');
+            if (response.status >= 200 && response.status < 300) {
+                return response.json()
+            } else {
+                return response.json().then(data => {
+                    console.log("Resposne section");
+                    $("#messages-p").show();
+                    var messages_text = "";
+                    for (var message in data.messages) {
+                        console.log(data.messages[message]);
+                        messages_text += data.messages[message] + "\n";
+                        
+                    }
+                    $("#messages-p").text(messages_text);
+                    console.log(data.messages);
+                });
             }
-            return response.json();
         })
         .then(data => {
-            console.log(data);
+            Swal.fire({
+                icon:'info',
+                title:'Information Saved',
+                text:'Account information succesfully saved',
+                timer: 3000,
+                timerProgressBar: false,
+                customClass: {
+                    popup: 'saved-successfully-alert'
+                }
+            });
+            setTimeout(function() {
+                window.location.href = `/view_employee/${employee_id}`;
+            }, 3000);
         })
         .catch(error => {
             console.error('Error updating employee:', error);
@@ -153,6 +177,9 @@ function load_listeners() {
         window.location.href = `/view_employee/${employee_id}`;
     })
 
+    $(".edit-employee-input").on("click", function() {
+        $("#messages-p").hide();
+    })
     
 }
 
