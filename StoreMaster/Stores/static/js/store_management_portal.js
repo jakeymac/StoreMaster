@@ -113,7 +113,41 @@ function filterEmployees(search_text) {
 
 // Function to request and organize data from the server
 function load_store_data() {
-    let csrftoken = $("input[name=csrfmiddlewaretoken]").val();    
+    let csrftoken = $("input[name=csrfmiddlewaretoken]").val();   
+    console.log("Testing: ", store_id); 
+
+    // Retrieve all the products in the store
+    fetch(`/api/product/store/${store_id}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    }).then(data => {
+        products = data["products"];
+        if (products.length == 0) {
+            $("#no-products-text").show();
+        } 
+        products.forEach(function(product) {    
+            var new_product_div = `<div class="individual-product-div"> 
+                                        <p class="product-name-p" >${product.product_name}</p> 
+                                        <button class="view-product-button" product_id="${product.product_id}">View</button>
+                                   </div>`;
+
+
+            $("#product-results-div").append(new_product_div);
+        })
+    })
+
+    // Retreive all orders from the store
+    
+
     fetch(store_id, { //Send the store_id that is passed within the html through context
         method:'POST',
         headers: {

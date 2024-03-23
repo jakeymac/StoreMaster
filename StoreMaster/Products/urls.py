@@ -4,6 +4,7 @@ from django.urls import path
 
 
 from . import views
+from . import endpoints
 
 app_name = "Products"
 
@@ -14,6 +15,10 @@ urlpatterns = [
     path("employee_view_product/<int:product_id>",views.employee_view_product,name="employee_view_product"),
     path("delete_product/<int:product_id>",views.delete_product,name="delete_product"),
     path("add_product/<int:store_id>", views.add_product_view, name="add_product"),
+
+    path("api/product",endpoints.product_endpoint),
+    path("api/product/<int:id>", endpoints.product_endpoint),
+    path("api/product/<str:id_type>/<int:id>",endpoints.product_endpoint)
 ]
 
 if settings.DEBUG:

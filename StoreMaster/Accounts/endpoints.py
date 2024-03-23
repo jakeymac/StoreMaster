@@ -1,6 +1,5 @@
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
 
 from django.db import transaction
 

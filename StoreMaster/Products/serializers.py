@@ -7,7 +7,7 @@ from Orders.serializers import OrderSerializer
 from Purchases.serializers import PurchaseSerializer
 
 class ProductSerializer(serializers.ModelSerializer):
-    store = StoreSerializer()
+    store = StoreSerializer(read_only=True)
     product_image = serializers.ImageField(required=False)
     class Meta:
         model = Product
@@ -15,29 +15,29 @@ class ProductSerializer(serializers.ModelSerializer):
                   'product_description','product_price','product_location','low_stock_quantity']
 
 class ProductInShipmentSerializer(serializers.ModelSerializer):
-    shipment = ShipmentSerializer()
-    product = ProductSerializer()
+    shipment = ShipmentSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
     class Meta:
         model = ProductInShipment
         fields = ['shipment','product','quantity','status']
 
 class ProductInCartSerializer(serializers.ModelSerializer):
-    customer_id = CustomerInfoSerializer()
-    product = ProductSerializer()
+    customer_id = CustomerInfoSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
     class Meta:
         model = ProductInCart
         fields = ['customer_id','product','quantity']
 
 class ProductInOrderSerializer(serializers.ModelSerializer):
-    order_info_object = OrderSerializer()
-    product = ProductSerializer()
+    order_info_object = OrderSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
     class Meta:
         model = ProductInOrder
         fields = ['order_info_object', 'product', 'quantity']
 
 class ProductInPurchaseSerializer(serializers.ModelSerializer):
-    purchase_info_object = PurchaseSerializer()
-    product = ProductSerializer()
+    purchase_info_object = PurchaseSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
     class Meta:
         model = ProductInPurchase
         fields = ['purchase_info_object', 'product', 'quantity']
