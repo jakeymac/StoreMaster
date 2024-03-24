@@ -32,6 +32,13 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('accounts/login/',views.login_employee,name='login'), # could be updated
 
+    path('api/account/logged_in_account',endpoints.logged_in_account_endpoint),
     path('api/account', endpoints.account_endpoint),
-    path('api/account/<int:account_id>', endpoints.account_endpoint)
+    path('api/account/<int:account_id>', endpoints.account_endpoint),
+    path('api/account/customer', endpoints.customer_endpoint),
+    path('api/account/customer/<int:store_id>', endpoints.customer_endpoint),
+    path('api/account/employee', endpoints.employee_endpoint),
+    path('api/account/employee/<int:store_id>', endpoints.employee_endpoint),
+    path('api/account/manager', endpoints.manager_endpoint),
+    path('api/account/manager/<int:store_id>', endpoints.manager_endpoint)
  ] 

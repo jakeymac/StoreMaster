@@ -16,11 +16,10 @@ class CustomDateField(serializers.DateField):
 
 class PurchaseSerializer(serializers.ModelSerializer):
     store = StoreSerializer()
-    customer_id = CustomerInfoSerializer()
-    employee_id = serializers.PrimaryKeyRelatedField(queryset=EmployeeInfo.objects.all(), required=False)
-    manager_id = serializers.PrimaryKeyRelatedField(queryset=ManagerInfo.objects.all(), required=False)
-    admin_id = serializers.PrimaryKeyRelatedField(queryset=AdminInfo.objects.all(), required=False)
-    customer_id = serializers.PrimaryKeyRelatedField(queryset=CustomerInfo.objects.all(), required=False)
+    customer_id = CustomerInfoSerializer(read_only=True)
+    employee_id = EmployeeInfoSerializer(read_only=True)
+    manager_id = ManagerInfoSerializer(read_only=True)
+    admin_id = AdminInfoSerializer(read_only=True)
 
     first_name = serializers.CharField(required=False)
     last_name = serializers.CharField(required=False)

@@ -24,6 +24,69 @@ serializer_dict = {"manager":ManagerInfoSerializer,
                     "employee":EmployeeInfoSerializer,
                     "customer":CustomerInfoSerializer}
 
+@api_view(['GET'])
+def logged_in_account_endpoint(request):
+    """Endpoint for getting the account information for the user currently logged in """
+    if request.user.is_authenticated:
+        account_info_object_type = model_dict.get(request.user.userinfo.account_type)
+        account_info_object = account_info_object_type.objects.get(user=request.user.userinfo.user)
+        account_serializer = serializer_dict.get(request.user.userinfo.account_type)(account_info_object)
+        return Response({"account_info":account_serializer.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({"message": "No user currently logged in"})
+    print(request.user)
+    user = User.objects.filter(user=request.user)
+
+@api_view(['GET'])
+def customer_endpoint(request,store_id=None):
+    if request.user.is_authenticated:
+        if store_id is not None:
+            store = Store.objects.get(store_id=store_id)
+            customers = CustomerInfo.objects.filter(store=store)
+            customer_serializer = CustomerInfoSerializer(customers,many=True)
+            return Response({"customers": customer_serializer.data}, status=status.HTTP_200_OK)
+        else:
+            customers = CustomerInfo.objects.all()
+            customer_serializer = CustomerInfoSerializer(customers, many=True)
+            return Response({"customers": customer_serializer.data}, status=status.HTTP_200_OK)
+
+
+    else:
+        return Response({"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['GET'])
+def employee_endpoint(request,store_id=None):
+    if request.user.is_authenticated:
+        if store_id is not None:
+            store = Store.objects.get(store_id=store_id)
+            employees = EmployeeInfo.objects.filter(store=store)
+            employee_serializer = EmployeeInfoSerializer(employees,many=True)
+            return Response({"employees": employee_serializer.data}, status=status.HTTP_200_OK)
+        else:
+            employees = EmployeeInfo.objects.all()
+            employee_serializer = EmployeeInfoSerializer(employees,many=True)
+            return Response({"employees": employee_serializer.data}, status=status.HTTP_200_OK)
+
+    else:
+        return Response({"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['GET'])
+def manager_endpoint(request,store_id=None):
+    if request.user.is_authenticated:
+        if store_id is not None:
+            store = Store.objects.get(store_id=store_id)
+            manages = ManagerInfo.objects.filter(store=store)
+            manager_serializer = ManagerInfoSerializer(managers,many=True)
+            return Response({"managers": manager_serializer.data}, status=status.HTTP_200_OK)
+        else:
+            managers = ManagerInfo.objects.all()
+            manager_serializer = ManagerInfoSerializer(managers,many=True)
+            return Response({"managers": manager_serializer.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
 
 @api_view(['GET','POST','PUT','DELETE'])
 def account_endpoint(request,account_id=None):

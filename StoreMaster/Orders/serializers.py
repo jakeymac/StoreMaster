@@ -17,7 +17,7 @@ class OrderSerializer(serializers.ModelSerializer):
     order_date = CustomDateField()
     class Meta:
         model = Order
-        fields = ['order_id', 'store', 'customer_id', 'order_date','order_total','shipping_address'
+        fields = ['order_id', 'store', 'customer_id', 'order_date','order_total','shipping_address',
                   'shipping_line_two', 'shipping_city', 'shipping_state', 'shipping_zip']
 
 

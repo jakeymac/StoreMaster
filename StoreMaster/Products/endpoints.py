@@ -7,19 +7,26 @@ from .models import *
 from Stores.models import *
 from .serializers import *
 
-
-
 @api_view(['GET','POST','PUT','DELETE'])
 def product_endpoint(request,id_type=None,id=None):
     if request.method == 'GET':
         if id_type is not None:
             if id_type == "store":
                 if id is not None:
-                    if id_type == "store":
-                        store = Store.objects.get(store_id=id)
-                        products = Product.objects.filter(store=store)
-                        product_serializer = ProductSerializer(products, many=True)
-                        return Response({"products": product_serializer.data}, status=status.HTTP_200_OK)
+                    store = Store.objects.get(store_id=id)
+                    products = Product.objects.filter(store=store)
+
+                    products_low_in_stock = []
+                    for product in products:
+                        if product.product_stock <= product.low_stock_quantity:
+                            products_low_in_stock.append(product)
+                    
+                    products_low_in_stock_serializer = ProductSerializer(products_low_in_stock, many=True)
+                    product_serializer = ProductSerializer(products, many=True)
+
+                    return Response({"products": product_serializer.data,
+                                    "products_low_in_stock": products_low_in_stock_serializer.data}, 
+                                    status=status.HTTP_200_OK)
             else:
                 return Response({"message": "Invalid id_type"}, status=status.HTTP_400_BAD_REQUEST)
 
