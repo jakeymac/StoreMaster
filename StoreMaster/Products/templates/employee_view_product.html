@@ -2,10 +2,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>View Product - {{store_id}}</title>
+        <title>View Product</title>
         <link rel="stylesheet" type="text/css" href="{% static 'css/employee_view_product.css' %}">
+        <script> var product_id = "{{product_id}}";</script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script src="{% static 'js/employee_view_product.js' %}"></script>
     </head>
     <body>

@@ -18,6 +18,7 @@ urlpatterns = [
     
     path("api/product/product_in_order", endpoints.product_in_order_endpoint),
     path("api/product/product_in_order/<int:id>", endpoints.product_in_order_endpoint),
+    path("api/product/product_history/<int:id>", endpoints.product_history_endpoint),
     path("api/product",endpoints.product_endpoint),
     path("api/product/<int:id>", endpoints.product_endpoint),
     path("api/product/<str:id_type>/<int:id>",endpoints.product_endpoint),

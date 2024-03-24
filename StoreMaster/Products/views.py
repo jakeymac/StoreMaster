@@ -206,13 +206,7 @@ def load_product_history_data(product_id):
             monthly_purchase_results[month] += quantity
         else:
             monthly_purchase_results[month] = quantity
-
-
-    
-    
-    
-
-
+            
     overall_daily_total_results = {}
     all_dates = set(daily_order_results.keys()) | set(daily_purchase_results.keys())
     all_dates = sorted(all_dates)
@@ -292,8 +286,6 @@ def load_product_history_data(product_id):
 
 #This view and when the api is created will need the store_id as well. 
 def employee_view_product(request,product_id):
-    
-
     context = {"product_id": product_id}
     if request.method == "POST":
         product = Product.objects.get(product_id=product_id)

@@ -55,8 +55,6 @@ def customer_endpoint(request,store_id=None):
 
 @api_view(['GET'])
 def employee_endpoint(request,store_id=None):
-    import pdb
-    pdb.set_trace()
     if request.user.is_authenticated:
         if store_id is not None:
             store = Store.objects.get(store_id=store_id)
