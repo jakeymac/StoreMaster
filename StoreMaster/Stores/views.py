@@ -548,8 +548,7 @@ def view_order(request,order_id):
     return render(request,"view_order.html",context=context)
 
 def employee_view_order(request,order_id):
-    order, products = get_order_information(order_id)
-    context = {"order":order,"products":products}
+    context = {"order_id":order_id}
 
     return render(request,"employee_view_order.html",context=context)
 

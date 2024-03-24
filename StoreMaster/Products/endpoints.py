@@ -41,3 +41,21 @@ def product_endpoint(request,id_type=None,id=None):
                 product_serializer = ProductSerializer(products, many=True)
                 return Response({"product": product_serializer.data}, status=status.HTTP_200_OK)
 
+@api_view(['GET','POST','PUT'])
+def product_in_order_endpoint(request,id=None):
+    if request.user.is_authenticated:
+        if id is not None:
+            order = Order.objects.get(order_id=id)
+            products_in_order = ProductInOrder.objects.filter(order_info_object = order)
+            products_in_order_serializer = ProductInOrderSerializer(products_in_order, many=True)
+            return Response({"products_in_order": products_in_order_serializer.data}, status=status.HTTP_200_OK)
+
+        else:
+            products_in_orders = ProductInOrder.objects.all()
+            products_in_order_serializer = ProductInOrderSerializer(products_in_orders, many=True)
+            return Response({"products_in_orders": products_in_orders_serializer.data}, status=status.HTTP_200_OK)
+        
+    else:
+        return Response({"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+

@@ -50,12 +50,13 @@ def customer_endpoint(request,store_id=None):
             customer_serializer = CustomerInfoSerializer(customers, many=True)
             return Response({"customers": customer_serializer.data}, status=status.HTTP_200_OK)
 
-
     else:
         return Response({"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
 def employee_endpoint(request,store_id=None):
+    import pdb
+    pdb.set_trace()
     if request.user.is_authenticated:
         if store_id is not None:
             store = Store.objects.get(store_id=store_id)
