@@ -112,8 +112,7 @@ function load_listeners() {
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": csrftoken
-                    },
-                    body: JSON
+                    }
                 })
                 .then(response => {
                     if (!response.ok) {

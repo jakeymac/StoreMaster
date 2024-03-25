@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -13,13 +14,21 @@ from Stores.models import *
 from .serializers import *
 
 @api_view(['GET','POST','PUT','DELETE'])
-def product_endpoint(request,id_type=None,id=None):
+def product_endpoint(request,id_type=None,id=None,is_active=None):
     if request.method == 'GET':
         if id_type is not None:
             if id_type == "store":
                 if id is not None:
                     store = Store.objects.get(store_id=id)
-                    products = Product.objects.filter(store=store)
+                    if is_active is None:
+                        #Don't filter for active or inactive products, return all products in the store
+                        products = Product.objects.filter(store=store)
+
+                    elif is_active.lower() == 'true' or is_active.lower() == 'false':
+                        products = Product.objects.filter(store=store,is_active=(is_active.lower() == 'true'))
+
+                    else:
+                        return Response({"message": "Invalid is_active value"}, status=status.HTTP_400_BAD_REQUEST)
 
                     products_low_in_stock = []
                     for product in products:
@@ -32,27 +41,46 @@ def product_endpoint(request,id_type=None,id=None):
                     return Response({"products": product_serializer.data,
                                     "products_low_in_stock": products_low_in_stock_serializer.data}, 
                                     status=status.HTTP_200_OK)
+
             else:
                 return Response({"message": "Invalid id_type"}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             if id is not None:
+                
                 product = Product.objects.get(product_id=id)
                 product_serializer = ProductSerializer(product)
                 return Response({"product": product_serializer.data}, status=status.HTTP_200_OK)
-            
+                
             else:
-                products = Product.objects.all()
+                if is_active is None:
+                    products = Product.objects.all()
+
+                elif is_active.lower() == 'true' or is_active.lower() == 'false':
+                    products = Product.objects.filter(is_active=(is_active.lower() == 'true'))
+                else:
+                    return Response({"message": "Invalid is_active value"}, status=status.HTTP_400_BAD_REQUEST)
+
                 product_serializer = ProductSerializer(products, many=True)
                 return Response({"product": product_serializer.data}, status=status.HTTP_200_OK)
 
     elif request.method == 'DELETE':
+        # import pdb
+        # pdb.set_trace()
+        return delete_product(request,id,id_type)
+
+@permission_classes([IsAuthenticated])
+def delete_product(request,id,id_type=None):
+    if request.user.userinfo.account_type != "customer":
         if id_type is None:
             if id is not None:
                 product = Product.objects.get(product_id = id)
                 try:
-                    product.delete()
-                    return Response({"message": "Successfully deleted product"}, status=status.HTTP_200_OK)
+                    product.is_active = False
+                    product.save()
+                    product_serializer = ProductSerializer(product)
+                    
+                    return Response({"message": "Successfully deleted product","product": product_serializer.data}, status=status.HTTP_200_OK)
 
                 except Exception as e:
                     return Response({"message":"Error deleting product"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -60,6 +88,8 @@ def product_endpoint(request,id_type=None,id=None):
         else:
             #This will serve to delete all products in a store
             pass
+
+
 @api_view(['GET','POST','PUT'])
 def product_in_order_endpoint(request,id=None):
     if request.user.is_authenticated:

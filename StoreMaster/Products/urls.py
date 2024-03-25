@@ -22,6 +22,8 @@ urlpatterns = [
     path("api/product",endpoints.product_endpoint),
     path("api/product/<int:id>", endpoints.product_endpoint),
     path("api/product/<str:id_type>/<int:id>",endpoints.product_endpoint),
+    path("api/product/<str:is_active>", endpoints.product_endpoint),
+    path("api/product/<str:id_type>/<int:id>/<str:is_active>",endpoints.product_endpoint)
     
 ]
 

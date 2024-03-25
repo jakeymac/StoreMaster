@@ -12,7 +12,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['product_id', 'store', 'product_stock','product_image','product_name',
-                  'product_description','product_price','product_location','low_stock_quantity']
+                  'product_description','product_price','product_location','low_stock_quantity','is_active']
 
 class ProductInShipmentSerializer(serializers.ModelSerializer):
     shipment = ShipmentSerializer(read_only=True)
