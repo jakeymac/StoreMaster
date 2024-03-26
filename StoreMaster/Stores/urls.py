@@ -9,12 +9,12 @@ from . import endpoints
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Your API Documentation",
+        title="StoreMaster API Documentation",
         default_version='v1',
-        description="Your API description",
-        terms_of_service="https://www.example.com/terms/",
-        contact=openapi.Contact(email="contact@example.com"),
-        license=openapi.License(name="MIT License"),
+        description="""This API provides seamless access to the StoreMaster system's 
+        functionalites for managing products, inventory, orders, purchases, 
+        and user accounts of both employees and customers""",
+        contact=openapi.Contact(email="jmjohnson1578@gmail.com"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),

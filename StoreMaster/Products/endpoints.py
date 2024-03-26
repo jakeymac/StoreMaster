@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.db.models import Count, Sum, Avg, F
+from django.db.models import Count, Sum, Avg, F, Q
 from django.db.models.functions import TruncDate, TruncWeek, TruncMonth
 from datetime import datetime, timedelta
 import math
@@ -123,6 +123,42 @@ def delete_product(request,id,id_type=None):
             #This will serve to delete all products in a store
             pass
 
+@api_view(['GET'])
+def product_search_endpoint(request,store_id,search_text=None,sort=None):
+
+    store = Store.objects.get(store_id=store_id)
+    #Make sure the serach_text isn't empty
+    if search_text:
+        query = Q()
+        search_terms = search_text.split()
+        for term in search_terms:
+            query |= Q(product_name__icontains=term) | Q(product_description__icontains=term)
+        
+        products = Product.objects.filter(query, store=store,is_active=True)
+
+    else:
+        products = Product.objects.filter(store=store,is_active=True)
+
+    if sort is not None:
+        if sort == "alphabetical-descend":
+            products = products.order_by("product_name")
+        elif sort == "alphabetical-ascend":
+            products = products.order_by("-product_name")
+        elif sort == "price-low-to-high":
+            products = products.order_by("product_price")
+        elif sort == "price-high-to-low":
+            products = products.order_by("-product_price")
+        else:
+            return Response({"message": "Error: invalid sort selection"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        # By default, just sort in alphabetical order
+        products = products.order_by("product_name")
+
+
+    product_serializer = ProductSerializer(products,many=True)
+    return Response({"products": product_serializer.data}, status=status.HTTP_200_OK)
+
+    
 
 @api_view(['GET','POST','PUT'])
 def product_in_order_endpoint(request,id=None):

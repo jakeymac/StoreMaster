@@ -252,54 +252,49 @@ def new_purchase(request,store_id):
     return render(request,"new_purchase.html",context=context)
 
 def store_home(request, store_id):
-    request.session["store_id"] = store_id
     if request.user.is_authenticated:
-        if request.user.userinfo.account_type == "customer":
-            user = request.user
-
-            #NEEDS TO LOAD PRODUCTS AND SUCH
-        else:
+        if request.user.userinfo.account_type != "customer":
             if request.user.userinfo.store:
                 return redirect("Stores:manage_store",store_id=request.user.userinfo.store.store_id)
             else:
-                #TODO return HttpResponse("Error: No store associated with this user")
-                pass
+                return HttpResponse("Error: No store associated with this user")
             
-    store = Store.objects.get(store_id=store_id)
-    if request.method == 'POST':
-        #Get search results
-        print(request.POST)
-        search_text = request.POST.get('search-bar')
-        if search_text:
-            query = Q()
-            search_terms = search_text.split()
-            for term in search_terms:
-                query |= Q(product_name__icontains=term) | Q(product_description__icontains=term)
+    return render(request,"store_front.html",context={"store_id":store_id})    
+    # store = Store.objects.get(store_id=store_id)
+    # if request.method == 'POST':
+    #     #Get search results
+    #     print(request.POST)
+    #     search_text = request.POST.get('search-bar')
+    #     if search_text:
+    #         query = Q()
+    #         search_terms = search_text.split()
+    #         for term in search_terms:
+    #             query |= Q(product_name__icontains=term) | Q(product_description__icontains=term)
 
-            products = Product.objects.filter(query,store_id=store_id)
+    #         products = Product.objects.filter(query,store_id=store_id)
 
-            sort_choice = request.POST.get("sort-selector")
+    #         sort_choice = request.POST.get("sort-selector")
             
-            if sort_choice:
-                if sort_choice == "alphabetical_descend":
-                    products = Product.objects.filter(query,store_id=store_id).order_by("product_name")
-                elif sort_choice == "alphabetical_ascend":
-                    products = Product.objects.filter(query,store_id=store_id).order_by("-product_name")
-                elif sort_choice == "price-low-to-high":
-                    products = Product.objects.filter(query,store_id=store_id).order_by("product_price")
-                elif sort_choice == "price-high-to-low":
-                    print("sorting")
-                    products = Product.objects.filter(query,store_id=store_id).order_by("-product_price")
+    #         if sort_choice:
+    #             if sort_choice == "alphabetical_descend":
+    #                 products = Product.objects.filter(query,store_id=store_id).order_by("product_name")
+    #             elif sort_choice == "alphabetical_ascend":
+    #                 products = Product.objects.filter(query,store_id=store_id).order_by("-product_name")
+    #             elif sort_choice == "price-low-to-high":
+    #                 products = Product.objects.filter(query,store_id=store_id).order_by("product_price")
+    #             elif sort_choice == "price-high-to-low":
+    #                 print("sorting")
+    #                 products = Product.objects.filter(query,store_id=store_id).order_by("-product_price")
             
-            print(products)
+    #         print(products)
                 
-        else:
-            return redirect("Stores:store_home",store_id)
+    #     else:
+    #         return redirect("Stores:store_home",store_id)
         
-    else:
-        #Get all products
-        products = Product.objects.filter(store = store)
-    return render(request,"store_front.html",context={"store":store,"products":products})
+    # else:
+    #     #Get all products
+    #     products = Product.objects.filter(store = store)
+    
 
 
 def view_customer_cart(request,user_id):
