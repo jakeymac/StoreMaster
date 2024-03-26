@@ -3,6 +3,7 @@
     color: #fff;
     padding: 10px;
     text-align: center;
+    display:flex;
 }
 
 #content {
@@ -19,8 +20,8 @@ body {
 #main-container {
     background-color:white;
     width:70%;
-    margin-left:10%;
-    margin-right:10%;
+    margin-left:15%;
+    margin-right:15%;
     padding-top: 30px;
 }
 .row {

@@ -1,79 +1,23 @@
 {% extends 'base.html'%}
 
 {% block content %}
-    <style>
-        .product-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 60%;
-            margin: auto;
-            padding: 15px;
-            border: 1px solid #ddd;
-        }
 
-        .product-details {
-            width: 45%;
-        }
-
-        .product-image {
-            width: 100px;
-            text-align: center;
-        }
-
-        img {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 10px;
-        }
-
-        #no-image {
-            width: 100px;
-            height: 100px;
-            margin-bottom:10px;
-            border: 1px solid #2980b9
-        }
-
-        button {
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        label {
-            font-weight: bold;
-            margin-top:30px;
-        }
-
-        #add-to-cart-div {
-            width: 100%;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        #add-to-cart-form {
-            display: flex;
-            align-items: center;
-        }
-
-        #quantity-selector {
-            margin-right: 10px;
-        }
-
-        
-    </style>
-
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Product</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/product_view.css' %}">
+</head>
+<body>
+    
+</body>
+</html>
     <div class="product-container">
         <div class="product-details">
-            <h1>{{ product.product_name }}</h1>
+            <h1 id="product-name-header">{{ product.product_name }}</h1>
             <label>Price:</label> ${{ product.product_price }}<br>
             <label>Description:</label> {{ product.product_description }}<br>
             <label>In stock:</label> {{ product.product_stock }}<br>
