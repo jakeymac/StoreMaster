@@ -20,7 +20,7 @@
     <meta name="csrf-token" content="{{csrf_token}}">
     <div id="main-container">
         <div id="search-bar-div">
-            <input type="text" id="search" name="search-bar" placeholder="Search for products">
+            <input type="text" id="search-bar" name="search-bar" placeholder="Search for products">
             <select id="sort-selector" name="sort-selector">
                 <option value=""selected>Sort</option>
                 <option value="alphabetical_descend">A-Z</option>
@@ -32,26 +32,9 @@
             <button id="search-button">Search</button>
         </div>
         <div id="search-results">
-            
+            <p id="no-products-p" style="display:none;">Sorry, no products found</p>
         </div>
     
-        <!-- <div id="content">
-            {% if products %}
-                <div id="results-div">
-                    {% for product in products %}
-                        <div class="product">
-                            {% if product.product_image %}
-                                <img src="{{product.product_image.url}}" alt="{{product.product_name}}">
-                            {% endif %}
-                            <a href="{% url 'Products:product_view' product.product_id %}"><h2>{{product.product_name}}</h2></a>
-                            <p>${{product.product_price}}</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <h3 class="results-label">Sorry, no products found</h3>
-            {% endif %}
-        </div> -->
     </div>
     
 </body>
