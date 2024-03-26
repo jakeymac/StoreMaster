@@ -1,0 +1,105 @@
+#banner {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+#content {
+    padding: 20px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+#main-container {
+    background-color:white;
+    width:70%;
+    margin-left:10%;
+    margin-right:10%;
+    padding-top: 30px;
+}
+.row {
+    display:flex;
+}
+#search-results {
+    /* display: flex;
+    flex-wrap: wrap; */
+    justify-content: center;
+    margin-top: 20px;
+    overflow-y: auto;
+    max-height: 1000px;
+    flex-direction:row;
+}
+
+.product {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 2%;
+    width: 20%; /* Adjusted width */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.empty-product {
+    border:none;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+#search-bar-div {
+display: flex;
+justify-content: center;
+align-items: center;
+margin-bottom: 20px;
+}
+
+#search-bar {
+    width: 300px; /* Adjust the width as needed */
+    padding: 10px; /* Adjust the padding as needed */
+    font-weight: bold; /* Set the text input to a thicker font */
+    border: 2px solid #333; /* Add a border for a more prominent look */
+    border-radius: 5px; /* Add some border-radius for rounded corners */
+}
+
+select {
+    margin-left: 10px; /* Add some space between the input and the select */
+}
+
+#search-button {
+    margin-left:10px;
+}
+
+.product-link {
+    text-decoration:none;
+    color:black;
+}
+
+.product-link:hover {
+    color:blue;
+}
+
+#no-products-p {
+    margin-top:30px;
+    text-align:center;
+}

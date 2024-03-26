@@ -55,6 +55,7 @@ function load_listeners() {
         if (image_input !== null) {
             
             new_product_data.append('product_image', image_input);
+            console.log(new_product_data);
             console.log("Ok step 1")
         } else {
             console.log("Step 2");
@@ -74,15 +75,46 @@ function load_listeners() {
         new_product_data.append('low_stock_quantity', $("#product-low-stock-quantity-input").val());
 
        
-
+        console.log(new_product_data);
         fetch(`/api/product/${product_id}`, {
             method: 'PUT',
             headers: {
                 "X-CSRFToken": csrftoken,
             },
-            body:new_product_data
+            body: new_product_data
 
         })
+        .then(response => {
+            if (!response.ok) {
+                Swal.fire({
+                    icon:'error',
+                    title:'Error Saving',
+                    text:'There was an error saving product information',
+                    timer: 3000,
+                    timerProgressBar: false,
+                    // customClass: {
+                    //     popup: 'saved-successfully-alert'
+                    // }
+                });
+                
+            }
+            return response.json();
+        }).then (data => {
+            console.log(data);
+            Swal.fire({
+                icon:'info',
+                title:'Success',
+                text:'Product information was saved successfully',
+                timer: 3000,
+                timerProgressBar: false,
+                // customClass: {
+                //     popup: 'saved-successfully-alert'
+                // }
+            });
+            setTimeout(function() {
+                window.location.href = `/employee_view_product/${product_id}`;
+            }, 3000);
+        });
         
         // let product_stock = $("#stock-number-input").val();
         // let product_name = $("#product-name-input").val();
