@@ -53,9 +53,12 @@ p {
     margin-top: 20px;
     text-align: center;
 }
+#customer-name-header {
+    margin-left:0px;
+}
 </style>
     <div id="main-info-container">
-        <h1>{{customer.first_name }} {{customer.last_name}}</h1>
+        <h1 id="customer-name-header">{{customer.first_name }} {{customer.last_name}}</h1>
         {% if customer.address %}
             <p>Address: {{customer.get_full_address}}</p>
         {% else %}

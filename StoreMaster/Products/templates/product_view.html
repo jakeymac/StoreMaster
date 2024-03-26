@@ -38,7 +38,7 @@
             <div id="add-to-cart-div">
                 <form id="add-to-cart-form" method="POST">
                     {% csrf_token %}
-                    <select name="quantity" id="quantity-selector" size="7">
+                    <select name="quantity" id="quantity-selector"  style="height:20px;" size="7">
                         {% for num in quantities %}
                             <option value="{{ num }}">{{ num }}</option>
                         {% endfor %}
