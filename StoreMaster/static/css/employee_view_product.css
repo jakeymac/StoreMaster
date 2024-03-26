@@ -106,8 +106,6 @@ label {
     margin-right: 10px;
 }
 
-
-
 #information-and-table {
     display: flex;
     flex-direction: column;
@@ -141,15 +139,16 @@ label {
     overflow-x: auto;
     overflow-y: auto;
     width:90%;
-    margin-left:5%;
+    margin-left:1%;
     margin-top:10px;
-    background-color:#3498db;
+    /* background-color:#3498db; */
+    border: solid 2px #3498db;
     padding:40px;
     border-radius: 5%;
 }
 
 #graph-buttons-div {
-    margin-left:40%;
+    margin-left:30%;
     margin-top:25px;
 }
 

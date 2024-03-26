@@ -9,6 +9,8 @@ from django.db.models.functions import TruncDate, TruncWeek, TruncMonth
 from datetime import datetime, timedelta
 import math
 
+import json
+
 from .models import *
 from Stores.models import *
 from .serializers import *
@@ -66,9 +68,35 @@ def product_endpoint(request,id_type=None,id=None,is_active=None):
                 return Response({"product": product_serializer.data}, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
-        print(json.loads(request.body))
-        import pdb
-        pdb.set_trace()
+        try:
+            product = Product.objects.get(product_id=id)
+        
+            if request.FILES.get("product_image"):
+                product.product_image = request.FILES["product_image"]
+            
+            product_data = dict(request.POST)
+
+            if "product_image" in product_data and product_data.get("product_image") == ['undefined']:
+                    del product_data["product_image"]
+
+            for key, value in product_data.items():
+                if isinstance(value, list) and len(value) == 1:
+                    product_data[key] = value[0]
+
+            product_serializer = ProductSerializer(product, data=product_data, partial=True)
+            if product_serializer.is_valid():
+                print("Saving")
+                product_serializer.save()
+                return Response({"message": "Successfully saved product information","product": product_serializer.data}, status=status.HTTP_200_OK)
+            else:
+                print("Error")
+                print(product_serializer.errors)
+                return Response({"message": product_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+            
+
+        except Exception as e:
+            return Response({"message": e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     elif request.method == 'DELETE':
         # import pdb

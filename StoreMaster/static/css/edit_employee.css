@@ -23,6 +23,8 @@ h1 {
     grid-column: span 2; /* span both columns */
 }
 
+
+
 .column {
     grid-column: span 1; /* span one column */
 }
@@ -39,17 +41,28 @@ input, select {
     box-sizing: border-box;
 }
 
-#edit_customer_form {
-    grid-column: span 2; /* span both columns */
+#buttons-div {
+    display:flex;
+}
+
+#save-changes-button {
+    grid-column: span 1;
+}
+
+#back-button {
+    grid-column: span 1;
 }
 
 button {
-    width: 100%;
+    width: 45%;
+    margin-left: 1.25%;
+    margin-right: 1.25%;
     padding: 10px;
     background-color: #3498db;
     color: #fff;
     border: none;
     cursor: pointer;
+    grid-column: span 1;
 }
 
 button:hover {
@@ -59,4 +72,23 @@ button:hover {
 p {
     margin-top: 20px;
     text-align: center;
+}
+
+#messages-p {
+    margin-top:0px;
+    text-align:center;
+    grid-column: span 2;
+    color:#d55527
+}
+
+#stock-notifications-div {
+    display: flex;
+}
+
+#stock-notifications-checkbox {
+    width:20px;
+}
+
+.saved-successfully-alert {
+    width:200px;
 }

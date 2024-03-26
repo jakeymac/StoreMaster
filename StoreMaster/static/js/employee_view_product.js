@@ -1,10 +1,11 @@
-let graph_data;
+var product_history;
 var product_data;
+let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
 function load_product_data() {
-    console.log("Loading product data");
-    let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
-    fetch(window.location.href, {
-        method: "POST",
+    
+
+    fetch(`/api/product/${product_id}`, {
+        method: 'GET',
         headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csrftoken
@@ -18,14 +19,9 @@ function load_product_data() {
     })
     .then(data => {
         console.log(data);
+        product_data = data.product;
         var product = data.product;
-        var order_averages = data.order_averages;
-        var purchase_averages = data.purchase_averages;
-        var overall_averages = data.overall_averages;
-
-        graph_data = data.graph_data;
-        product_data = product;
-
+    
         $("#product-name-header").text(product.product_name);
         $("#product-price-p").text(`$${product.product_price}`);
         $("#product-description-p").text(product.product_description);
@@ -39,19 +35,50 @@ function load_product_data() {
         } else {
             $("#no-image-div").show();
         }
-
-        $("#orders-info-row").append(`<td id="order-averages-daily-td">${order_averages.daily}</td>
-                                      <td id="order-averages-weekly-td">${order_averages.weekly}</td>
-                                      <td id="order-averages-monthly-td">${order_averages.monthly}</td>`);
-
-        $("#purchases-info-row").append(` <td id="purchase-averages-daily-td">${purchase_averages.daily}</td>
-                                          <td id="purchase-averages-weekly-td">${purchase_averages.weekly}</td>
-                                          <td id="purchase-averages-monthly-td">${purchase_averages.monthly}</td>`);
-                                          
-        $("#overall-info-row").append(`<td id="overall-averages-daily-td">${overall_averages.daily}</td>
-                                       <td id="overall-averages-weekly-td">${overall_averages.weekly}</td>
-                                       <td id="overall-averages-monthly-td">${overall_averages.monthly}</td>`);                            
     })
+
+    fetch(`/api/product/product_history/${product_id}`,{
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("product history api data: ", data);
+        var product = data.product;
+        product_history = data.product_history_data;
+
+        var daily_order_average = product_history.orders_daily_average;
+        var weekly_order_average = product_history.orders_weekly_average;
+        var monthly_order_average = product_history.orders_monthly_average;
+
+        var daily_purchase_average = product_history.purchases_daily_average;
+        var weekly_purchase_average = product_history.purchases_weekly_average;
+        var monthly_purchase_average = product_history.purchases_monthly_average;
+
+        var daily_overall_average = product_history.overall_daily_average;
+        var weekly_overall_average = product_history.overall_weekly_average;
+        var monthly_overall_average = product_history.overall_monthly_average;
+
+        $("#orders-info-row").append(`<td id="order-averages-daily-td">${daily_order_average}</td>
+                                      <td id="order-averages-weekly-td">${weekly_order_average}</td>
+                                      <td id="order-averages-monthly-td">${monthly_order_average}</td>`);
+
+        $("#purchases-info-row").append(`<td id="purchase-averages-daily-td">${daily_purchase_average}</td>
+                                         <td id="purchase-averages-weekly-td">${weekly_purchase_average}</td>
+                                         <td id="purchase-averages-monthly-td">${monthly_purchase_average}</td>`);
+                                         
+        $("#overall-info-row").append(`<td id="overall-averages-daily-td">${daily_overall_average}</td>
+                                       <td id="overall-averages-weekly-td">${weekly_overall_average}</td>
+                                       <td id="overall-averages-monthly-td">${monthly_overall_average}</td>`);                                  
+    }) 
 }
 
 function load_listeners() {
@@ -61,18 +88,68 @@ function load_listeners() {
     });
 
     $("#edit-product-button").on("click", function() {
-        console.log("Edit product button");
         window.location.href = `/product_edit_view/${product_data.product_id}`;
     });
 
     $("#delete-product-button").on("click", function() {
-        console.log("Delete product button");
-        window.location.href = `/delete_product/${product_data.product_id}`;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Are you sure you want to delete this product? You won't be able to undo this",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            customClass: {
+                popup: 'delete-alert'
+            }
+        }).then((result) => {
+            console.log(result);
+            if (result.isConfirmed) {
+                // Send a DELETE request to API
+                console.log()
+                let csrftoken = $('meta[name="csrf-token"]').attr('value');
+                fetch(`/api/product/${product_data.product_id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrftoken
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'There was an error deleting this product',
+                            icon: 'error',
+                            timer:3000,
+                            timerProgressBar: false,
+                            customClass: {
+                                popup: 'delete-confirmation-alert'
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Deleted',
+                            text: 'Successfully deleted this product',
+                            icon: 'success',
+                            timer:3000,
+                            timerProgressBar: false,
+                            customClass: {
+                                popup: 'delete-confirmation-alert'
+                            }
+                        });
+                        setTimeout(function() {
+                            window.location.href = `/manage_store/${product_data.store.store_id}`;     
+                        }, 3000);
+                                
+                    }
+                })
+            }
+        })
     });
 
     $("#return-to-portal-button").on("click", function() {
-        console.log("Return to portal");
-        window.location.href = `/manage_store/${product_data.store_id}`;
+        window.location.href = `/manage_store/${product_data.store.store_id}`;
 
     });
     
@@ -84,10 +161,10 @@ function load_graph() {
     if ($("#source-selector").val() != "" && $("#time-selector").val() != "") {
         var source = $("#source-selector").val();
         var time  = $("#time-selector").val();
-        console.log("Success");
-        console.log(graph_data);
+        // console.log("Success");
+        // console.log(graph_data);
 
-        var selected_combo = graph_data[`${source}_${time}_total_results`]
+        var selected_combo = product_history[`${source}_${time}_total_results`]
         var source_text = source.charAt(0).toUpperCase() + source.slice(1).toLowerCase();
         var time_text = time.charAt(0).toUpperCase() + time.slice(1).toLowerCase();
 

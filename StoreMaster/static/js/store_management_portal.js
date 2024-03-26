@@ -5,6 +5,8 @@ var customers;
 var employees;
 var products_low_in_stock;
 
+let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+
 // Function to filter products based on search text by product name
 function filterProducts(search_text) {
     var productsFound = false;
@@ -111,11 +113,13 @@ function filterEmployees(search_text) {
     }
 }
 
+
+
 // Function to request and organize data from the server
 function load_store_data() {
-    let csrftoken = $("input[name=csrfmiddlewaretoken]").val();    
-    fetch(store_id, { //Send the store_id that is passed within the html through context
-        method:'POST',
+    
+    fetch('/api/account/logged_in_account', {
+        method: 'GET',
         headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csrftoken
@@ -128,30 +132,84 @@ function load_store_data() {
         return response.json();
     })
     .then(data => {
-        console.log(data);
-        products = data["products"];
+        isAdmin = (data.account_info.account_type == "admin");
+        console.log("Data: ", data);
+        console.log("Testing is aDmin: 2 ", isAdmin);
+        if (isAdmin) {
+            $("#customer-search-section").show();
+            $("#employee-search-section").show();
+            load_admin_only_data();
+        }
+    })
+
+    // Retrieve all the products in the store
+    fetch(`/api/product/store/${store_id}/true`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    }).then(data => {
+        products = data.products;
         if (products.length == 0) {
             $("#no-products-text").show();
-        }
-        products.forEach(function(product) {
-            // Generate html for each product and add it to the product search results section
+        } 
+        products.forEach(function(product) {    
             var new_product_div = `<div class="individual-product-div"> 
                                         <p class="product-name-p" >${product.product_name}</p> 
                                         <button class="view-product-button" product_id="${product.product_id}">View</button>
-                                    </div>`;
-            
+                                   </div>`;
+
 
             $("#product-results-div").append(new_product_div);
-        });
-         
-        orders = data["orders"];
+        })
 
-        // If there are no orders yet, display "no orders found"
+        products_low_in_stock = data.products_low_in_stock;
+        if (products_low_in_stock.length == 0) {
+            $("#no-low-stock-text").show();
+        }
+        products_low_in_stock.forEach(function(product) {
+            // Style each product differently for items that are out of stock, or just low in stock
+            if (product.product_stock == 0) {
+                var stock_class = "out-of-stock-item";
+            } else {
+                var stock_class = "low-stock-item"
+            }
+            // Generate html for each product and add it to the list of products that are low in stock
+            var new_product_html = `<div class="individual-product-div">
+                                        <p class="product-name-p ${stock_class}"> ${product.product_name}</p>
+                                        <button class="view-product-button" product_id="${product.product_id}">View</button>
+                                    </div>`
+            $("#low-stock-items").append(new_product_html);
+        });
+    });
+    
+    // Retreive all orders from the store
+    fetch(`/api/order/store/${store_id}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        orders = data.orders;
         if (orders.length == 0) {
             $("#no-orders-text").show();
             $("#order-info-table").hide();
         }
-
         var new_order_div_html = "";
         orders.forEach(function(order) {
             // Reformat the order date for displaying
@@ -160,23 +218,36 @@ function load_store_data() {
             var day = String(order_date.getDate()).padStart(2, '0');
             var year = order_date.getFullYear();
             var formattedDate = `${month}-${day}-${year}`;
-            ``
+            
 
             // Generate html for each order and add it to the order results table
             new_order_div_html += `<tr class="order-row">
                                         <td class="order-id-cell">${order.order_id}</td>
                                         <td class="order-date-cell">${formattedDate}</td>
-                                        <td class="order-customer-name-cell">${order.customer_name}</td>
+                                        <td class="order-customer-name-cell">${order.customer_id.first_name} ${order.customer_id.last_name}</td>
                                         <td><button class="view-order-button" order_id="${order.order_id}">View</button> </td>
                                     </tr>`
         });
     
         $("#order-info-table").append(new_order_div_html);
+    })
 
-        
-        purchases = data["purchases"];
-        
-        // If there are no purchases yet, display "no products found"
+    // Retreive all purchases from store
+    fetch(`/api/purchase/store/${store_id}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        purchases = data.purchases;
         if (purchases.length == 0) {
             $("#no-purchases-text").show();
             $("#purchase-info-table").hide();
@@ -192,85 +263,93 @@ function load_store_data() {
             var day = String(purchase_date.getDate()).padStart(2,'0');
             var year = purchase_date.getFullYear();
             var formattedDate = `${month}-${day}-${year}`;
+            var customer_name = "";
+            if (purchase.customer_id !== null) {
+                customer_name = purchase.customer_id.first_name + " " + purchase.customer_id.last_name;
+            } else if (purchase.first_name !== null) {
+                customer_name = purchase.first_name;
+                if (purchase.last_name !== null)  {
+                    customer_name += " " + purchase.last_name;
+                }
+            } else {
+                customer_name = "No name found";
+            }
 
             // Generate html for each purchase and add it to the purchase results table
             new_purchase_div_html += `<tr class="purchase-row">
                                         <td class="purchase-id-cell">${purchase.purchase_id}</td>
                                         <td class="purchase-date-cell">${formattedDate}</td>
-                                        <td class="purchase-customer-name-cell">${purchase.customer_name}</td>
+                                        <td class="purchase-customer-name-cell">${customer_name}</td>
                                         <td><button class="view-purchase-button" purchase_id="${purchase.purchase_id}">View</button></td>
                                       </tr>`
         });
-        $("#purchase-info-table").append(new_purchase_div_html);
+        $("#purchase-info-table").append(new_purchase_div_html); 
+    })
+}
 
-
-        products_low_in_stock = data["products_low_in_stock"];
-        
-        // If there are no products low in stock, display "no products found"
-        if (products_low_in_stock.length == 0) {
-            $("#no-low-stock-text").show();
+function load_admin_only_data() {
+    // Retrieve all customers in store
+    fetch(`/api/account/customer/${store_id}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
         }
-        
-        
-        products_low_in_stock.forEach(function(product) {
-            // Style each product differently for items that are out of stock, or just low in stock
-            if (product.stock == 0) {
-                var stock_class="out-of-stock-item";
-            } else {
-                var stock_class = "low-stock-item"
-            }
-            // Generate html for each product and add it to the list of products that are low in stock
-            var new_product_html = `<div class="individual-product-div">
-                                        <p class="product-name-p ${stock_class}"> ${product.name}</p>
-                                        <button class="view-product-button" product_id="${product.id}">View</button>
-                                    </div>`
-            $("#low-stock-items").append(new_product_html);
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        var customers = data.customers;
+        if(customers.length == 0) {
+            $("#no-customers-text").show();
+        }
+        customers.forEach(function(customer) {
+            console.log(customer);
+            // Generate html for each customer and add it to the customer search results section
+            var new_customer_html = `<div class="individual-customer-div">
+                                        <p class="customer-name-p">${customer.first_name} ${customer.last_name}</p>
+                                        <button class="view-customer-button" customer_id="${customer.user.id}">View</button>
+                                    </div>`;
+
+            $("#customer-results-div").append(new_customer_html);
         });
-        
+    })
 
-        if (data["is_admin"]) {
-            // If the logged in user is an admin, show the customer and employee search divs
-            $("#customer-search-section").show();
-            $("#employee-search-section").show();
-            $("#return-to-admin-portal-button").show(); // Show the return to admin portal button
-            customers = data["customers"];
-
-
-            // If there are no customers, display "no customers found"
-            if (customers.length == 0) {
-                $("#no-customers-text").show();
-            }
-            
-
-            customers.forEach(function(customer) {
-                console.log(customer);
-                // Generate html for each customer and add it to the customer search results section
-                var new_customer_html = `<div class="individual-customer-div">
-                                            <p class="customer-name-p">${customer.first_name} ${customer.last_name}</p>
-                                            <button class="view-customer-button" customer_id="${customer.user_id}">View</button>
-                                        </div>`;
-
-                $("#customer-results-div").append(new_customer_html);
-            });
-
-            employees = data["employees"];
-
-            // If there are no employees, display "no employees found"
-            if (employees.length == 0) {
-                $("#no-employees-text").show();
-            }
-            
-            employees.forEach(function(employee) {
-                console.log(employee);
-                // Generate html for each employee and add it to the employee search results section
-                var new_employee_html = `<div class="individual-employee-div">
-                                            <p class="employee-name-p">${employee.first_name} ${employee.last_name}</p>
-                                            <button class="view-employee-button" employee_id="${employee.user_id}">View</button>
-                                         </div>`
-
-                $("#employee-results-div").append(new_employee_html);
-            })
+    // Retreive all employees in store
+    fetch(`/api/account/employee/${store_id}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
         }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        var employees = data.employees;
+        if (employees.length == 0) {
+            $("#no-employees-text").show();
+        }
+        employees.forEach(function(employee) {
+            console.log(employee);
+            // Generate html for each employee and add it to the employee search results section
+            var new_employee_html = `<div class="individual-employee-div">
+                                        <p class="employee-name-p">${employee.first_name} ${employee.last_name}</p>
+                                        <button class="view-employee-button" employee_id="${employee.user.id}">View</button>
+                                     </div>`
+
+            $("#employee-results-div").append(new_employee_html);
+        });
     })
 }
 
