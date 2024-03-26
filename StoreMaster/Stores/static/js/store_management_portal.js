@@ -143,7 +143,7 @@ function load_store_data() {
     })
 
     // Retrieve all the products in the store
-    fetch(`/api/product/store/${store_id}`, {
+    fetch(`/api/product/store/${store_id}/true`, {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
