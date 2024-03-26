@@ -11,7 +11,7 @@
         <script src="{% static 'js/employee_view_product.js' %}"></script>
     </head>
     <body>
-        {% csrf_token %}
+        <meta name="csrf-token" content="{% csrf_token %}">
         <div id="main-div-container">
             <div class="row" id="main-product-info-div">
                 <h1 id="product-name-header"></h1>

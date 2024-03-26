@@ -14,6 +14,7 @@ from Stores.models import *
 from .serializers import *
 
 @api_view(['GET','POST','PUT','DELETE'])
+@permission_classes([IsAuthenticated])
 def product_endpoint(request,id_type=None,id=None,is_active=None):
     if request.method == 'GET':
         if id_type is not None:
@@ -63,6 +64,11 @@ def product_endpoint(request,id_type=None,id=None,is_active=None):
 
                 product_serializer = ProductSerializer(products, many=True)
                 return Response({"product": product_serializer.data}, status=status.HTTP_200_OK)
+
+    elif request.method == 'PUT':
+        print(json.loads(request.body))
+        import pdb
+        pdb.set_trace()
 
     elif request.method == 'DELETE':
         # import pdb

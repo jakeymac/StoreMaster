@@ -107,6 +107,7 @@ function load_listeners() {
             if (result.isConfirmed) {
                 // Send a DELETE request to API
                 console.log()
+                let csrftoken = $('meta[name="csrf-token"]').attr('value');
                 fetch(`/api/product/${product_data.product_id}`, {
                     method: 'DELETE',
                     headers: {
@@ -137,20 +138,12 @@ function load_listeners() {
                                 popup: 'delete-confirmation-alert'
                             }
                         });
-                        window.location.href = `/manage_store/${product.store.store_id}`;             
+                        setTimeout(function() {
+                            window.location.href = `/manage_store/${product_data.store.store_id}`;     
+                        }, 3000);
+                                
                     }
-
                 })
-                Swal.fire({
-                    title: 'Deleted',
-                    text: 'Successfully deleted',
-                    icon: 'success',
-                    timer:3000,
-                    timerProgressBar: false,
-                    customClass: {
-                        popup: 'delete-confirmation-alert'
-                    }
-                });
             }
         })
     });
