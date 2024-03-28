@@ -38,4 +38,20 @@ purchase_data: {{purchase_object.purchase_date}}
 </table>
 
 <p>Total: ${{purchase_object.purchase_total}}</p>
-<a href="{% url 'Stores:manage_store' products_in_purchase.0.product.store_id %}"><button>Back to store manager</button></a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+
+<button id="back-button">Back to store manager</button></a>
+<form id="return-to-management-portal-form" action="/manage_store" method="POST">
+    {% csrf_token %}
+    <input type="hidden" id="store-id-input" name="store_id">
+</form>

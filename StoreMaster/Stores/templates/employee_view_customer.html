@@ -1,82 +1,36 @@
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #f9f9f9;
-    }
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/employee_view_customer.css' %}">
+    <script>var customer_id = "{{customer_id}}" </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/employee_view_customer.js' %}" defer></script>
+</head>
+<body>
     
-    #main-info-container {
-        width: 300px;
-        margin: 35px auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    h3 {
-        text-align: center;
-        color: #333;
-    }
-    
-    label {
-        display: block;
-        margin-bottom: 8px;
-        color: #333;
-    }
-    
-    input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        box-sizing: border-box;
-    }
-    
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        margin-bottom:10px;
-    }
-    
-    button:hover {
-        background-color: #2980b9;
-    }
-    
-    p {
-        margin-top: 20px;
-        text-align: center;
-    }
-</style>
+    <div id="main-info-container">
+        {% csrf_token %}
+        <h1 id="customer-name-header"></h1>
+        <p id="customer-address-p"></p>
+        <p id="customer-line-two-p"></p>
+        <p id="customer-username-p"></p>
+        <p id="customer-birthday-p"></p>
+        <p id="customer-other-information-p"></p>
 
-
-<div id="main-info-container">
-        <h3>{{customer.first_name }} {{customer.last_name}}</h3>
-        {% if customer.address %}
-            <p>Address: {{customer.get_full_address}}</p>
-        {% else %}
-            <p> No address found</p>
-        {% endif %}
-        <p>Username: {{customer.username}}</p>
-        {% if customer.birthday %}
-            <p>Birthday: {{customer.birthday}}</p>
-        {% else %}
-            <p>No birthday found</p>
-        {% endif %}
-        
-        {% if customer.other_information %} 
-            <p>Other information: {{customer.other_information}}</p>
-        {% else %} 
-            <p>No other information found</p>
-        {% endif %}
-        <a href="{% url 'Accounts:employee_edit_customer' customer.user_id %}"><button>Edit Information</button></a>
-
-        {% if original_page == "admin portal" %}
-            <a href="{% url 'Stores:admin_manage_stores' %}"><button>Back to admin portal</button></a>
-        {% else %}
-            <a href="{% url 'Stores:manage_store' customer.store.store_id %}"><button>Back to management portal</button></a>
-        {% endif %}
+        <button id="edit-customer-button">Edit</button>
+        <button id="back-button">Back to management portal</button>
     </div>
+    <form id="back-to-management-portal-form" method="POST" action="/manage_store">
+        {% csrf_token %}
+        <input type="hidden" id="store-id-input" name="store_id_input">
+    </form>
+    <form id="open-edit-customer-form" method="POST" action="/edit_account_info">
+        {% csrf_token %}
+        <input type="hidden" id="account-type-input" name="account_type_input" value="customer">
+        <input type="hidden" id="customer-id-input" name="account_id_input" value="{{customer_id}}">
+    </form>
+</body>
+</html>

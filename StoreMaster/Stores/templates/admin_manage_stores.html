@@ -21,6 +21,10 @@
                     {% endfor %} -->
                 </select>
                 <button id="select-store-button">Select Store</button>
+                <form id="store-selector-form" action="/manage_store" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="store_id" id="store-id">
+                </form>
             </div>
         
             <h1>Select Employee</h1>

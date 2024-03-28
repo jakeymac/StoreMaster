@@ -38,6 +38,10 @@
         </div>
        
     </div>
+    <form id="return-to-management-portal-form" action="/manage_store" method="POST">
+        {% csrf_token %}
+        <input type="hidden" id="store-id-input" name="store_id">
+    </form>
 </body>
 </html>
 

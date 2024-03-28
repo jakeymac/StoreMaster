@@ -56,6 +56,19 @@ def remove_product_from_purchase(request,store_id,product_id):
     del request.session[product_id]
     return redirect("Stores:new_purchase",store_id)
 
+def view_purchase(request):
+    if request.method == "POST":
+        if "purchase_id_input" in request.POST:
+            context = {"purchase_id": request.POST.get("purchase_id_input")}
+            if request.user and request.user.is_authenticated:
+                if request.user.userinfo.account_type != "customer":
+                    return render(request,"employee_view_purchase.html", context=context)
+                
+                else:
+                    if request.user.id == request.POST.get("customer_id_input"):
+                        return render(request, "view_purchase.html", context=context)
+
+
 def employee_view_purchase(request,purchase_id):
     purchase_object = Purchase.objects.get(purchase_id=purchase_id)
     products_in_purchase = [obj for obj in ProductInPurchase.objects.filter(purchase_info_object=purchase_object)]
@@ -536,204 +549,166 @@ def get_order_information(order_id):
 
     return order, products
 
-def view_order(request,order_id):
-    order, products = get_order_information(order_id)
-    context = {"order":order,"products":products,}
+def view_order(request):
+    if request.method == "POST":
+        if "order_id_input" in request.POST:
+            context = {"order_id": request.POST.get("order_id_input")}
+            if request.user and request.user.is_authenticated:
+                if request.user.userinfo.account_type != "customer":
+                    return render(request, "employee_view_order.html", context=context)
 
-    return render(request,"view_order.html",context=context)
+                else:
+                    if request.user.id == request.POST.get("customer_id_input"):
+                        return render(request, "view_order.html", context=context)
+    # order, products = get_order_information(order_id)
+    # context = {"order":order,"products":products,}
+
+    # return render(request,"view_order.html",context=context)
 
 def employee_view_order(request,order_id):
     context = {"order_id":order_id}
 
     return render(request,"employee_view_order.html",context=context)
 
-@login_required(login_url='/login_employee')
-def manage_store(request,store_id):
-    store = Store.objects.get(store_id=store_id)
-    products = Product.objects.filter(store=store)
-    orders = Order.objects.filter(store=store)
-    purchases = Purchase.objects.filter(store=store)
-    customers = CustomerInfo.objects.filter(store=store)
-    employees = EmployeeInfo.objects.filter(store=store)
-    managers = ManagerInfo.objects.filter(store=store)
+# @login_required(login_url='/login_employee')
+# def manage_store(request,store_id):
+#     store = Store.objects.get(store_id=store_id)
+#     products = Product.objects.filter(store=store)
+#     orders = Order.objects.filter(store=store)
+#     purchases = Purchase.objects.filter(store=store)
+#     customers = CustomerInfo.objects.filter(store=store)
+#     employees = EmployeeInfo.objects.filter(store=store)
+#     managers = ManagerInfo.objects.filter(store=store)
     
-    employees = list(employees) + list(managers)
+#     employees = list(employees) + list(managers)
 
-    products_in_low_stock = []
-    for product in products:
-        if product.product_stock <= product.low_stock_quantity:
-            products_in_low_stock.append(product)
+#     products_in_low_stock = []
+#     for product in products:
+#         if product.product_stock <= product.low_stock_quantity:
+#             products_in_low_stock.append(product)
 
-    if request.method == 'POST':
-        if 'product_search' in request.POST:
-            search_text = request.POST.get('product_search')
-            search_terms = search_text.split()
-            query = Q(store_id=store_id)
-            for term in search_terms:
-                if term.isdigit():
-                    query &= Q(product_id=term)
+#     if request.method == 'POST':
+#         if 'product_search' in request.POST:
+#             search_text = request.POST.get('product_search')
+#             search_terms = search_text.split()
+#             query = Q(store_id=store_id)
+#             for term in search_terms:
+#                 if term.isdigit():
+#                     query &= Q(product_id=term)
 
-                query &= (Q(product_name__icontains=term) | Q(product_description__icontains=term))
+#                 query &= (Q(product_name__icontains=term) | Q(product_description__icontains=term))
 
-            products = Product.objects.filter(query)
+#             products = Product.objects.filter(query)
 
-        elif 'order_search' in request.POST:
-            #TODO could add searching for user as well.
-            search_text = request.POST.get("order_search")
-            search_terms = search_text.split()
-            query = Q(store=store)
-            for term in search_terms:
-                if term.isdigit():
-                    query &= (Q(order_id__icontains=int(term)))
+#         elif 'order_search' in request.POST:
+#             #TODO could add searching for user as well.
+#             search_text = request.POST.get("order_search")
+#             search_terms = search_text.split()
+#             query = Q(store=store)
+#             for term in search_terms:
+#                 if term.isdigit():
+#                     query &= (Q(order_id__icontains=int(term)))
                 
-                query &= (Q(customer_id__first_name__icontains=term) | Q(customer_id__last_name__icontains=term))
+#                 query &= (Q(customer_id__first_name__icontains=term) | Q(customer_id__last_name__icontains=term))
             
-            orders = Order.objects.filter(query)
+#             orders = Order.objects.filter(query)
 
-        elif 'purchase_search' in request.POST:
-            #TODO could add seaching for user as well.
-            search_text = request.POST.get("purchase_search")
-            search_terms = search_text.split()
-            query = Q(store=store)
-            for term in search_terms:
-                if term.isdigit():
-                    query &= (Q(purchase_id__icontains=int(term)))
+#         elif 'purchase_search' in request.POST:
+#             #TODO could add seaching for user as well.
+#             search_text = request.POST.get("purchase_search")
+#             search_terms = search_text.split()
+#             query = Q(store=store)
+#             for term in search_terms:
+#                 if term.isdigit():
+#                     query &= (Q(purchase_id__icontains=int(term)))
                 
-                query &= (Q(customer_id__first_name__icontains=term) | Q(customer_id__last_name__icontains=term))
+#                 query &= (Q(customer_id__first_name__icontains=term) | Q(customer_id__last_name__icontains=term))
             
-            purchases = Purchase.objects.filter(query)
-        elif 'customer_search' in request.POST:
-            search_text = request.POST.get("customer_search")
-            search_terms = search_text.split()
-            query = Q(store=store)
-            for term in search_terms:
-                if term.isdigit():
-                    query &= (Q(user_id=term))
-                #Users' names and last names aren't going to have numbers
-                else:
-                    query &= (Q(first_name__icontains=term) | Q(last_name__icontains=term))
+#             purchases = Purchase.objects.filter(query)
+#         elif 'customer_search' in request.POST:
+#             search_text = request.POST.get("customer_search")
+#             search_terms = search_text.split()
+#             query = Q(store=store)
+#             for term in search_terms:
+#                 if term.isdigit():
+#                     query &= (Q(user_id=term))
+#                 #Users' names and last names aren't going to have numbers
+#                 else:
+#                     query &= (Q(first_name__icontains=term) | Q(last_name__icontains=term))
 
-            customers = CustomerInfo.objects.filter(query)
+#             customers = CustomerInfo.objects.filter(query)
             
-        elif 'employee_search' in request.POST:
-            search_text = request.POST.get("employee_search")
-            search_terms = search_text.split()
-            query = Q(store=store)
-            for term in search_terms:
-                if term.isdigit():
-                    query &= (Q(user_id=term))
-                else:
-                    query &= (Q(first_name__icontains=term) | Q(last_name__icontains=term))
+#         elif 'employee_search' in request.POST:
+#             search_text = request.POST.get("employee_search")
+#             search_terms = search_text.split()
+#             query = Q(store=store)
+#             for term in search_terms:
+#                 if term.isdigit():
+#                     query &= (Q(user_id=term))
+#                 else:
+#                     query &= (Q(first_name__icontains=term) | Q(last_name__icontains=term))
 
-            employees = EmployeeInfo.objects.filter(query)
-            managers = ManagerInfo.objects.filter(query)
+#             employees = EmployeeInfo.objects.filter(query)
+#             managers = ManagerInfo.objects.filter(query)
 
-            employees = list(employees) + list(managers)
+#             employees = list(employees) + list(managers)
 
-    else:
+#     else:
 
-        context = {}
-        userinfo = request.user.userinfo
-        if Store.objects.filter(store_id = store_id).exists():
+#         context = {}
+#         userinfo = request.user.userinfo
+#         if Store.objects.filter(store_id = store_id).exists():
 
-            request.session["store_id"] = store_id
-            context["account_type"] = userinfo.account_type
-            context["Store name"] = Store.objects.get(store_id=store_id).store_name
-            context["user"] = request.user
+#             request.session["store_id"] = store_id
+#             context["account_type"] = userinfo.account_type
+#             context["Store name"] = Store.objects.get(store_id=store_id).store_name
+#             context["user"] = request.user
             
-        else:
-            return HttpResponse("Sorry, no stores found with that ID.")
-            #Could put a seperate search page for finding a store.
+#         else:
+#             return HttpResponse("Sorry, no stores found with that ID.")
+#             #Could put a seperate search page for finding a store.
 
 
-        #TODO maybe delete this, not sure what it's doing here.
-        context = {}
-        userinfo = request.user.userinfo
-        if Store.objects.filter(store_id = store_id).exists():
-            pass
+#         #TODO maybe delete this, not sure what it's doing here.
+#         context = {}
+#         userinfo = request.user.userinfo
+#         if Store.objects.filter(store_id = store_id).exists():
+#             pass
 
-    shipments = Shipment.objects.filter(destination_store=store_id)
+#     shipments = Shipment.objects.filter(destination_store=store_id)
 
-    context = { "store":Store.objects.get(store_id=store_id),
-                "products":products,
-                "orders":orders,
-                "purchases":purchases,
-                "customers":customers,
-                "employees":employees,
-                "shipments":shipments,
-                "low_stock_products":products_in_low_stock }
+#     context = { "store":Store.objects.get(store_id=store_id),
+#                 "products":products,
+#                 "orders":orders,
+#                 "purchases":purchases,
+#                 "customers":customers,
+#                 "employees":employees,
+#                 "shipments":shipments,
+#                 "low_stock_products":products_in_low_stock }
     
-    return render(request,"manage_store.html",context)
+#     return render(request,"manage_store.html",context)
 
 @login_required(login_url='/login_employee')
-def manage_store(request, store_id):
-    store = Store.objects.get(store_id = store_id)
+
+def manage_store_url(request):
     if request.method == "POST":
-        products = Product.objects.filter(store=store)
-        orders = Order.objects.filter(store=store)
-        purchases = Purchase.objects.filter(store=store)
-        customers = CustomerInfo.objects.filter(store=store)
-        employees = EmployeeInfo.objects.filter(store=store)
-        managers = ManagerInfo.objects.filter(store=store)
+        request_data = json.loads(request.body)
+        return redirect("manage_store")
 
-        products_low_in_stock = []
-        for product in products:
-            if product.product_stock <= product.low_stock_quantity:
-                products_low_in_stock.append(product)
+def manage_store(request):
+    if request.method == "POST":
+        print("hi")
 
+        store_id = request.POST.get("store_id")
+        store = Store.objects.get(store_id = store_id)
 
-        products_low_in_stock = [{'id': product.product_id,
-                                'name': product.product_name,
-                                'product_stock': product.product_stock} 
-                                for product in products_low_in_stock]
+        context =  {"store_id": store_id}
+        
 
-        products = list(products.values())
-        orders = list(orders.values())
-        purchases = list(purchases.values())
-        customers = list(customers.values())
-        employees = list(employees.values()) + list(managers.values())
-        managers = list(managers.values())
-
-        for order in orders:
-            customer = CustomerInfo.objects.get(user_id=order["customer_id_id"])
-            name = customer.first_name + " " + customer.last_name
-            order["customer_name"] = name
-    
-        for purchase in purchases:
-            customer = CustomerInfo.objects.get(user_id=purchase["customer_id_id"])
-            name = customer.first_name + " " + customer.last_name
-            purchase["customer_name"] = name
-
-        response_data = {
-            "is_admin": request.user.userinfo.account_type  == "admin",
-            "products": products,
-            "orders": orders,
-            "purchases": purchases,
-            "customers": customers,
-            "employees": employees,
-            "products_low_in_stock": products_low_in_stock
-        }
-
-        return JsonResponse(response_data)
+        return render(request,"store_management_portal.html", context=context)
 
     else:
-        store_name = store.store_name
-
-        username = str(request.user)
-
-        context =  {"store_name": store_name,
-                    "username": username,
-                    "store_id": store_id}
-
-        return render(request, "store_management_portal.html", context=context)
-
-
-
-    
-
-
-    
-
+        return redirect('home')
 
 def admin_manage_stores(request):
     if request.method == 'POST':

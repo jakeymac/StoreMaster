@@ -10,8 +10,8 @@ app_name = "Products"
 
 urlpatterns = [
     path('products', views.index,name='index'),
-    path('product_view/<int:product_id>',views.product_view,name="product_view"),
-    path('product_edit_view/<int:product_id>',views.product_edit_view,name="product_edit_view"),
+    path('view_product',views.product_view,name="view_product"),
+    path('edit_product',views.edit_product_view,name='edit_product'),
     path("employee_view_product/<int:product_id>",views.employee_view_product,name="employee_view_product"),
     path("delete_product/<int:product_id>",views.delete_product,name="delete_product"),
     path("add_product/<int:store_id>", views.add_product_view, name="add_product"),
@@ -27,8 +27,6 @@ urlpatterns = [
     path("api/product/<str:id_type>/<int:id>",endpoints.product_endpoint),
     path("api/product/<str:is_active>", endpoints.product_endpoint),
     path("api/product/<str:id_type>/<int:id>/<str:is_active>",endpoints.product_endpoint),
-    
-    
 ]
 
 if settings.DEBUG:

@@ -112,7 +112,8 @@ function load_listeners() {
                 // }
             });
             setTimeout(function() {
-                window.location.href = `/employee_view_product/${product_id}`;
+                $("#back-to-product-form").submit();
+                //window.location.href = `/employee_view_product/${product_id}`;
             }, 3000);
         });
         
@@ -125,7 +126,7 @@ function load_listeners() {
     })
 
     $("#back-button").on("click", function() {
-        window.location.href = `/employee_view_product/${product_id}`;
+        $("#back-to-product-form").submit();
     })
 }
 

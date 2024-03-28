@@ -68,7 +68,9 @@ function load_listeners() {
  // Add functioanlity to have customer name and product names be 
  // clickable to open those pages ot the customer or pdocut details pages
     $("#back-button").on("click", function() {
-        window.location.href=`/manage_store/${store_id}`;
+        $("#store-id-input").val(store_id);
+        $("#return-to-management-portal-form").submit();
+        // window.location.href=`/manage_store/${store_id}`;
     })
 
     $("#order-information-div").on("click", ".hoverable-link", function() {

@@ -45,6 +45,45 @@ def StoreMasterHome(request):
         pass
     else:
         return render(request,"home.html",{})
+
+def view_account_info(request):
+    if request.method == "POST":
+        if "account_id_input" in request.POST and "account_type_input" in request.POST:
+            account_id = request.POST.get("account_id_input")
+            account_type = request.POST.get("account_type_input")
+            
+            if request.user and request.user.is_authenticated:
+                user_account_type = request.user.userinfo.account_type
+                if account_type == "customer":
+                    context = {"customer_id": account_id}
+                    if user_account_type == "customer":
+                        if request.user.id == account_id:
+                            return render(request, "view_customer.html",context=context)
+                        else:
+                            pass
+
+                    elif user_account_type == "manager" or user_account_type == "employee" or user_account_type == "admin":
+                        #TODO Add security to see if this customer belongs to the same store as the user requesting access
+                        return render(request, "employee_view_customer.html", context=context)
+                    else:
+                        pass
+
+                elif account_type == "employee":
+                    if request.user.userinfo.account_type == "manager" or request.user.userinfo.account_type == "admin":
+                        #TODO Add security to see if this employee belongs to the same store as the user requesting access
+
+
+                            return render(request, "view_employee.html", context=context)
+
+                    elif request.user.userinfo.account_type == "employee" and request.user.id == account_id:
+                        return render(request,"view_employee.html")
+                    
+                    else:
+                        pass
+
+                else:
+                    pass
+
     
 def employee_view_customer(request,customer_id,original_page="manage store"):
     customer = CustomerInfo.objects.get(user_id=customer_id)
@@ -139,6 +178,36 @@ def edit_employee(request,employee_id,employee_type="manager",original_page="man
     context["original_page"] = original_page
 
     return render(request,"edit_employee.html",context=context)
+
+def edit_account_info(request):
+    import pdb
+    pdb.set_trace()
+
+    if request.method == "POST":
+        if request.user and request.user.is_authenticated:
+            if "account_id_input" in request.POST and "account_type_input" in request.POST:
+                account_id = request.POST.get("account_id_input")
+                account_type = request.POST.get("account_type_input")
+                user_account_type = request.user.userinfo.account_type
+                if account_type == "customer":
+                    context={"customer_id": account_id}
+                    if user_account_type == "customer":
+                        if account_id == user.id:
+                            return render(request,"edit_customer.html",context=context)
+                        else:
+                            pass
+                    elif user_account_type in ["employee", "manager", "admin"]:
+                        return render(request,"employee_edit_customer.html", context=context)
+                    else:
+                        pass
+                elif account_type == "employee":
+                    pass
+                elif account_type == "manager":
+                    pass
+                elif account_type == "admin":
+                    PasswordResetView
+                else:
+                    pass
 
 #TODO needs to make sure permissions are correct for user trying to edit. 
 @login_required(login_url='/login_employee')

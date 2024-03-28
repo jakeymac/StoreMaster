@@ -38,10 +38,12 @@ function load_data() {
 
 function load_listeners() {
     $("#select-store-button").on("click", function() {
-        if ($("store-selector").val() != "") {
-            window.location.href = `/manage_store/${$("#store-selector").val()}`;
+        if ($("#store-selector").val() != "") {
+            $("#store-id").val($("#store-selector").val());
+            $("#store-selector-form").submit();
         }
     });
+
 
     $("#select-employee-button").on("click", function() {
         if ($("#employee-selector").val() != "") {

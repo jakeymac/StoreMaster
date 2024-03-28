@@ -35,12 +35,35 @@ function load_data() {
 }
 
 function load_listeners() {
+    let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+    console.log("Token: "< csrftoken);
+    
     $("#edit-information-button").on("click", function() {
         window.location.href = `/edit_employee/${employee_data.user.id}`; //Change this later when updating the views page I dont' want this ot need the employee type
     });
 
     $("#back-to-portal-button").on("click", function() {
-        window.location.href = `/manage_store/${employee_data.store.store_id}`;
+        console.log("Sending POST request");
+        fetch(`/manage_store/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({"store_id": employee_data.store.store_id})
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Success");
+                // Optionally, you can redirect the user after a successful POST request
+                // window.location.href = "/manage_store/";
+            } else {
+                console.error("Error:", response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
     });
 }
 

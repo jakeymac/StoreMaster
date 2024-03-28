@@ -12,7 +12,6 @@
     
 </head>
 <body>
-    <meta name="csrf-token" content="{% csrf_token %}">
     <div id="edit-information-container">
         
         <label for="stock-number-input">Product Stock:</label>
@@ -42,6 +41,11 @@
 
         <button id="save-button">Save</button>
         <button id="back-button">Back</button>
+
+        <form id="back-to-product-form" method="POST" action="/view_product">
+            {% csrf_token %}
+            <input type="hidden" id="store-id-input" name="product_id_input" value="{{product_id }}">
+        </form>
         <!-- <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <label for="{{ form.product_stock.id_for_label }}">Product Stock:</label>

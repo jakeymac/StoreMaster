@@ -88,7 +88,8 @@ function load_listeners() {
     });
 
     $("#edit-product-button").on("click", function() {
-        window.location.href = `/product_edit_view/${product_data.product_id}`;
+        $("#open-edit-product-form").submit();
+        // window.location.href = `/product_edit_view/${product_data.product_id}`;
     });
 
     $("#delete-product-button").on("click", function() {
@@ -139,7 +140,8 @@ function load_listeners() {
                             }
                         });
                         setTimeout(function() {
-                            window.location.href = `/manage_store/${product_data.store.store_id}`;     
+                            $("#store-id-input").val(product_data.store.store_id);
+                            $("#return-to-management-portal-form").submit();   
                         }, 3000);
                                 
                     }
@@ -149,7 +151,9 @@ function load_listeners() {
     });
 
     $("#return-to-portal-button").on("click", function() {
-        window.location.href = `/manage_store/${product_data.store.store_id}`;
+        $("#store-id-input").val(product_data.store.store_id);
+        $("#return-to-management-portal-form").submit();
+        // window.location.href = `/manage_store/${product_data.store.store_id}`;
 
     });
     

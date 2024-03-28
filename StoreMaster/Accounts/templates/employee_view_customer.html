@@ -3,63 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-        }
-
-        #main-info-container {
-            width: 300px;
-            margin: 35px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        p {
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/employee_view_customer.css' %}">
+    <script>var store_id = "{{store_id}}" </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/employee_view_customer.js' %}" defer></script>
 </head>
 <body>
     
     <div id="main-info-container">
-        <h1>{{ customer.first_name }} {{ customer.last_name }}</h1>
+        <h1 id="customer-name-header"></h1>
+        <p id="customer-address-p"></p>
+        <p id="customer-username-p"></p>
+        <p id="customer-birthday-p"></p>
+        <p id="customer-other-information-p"></p>
+
+        <button id="edit-customer-button">Edit</button>
+        <button id="back-button">Back to management portal</button>
+        <!-- <h1>{{ customer.first_name }} {{ customer.last_name }}</h1>
         {% if customer.address %}
             <p>Address: {{ customer.get_full_address }}</p>
         {% else %}
@@ -76,8 +36,8 @@
             <p>Other information: {{ customer.other_information }}</p>
         {% else %}
             <p>No other information found</p>
-        {% endif %}
-        <a href="{% url 'Accounts:employee_edit_customer' customer.user.userinfo.user_id %}"><button>Edit Information</button></a>
+        {% endif %} -->
+        
     </div>
 </body>
 </html>

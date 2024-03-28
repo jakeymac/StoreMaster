@@ -10,8 +10,8 @@
     <body>
         {% csrf_token %}
         <div id="store-info-div">
-            <h1>{{store_name}}</h1>
-            <h2>Welcome, {{username}}</h2>
+            <h1 id="store-name-header">{{store_name}}</h1>
+            <h2 id="welcome-user-header"></h2>
         </div>
         
         <div id="main-div-container">
@@ -22,6 +22,11 @@
                     <div class="search-results-section" id="product-results-div">
                         <p id="no-products-text" style="display:none;">No products found</p>
                     </div>
+                    <form id="open-product-form" action="/view_product" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" value="employee" name="user_type_input" id="user-type-input">
+                        <input type="hidden" name="product_id_input" id="product-id-input">
+                    </form>
                 </div>
 
                 <div class="search-section">
@@ -36,6 +41,11 @@
                                 <th id="order-customer-name-column-header">Customer</th>
                             </tr>
                         </table>
+                        <form id="open-order-form" action="/view_order" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_customer_id_input" id="order-customer-id-input">
+                            <input type="hidden" name="order_id_input" id="order-id-input">
+                    </form>
                     </div>
                 </div>
 
@@ -51,6 +61,11 @@
                                 <th id="purcahse-customer-name-column-header">Customer</th>
                             </tr>
                         </table>
+                        <form id="open-purchase-form" action="/view_purchase" method="POST">
+                            {% csrf_token%}
+                            <input type="hidden" id="purchase-id-input" name="purchase_id_input">
+                            <input type="hidden" id="purchase-customer-id-input" name="purchase_customer_id_input">
+                        </form>
                     </div>
                 </div>
                 
@@ -68,6 +83,12 @@
                     <input type="text" id="customer-search-bar" placeholder="Search">
                     <p id="no-customers-text" style="display:none;">No customers found</p>
                     <div class="search-results-section" id="customer-results-div"></div>
+                    <form id="open-customer-form" method="POST" action="/account_info">
+                        {% csrf_token %}
+                        <input type="hidden" id="customer-id-input" name="account_id_input">
+                        <input type="hidden" id="store-id-input" name="store_id_input" value="{{store_id}}">
+                        <input type="hidden" name="account_type_input" value="customer">   
+                    </form>
                 </div>
 
                 <div class="search-section" id="button-section">

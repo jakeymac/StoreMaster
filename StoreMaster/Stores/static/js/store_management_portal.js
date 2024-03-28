@@ -133,14 +133,31 @@ function load_store_data() {
     })
     .then(data => {
         isAdmin = (data.account_info.account_type == "admin");
-        console.log("Data: ", data);
-        console.log("Testing is aDmin: 2 ", isAdmin);
+        $("#welcome-user-header").text(`Welcome, ${data.account_info.first_name}`);
         if (isAdmin) {
             $("#customer-search-section").show();
             $("#employee-search-section").show();
             load_admin_only_data();
         }
     })
+    fetch(`api/store/${store_id}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        }
+    })
+    .then(response=> {
+        if (!response.ok) {
+            throw new Error('network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        var store = data.store;
+        $("#store-name-header").text(store.store_name);
+    });
 
     // Retrieve all the products in the store
     fetch(`/api/product/store/${store_id}/true`, {
@@ -206,6 +223,7 @@ function load_store_data() {
     })
     .then(data => {
         orders = data.orders;
+        console.log(orders);
         if (orders.length == 0) {
             $("#no-orders-text").show();
             $("#order-info-table").hide();
@@ -225,7 +243,7 @@ function load_store_data() {
                                         <td class="order-id-cell">${order.order_id}</td>
                                         <td class="order-date-cell">${formattedDate}</td>
                                         <td class="order-customer-name-cell">${order.customer_id.first_name} ${order.customer_id.last_name}</td>
-                                        <td><button class="view-order-button" order_id="${order.order_id}">View</button> </td>
+                                        <td><button class="view-order-button" order_id="${order.order_id}" customer_id="${order.customer_id.user.id}">View</button> </td>
                                     </tr>`
         });
     
@@ -248,6 +266,7 @@ function load_store_data() {
     })
     .then(data => {
         purchases = data.purchases;
+        console.log(purchases);
         if (purchases.length == 0) {
             $("#no-purchases-text").show();
             $("#purchase-info-table").hide();
@@ -280,7 +299,7 @@ function load_store_data() {
                                         <td class="purchase-id-cell">${purchase.purchase_id}</td>
                                         <td class="purchase-date-cell">${formattedDate}</td>
                                         <td class="purchase-customer-name-cell">${customer_name}</td>
-                                        <td><button class="view-purchase-button" purchase_id="${purchase.purchase_id}">View</button></td>
+                                        <td><button class="view-purchase-button" purchase_id="${purchase.purchase_id}" customer_id="${purchase.customer_id.user.id}">View</button></td>
                                       </tr>`
         });
         $("#purchase-info-table").append(new_purchase_div_html); 
@@ -388,29 +407,41 @@ function load_listeners() {
     // Event listener for view product buttons
     $(document).on("click", ".view-product-button", function() {
         var product_id = $(this).attr("product_id");
+        $("#product-id-input").val(product_id);
+        $("#open-product-form").submit();
         // Open the view product page with the chosen product ID
-        window.location.href = `/employee_view_product/${product_id}`;
+        // window.location.href = `/employee_view_product/${product_id}`;
     });
 
     // Event listener for view order buttons
     $(document).on("click", ".view-order-button", function() {
         var order_id = $(this).attr("order_id");
+        var customer_id = $(this).attr("customer_id");
+        $("#order-id-input").val(order_id);
+        $("#order-customer-id-input").val(customer_id);
+        $("#open-order-form").submit();
         // Open the view order page with the chosen order ID
-        window.location.href = `/employee_view_order/${order_id}`
+        // window.location.href = `/employee_view_order/${order_id}`
     });
 
     // Event listener for view purchase buttons
     $(document).on("click", ".view-purchase-button", function() {
         var purchase_id = $(this).attr("purchase_id");
+        var customer_id = $(this).attr("customer_id");
+        $("#purchase-id-input").val(purchase_id);
+        $("#purchase-customer-id-input").val(customer_id);
+        $("#open-purchase-form").submit();
         // Open the view purchase page with the chosen purchase ID
-        window.location.href = `/employee_view_purchase/${purchase_id}`;
+        // window.location.href = `/employee_view_purchase/${purchase_id}`;
     });
 
     // Event listener for view customer buttons
     $(document).on("click", ".view-customer-button", function() {
         var customer_id = $(this).attr("customer_id");
+        $("#customer-id-input").val(customer_id);
+        $("#open-customer-form").submit();
         // Open the view customer page with the chosen customer ID
-        window.location.href = `/employee_view_customer/${customer_id}`;
+        // window.location.href = `/employee_view_customer/${customer_id}`;
     });
 
     // Event listener for view employee buttons
