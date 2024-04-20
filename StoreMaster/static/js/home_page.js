@@ -56,7 +56,7 @@ var get_store_search_results = function() {
                                     <p class="store-name">${store.fields.store_name}</p>
                                     <p class="store-address">"${store.fields.address} ${store.fields.line_two} ${store.fields.city}"</p>
                                 </div>
-                                <button id="open-store-result-${store.pk}" class="open-store-button">Open Store</button>
+                                <button store_id="${store.store_id}" id="open-store-result-${store.pk}" class="open-store-button">Open Store</button>
                             </div>`
 
                 resultsHTML += store_html;
@@ -73,9 +73,9 @@ var get_store_search_results = function() {
         //console.log(resultsHTML);
         console.log("Success");
         resultsDiv.on('click', '.open-store-button', function() {
-            var storeId = this.id.split("-")[3];
+            var store_id = this.attr("store_id");
             console.log(storeId);
-            var url = "store_home/O ".replace('O',storeId);
+            var url = `store_home/${store_id}`;
             window.location.href=url; 
         });
     })

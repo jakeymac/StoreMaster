@@ -60,30 +60,42 @@ def view_account_info(request):
                         if request.user.id == account_id:
                             return render(request, "view_customer.html",context=context)
                         else:
-                            pass
+                            return HttpResponse("Sorry, you aren't authorized to access that information")
 
                     elif user_account_type == "manager" or user_account_type == "employee" or user_account_type == "admin":
                         #TODO Add security to see if this customer belongs to the same store as the user requesting access
                         return render(request, "employee_view_customer.html", context=context)
                     else:
-                        pass
+                        return HttpResponse("Sorry, you aren't authorized to access that information")
 
                 elif account_type == "employee":
                     if request.user.userinfo.account_type == "manager" or request.user.userinfo.account_type == "admin":
                         #TODO Add security to see if this employee belongs to the same store as the user requesting access
-
-
                             return render(request, "view_employee.html", context=context)
 
                     elif request.user.userinfo.account_type == "employee" and request.user.id == account_id:
                         return render(request,"view_employee.html")
                     
                     else:
-                        pass
+                        return HttpResponse("Sorry, you aren't authorized to access that information")
+
+                elif account_type == "manager":
+                    if request.user.id == account_id or request.user.userinfo.account_type == "admin":
+                        return render(request,"view_employee.html")
+                    else:
+                        return HttpResponse("Sorry, you aren't authorized to access that information")
+
+                elif account_type == "admin":
+                    if request.user.id == account_id:
+                        return render(request, "view_employee.html")
+                    else:
+                        return HttpResponse("Sorry, you aren't authorized to access that information")
 
                 else:
-                    pass
+                    return HttpResponse("Sorry, that isn't a valid account type")
 
+            else:
+                return HttpResponse("Sorry, you aren't authorized to access that information")
     
 def employee_view_customer(request,customer_id,original_page="manage store"):
     customer = CustomerInfo.objects.get(user_id=customer_id)
@@ -180,9 +192,6 @@ def edit_employee(request,employee_id,employee_type="manager",original_page="man
     return render(request,"edit_employee.html",context=context)
 
 def edit_account_info(request):
-    import pdb
-    pdb.set_trace()
-
     if request.method == "POST":
         if request.user and request.user.is_authenticated:
             if "account_id_input" in request.POST and "account_type_input" in request.POST:

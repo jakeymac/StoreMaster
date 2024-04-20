@@ -12,7 +12,7 @@
     </head>
     <body>
         {% csrf_token %}
-        <meta name="csrf-token" content="{% csrf_token %}">
+        <!-- <meta name="csrf-token" content="{% csrf_token %}"> -->
 
         <div id="main-div-container">
             <div class="row" id="main-product-info-div">
@@ -98,7 +98,7 @@
         </div>
         <form id="return-to-management-portal-form" action="/manage_store" method="POST">
             {% csrf_token %}
-            <input type="hidden" id="store-id-input" name="store_id">
+            <input type="hidden" id="store-id-input" name="store_id_input">
         </form>
         <form id="open-edit-product-form" action="/edit_product" method="POST">
             {% csrf_token %} 

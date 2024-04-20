@@ -1,107 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
 
-<html>
+
+{% block content %} 
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-}
-
-#edit-information-container {
-    width: 600px;
-    margin: 100px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
-
-h1 {
-    text-align: center;
-    color: #333;
-    grid-column: span 2; /* span both columns */
-}
-
-.column {
-    grid-column: span 1; /* span one column */
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-}
-
-input, select {
-    width: 100%;
-    padding: 2px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-}
-
-#edit_customer_form {
-    grid-column: span 2; /* span both columns */
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
-
-#back-button {
-    width:25%; 
-    margin-left:950px;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-p {
-    margin-top: 20px;
-    text-align: center;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account Info</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/employee_edit_customer.css' %}">
+    <script>var customer_id = "{{customer_id}}"</script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="{% static 'js/employee_edit_customer.js' %}" defer></script>
 </head>
 <body>
-    
-<form id="edit_customer_form" method="POST">
-<div id="edit-information-container">
-    <h1>Edit Account Information</h1>
+    <div id="edit-information-container">
+        <h1>Edit Account Information</h1>
         {% csrf_token %}
         <div class="column">
-            {{ form.first_name.label_tag }} {{form.first_name}}
-            {{ form.last_name.label_tag }} {{form.last_name}}
-            {{ form.email_address.label_tag }} {{form.email_address}}
-            {{ form.address.label_tag }} {{ form.address }}
-            {{ form.line_two.label_tag }} {{form.line_two }}
-            {{ form.city.label_tag }} {{ form.city}}
-            {{ form.state.label_tag }} {{ form.state}}
-            {{ form.zip.label_tag}} {{ form.zip }}
+            <label for="first-name-input">First Name:</label>
+            <input type="text" name="first_name" id="first-name-input">
+            <label for="last-name-input">Last Name:</label>
+            <input type="text" name="last_name" id="last-name-input">
+            <label for="email-address-input">Email Address:</label>
+            <input type="email" name="email_address" id="email-address-input">
+            <label for="address-input">Address:</label>
+            <input type="text" name="address" id="address-input">
+            <label for="line-two-input">Address Line 2:</label>
+            <input type="text" name="line_two" id="line-two-input">
         </div>
 
         <div class="column">
-            {{ form.username.label_tag}} {{form.username}}
-            {{ form.password.label_tag}} {{form.password}}
-            {{ form.store.labeL_tag}} {{ form.store}}
-            {{ form.other_information.label_tag}} {{form.other_information}}
-            {{form.birthday.label_tag}} {{form.birthday}}
+            <label for="city-input">City:</label>
+            <input type="text" name="city" id="city-input">
+            <label for="state-input">State:</label>
+            <input type="text" name="state" id="state-input">
+            <label for="zip-input">Zip:</label>
+            <input type="text" name="zip" id="zip-input">
+            <label for="other-information-input">Other Information:</label>
+            <textarea name="other_information" id="other-information-input"></textarea>
+            <label for="birthday-input">Birthday:</label>
+            <input type="date" name="birthday" id="birthday-input">
         </div>
-       
-        <button it='form-button' type="submit">Save</button>
+
+        
+        <div id="buttons-div">
+            <button id='save-info-button'>Save</button>
+            <button id="back-button">Back</button> 
+        </div>
+           
+        
+            
+        
+    </div>
     
+        
     
-</div>
-</form>
-<a href="{% url 'Accounts:employee_view_customer' customer_id%}"><button id="back-button">Back</button></a>    
+        <form id="back-to-employee-info-form" method="POST" action="/account_info">
+            {% csrf_token %}
+            <input type="hidden" name="account_id_input" id="account-id-input" value="{{customer_id}}">
+            <input type="hidden" name="account_type_input" id="account-type-input" value="customer">
+        </form>
 </body>
 </html>
+
+
+{% endblock %}

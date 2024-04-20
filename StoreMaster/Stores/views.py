@@ -265,14 +265,19 @@ def new_purchase(request,store_id):
     return render(request,"new_purchase.html",context=context)
 
 def store_home(request, store_id):
-    if request.user.is_authenticated:
-        if request.user.userinfo.account_type != "customer":
-            if request.user.userinfo.store:
-                return redirect("Stores:manage_store",store_id=request.user.userinfo.store.store_id)
-            else:
-                return HttpResponse("Error: No store associated with this user")
-            
-    return render(request,"store_front.html",context={"store_id":store_id})    
+    if Store.objects.filter(store_id=store_id).exists():
+
+        if request.user.is_authenticated:
+            if request.user.userinfo.account_type != "customer":
+                if request.user.userinfo.store:
+                    return redirect(f"Stores:manage_store/{request.user.userinfo.store.store_id}")
+                else:
+                    return HttpResponse("Error: No store associated with this user")
+                
+        return render(request,"store_front.html",context={"store_id":store_id})    
+
+    else:
+        return HttpResponse("Couldn't find a store with that ID")
     # store = Store.objects.get(store_id=store_id)
     # if request.method == 'POST':
     #     #Get search results
@@ -526,7 +531,6 @@ def view_shipment(request,shipment_id):
             product_in_shipment.save()
 
 
-
     shipment = Shipment.objects.get(shipment_id=shipment_id)
     products = ProductInShipment.objects.filter(shipment=shipment)
 
@@ -697,9 +701,7 @@ def manage_store_url(request):
 
 def manage_store(request):
     if request.method == "POST":
-        print("hi")
-
-        store_id = request.POST.get("store_id")
+        store_id = request.POST.get("store_id_input")
         store = Store.objects.get(store_id = store_id)
 
         context =  {"store_id": store_id}

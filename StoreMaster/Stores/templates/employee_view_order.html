@@ -9,7 +9,6 @@
     <script>var order_id = "{{order_id}}";</script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/employee_view_order.js' %}" defer></script>
-    
 </head>
 <body>
     {% csrf_token %}
@@ -40,7 +39,7 @@
     </div>
     <form id="return-to-management-portal-form" action="/manage_store" method="POST">
         {% csrf_token %}
-        <input type="hidden" id="store-id-input" name="store_id">
+        <input type="hidden" id="store-id-input" name="store_id_input">
     </form>
 </body>
 </html>

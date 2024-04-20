@@ -1,3 +1,4 @@
+var account_data;
 function load_data() {
     let csrftoken = $("input[name=csrfmiddlewaretoken]").val();
     fetch(`/api/account/${customer_id}`, {
@@ -15,11 +16,11 @@ function load_data() {
     })
     .then(data => {
         console.log(data);
-        var account_data = data.account_data;
+        account_data = data.account_data;
         $("#store-id-input").val(account_data.store.store_id);
         $("#customer-id-input").val(customer_id);
 
-        $("#customer-name-header").text(account_data.first_name + account_data.last_name);
+        $("#customer-name-header").text(account_data.first_name + " " + account_data.last_name);
         if (account_data.address) {
             $("#customer-address-p").text("Address: " + account_data.address);
         }
@@ -38,6 +39,12 @@ function load_listeners() {
     $("#edit-customer-button").on("click", function() {
         $("#open-edit-customer-form").submit();
     })
+
+    $("#back-button").on("click", function() {
+        $("#store-id-input").val(account_data.store.store_id);
+        $("#back-to-management-portal-form").submit();
+    })
+    
     
 
 }

@@ -132,6 +132,8 @@ def account_endpoint(request,account_id=None):
         elif request.method == 'POST':
             pass
         elif request.method == 'PUT':
+            import pdb
+            pdb.set_trace()
             data = json.loads(request.body)
             user_data = data["user"]
             account_data = data["account_data"]
@@ -140,7 +142,7 @@ def account_endpoint(request,account_id=None):
             try:
                 with transaction.atomic():  
                     user = User.objects.get(pk=user_data["id"])
-                    user_serializer = UserSerializer(user, data=user_data)
+                    user_serializer = UserSerializer(user, data=user_data,partial=True)
                     if user_serializer.is_valid():
                         user_serializer.save()
 
@@ -150,7 +152,7 @@ def account_endpoint(request,account_id=None):
 
                         account_type = account_data["account_type"]
                         account_instance = model_dict.get(account_type).objects.get(user=user)
-                        account_serializer = serializer_dict.get(account_type)(account_instance, data=account_data)
+                        account_serializer = serializer_dict.get(account_type)(account_instance, data=account_data,partial=True)
                         if account_serializer.is_valid():
                             account_serializer.save()
                             messages.append("Successfully saved changes")

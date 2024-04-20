@@ -409,8 +409,6 @@ function load_listeners() {
         var product_id = $(this).attr("product_id");
         $("#product-id-input").val(product_id);
         $("#open-product-form").submit();
-        // Open the view product page with the chosen product ID
-        // window.location.href = `/employee_view_product/${product_id}`;
     });
 
     // Event listener for view order buttons
@@ -420,8 +418,6 @@ function load_listeners() {
         $("#order-id-input").val(order_id);
         $("#order-customer-id-input").val(customer_id);
         $("#open-order-form").submit();
-        // Open the view order page with the chosen order ID
-        // window.location.href = `/employee_view_order/${order_id}`
     });
 
     // Event listener for view purchase buttons
@@ -431,8 +427,6 @@ function load_listeners() {
         $("#purchase-id-input").val(purchase_id);
         $("#purchase-customer-id-input").val(customer_id);
         $("#open-purchase-form").submit();
-        // Open the view purchase page with the chosen purchase ID
-        // window.location.href = `/employee_view_purchase/${purchase_id}`;
     });
 
     // Event listener for view customer buttons
@@ -440,8 +434,6 @@ function load_listeners() {
         var customer_id = $(this).attr("customer_id");
         $("#customer-id-input").val(customer_id);
         $("#open-customer-form").submit();
-        // Open the view customer page with the chosen customer ID
-        // window.location.href = `/employee_view_customer/${customer_id}`;
     });
 
     // Event listener for view employee buttons
